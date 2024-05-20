@@ -31555,7 +31555,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Response>) {
   }
 
   try {
-    
+    /** @see https://trpc.io/docs/server-side-calls */
     const ctx = await createContext({ req, res }, sessionGetter);
     const caller = bookingsRouter.createCaller({
       ...ctx,
@@ -33491,8 +33491,8 @@ export const schemaAvailabilityReadPublic = Availability.pick({
   date: true,
   scheduleId: true,
   days: true,
-  // eventTypeId: true ,
-  // userId: true ,
+  // eventTypeId: true /** @deprecated */,
+  // userId: true /** @deprecated */,
 }).merge(z.object({ success: z.boolean().optional(), Schedule: Schedule.partial() }).partial());
 
 const schemaAvailabilityCreateParams = z
@@ -33960,7 +33960,7 @@ export const schemaWebhookReadPublic = Webhook.pick({
   eventTriggers: true,
   // FIXME: We have some invalid urls saved in the DB
   // subscriberUrl: true,
-  
+  /** @todo: find out how to properly add back and validate those. */
   // eventType: true,
   // app: true,
   appId: true,
@@ -40538,7 +40538,7 @@ const patchHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       expires: "" /* Not used in this context */,
     };
   }
-  
+  /** @see https://trpc.io/docs/server-side-calls */
   const ctx = await createContext({ req, res }, sessionGetter);
   try {
     const caller = viewerTeamsRouter.createCaller(ctx);
