@@ -29650,7 +29650,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   return res.status(200).json(result);
 }
 import type { NextApiRequest, NextApiResponse } from "next";
-import crypto from "node:crypto";
+import crypto from "crypto";
 
 import { getServerSession } from "@calcom/features/auth/lib/getServerSession";
 import { defaultHandler } from "@calcom/lib/server";
