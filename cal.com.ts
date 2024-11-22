@@ -203,11 +203,14 @@ export const SnippedGenerator = {
                   fn: (req) => {
                     // get extended info about request
                     const { spec, oasPathMethod } = req.toJS();
+
                     const { path, method } = oasPathMethod;
 
                     // run OpenAPISnippet for target node
                     const targets = ["node_fetch"];
+
                     let snippet;
+
                     try {
                       // set request snippet content
                       snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
@@ -231,11 +234,14 @@ export const SnippedGenerator = {
                   fn: (req) => {
                     // get extended info about request
                     const { spec, oasPathMethod } = req.toJS();
+
                     const { path, method } = oasPathMethod;
 
                     // run OpenAPISnippet for target node
                     const targets = ["shell_httpie"];
+
                     let snippet;
+
                     try {
                       // set request snippet content
                       snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
@@ -259,11 +265,14 @@ export const SnippedGenerator = {
                   fn: (req) => {
                     // get extended info about request
                     const { spec, oasPathMethod } = req.toJS();
+
                     const { path, method } = oasPathMethod;
 
                     // run OpenAPISnippet for target node
                     const targets = ["php_curl"];
+
                     let snippet;
+
                     try {
                       // set request snippet content
                       snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
@@ -287,11 +296,14 @@ export const SnippedGenerator = {
                   fn: (req) => {
                     // get extended info about request
                     const { spec, oasPathMethod } = req.toJS();
+
                     const { path, method } = oasPathMethod;
                     console.log(spec, oasPathMethod, path, method);
                     // run OpenAPISnippet for target node
                     const targets = ["java_okhttp"];
+
                     let snippet;
+
                     try {
                       // set request snippet content
                       snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
@@ -379,11 +391,14 @@ export const SnippedGenerator = {
                   fn: (req) => {
                     // get extended info about request
                     const { spec, oasPathMethod } = req.toJS();
+
                     const { path, method } = oasPathMethod;
 
                     // run OpenAPISnippet for target node
                     const targets = ["go_native"];
+
                     let snippet;
+
                     try {
                       // set request snippet content
                       snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
@@ -407,11 +422,14 @@ export const SnippedGenerator = {
                   fn: (req) => {
                     // get extended info about request
                     const { spec, oasPathMethod } = req.toJS();
+
                     const { path, method } = oasPathMethod;
 
                     // run OpenAPISnippet for target node
                     const targets = ["ruby"];
+
                     let snippet;
+
                     try {
                       // set request snippet content
                       snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
@@ -435,11 +453,14 @@ export const SnippedGenerator = {
                   fn: (req) => {
                     // get extended info about request
                     const { spec, oasPathMethod } = req.toJS();
+
                     const { path, method } = oasPathMethod;
 
                     // run OpenAPISnippet for target node
                     const targets = ["python"];
+
                     let snippet;
+
                     try {
                       // set request snippet content
                       snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
@@ -489,6 +510,7 @@ const middleware = async (req: NextRequest): Promise<NextResponse<unknown>> => {
       // If is in maintenance mode, point the url pathname to the maintenance page
       if (isInMaintenanceMode) {
         req.nextUrl.pathname = `/maintenance`;
+
         return NextResponse.rewrite(req.nextUrl);
       }
     } catch (error) {
@@ -526,6 +548,7 @@ const middleware = async (req: NextRequest): Promise<NextResponse<unknown>> => {
 
   if (url.pathname.startsWith("/future/apps/installed")) {
     const returnTo = req.cookies.get("return-to")?.value;
+
     if (returnTo !== undefined) {
       requestHeaders.set("Set-Cookie", "return-to=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT");
 
@@ -850,6 +873,7 @@ import type { Fixtures } from "@calcom/web/test/fixtures/fixtures";
 import { createOrganization } from "@calcom/web/test/utils/bookingScenario/bookingScenario";
 
 const WEBSITE_PROTOCOL = new URL(WEBSITE_URL).protocol;
+
 const _testWithAndWithoutOrg = (
   description: Parameters<typeof testWithAndWithoutOrg>[0],
   fn: Parameters<typeof testWithAndWithoutOrg>[1],
@@ -1053,7 +1077,9 @@ declare global {
 expect.extend({
   toHaveEmail(emails: Fixtures["emails"], expectedEmail: ExpectedEmail, to: string) {
     const { isNot } = this;
+
     const testEmail = emails.get().find((email) => email.to.includes(to));
+
     const emailsToLog = emails
       .get()
       .map((email) => ({ to: email.to, html: email.html, ics: email.icalEvent }));
@@ -1066,15 +1092,20 @@ expect.extend({
       };
     }
     const ics = testEmail.icalEvent;
+
     const icsObject = ics?.content ? ical.sync.parseICS(ics?.content) : null;
+
     const iCalUidData = icsObject ? icsObject[expectedEmail.ics?.iCalUID || ""] : null;
 
     let isToAddressExpected = true;
+
     const isIcsFilenameExpected = expectedEmail.ics ? ics?.filename === expectedEmail.ics.filename : true;
+
     const isIcsUIDExpected =
       expectedEmail.ics && expectedEmail.ics.iCalUID
         ? !!(icsObject ? icsObject[expectedEmail.ics.iCalUID] : null)
         : true;
+
     const emailDom = parse(testEmail.html);
 
     const actualEmailContent = {
@@ -1108,6 +1139,7 @@ expect.extend({
     }
 
     isToAddressExpected = expectedEmail.to === testEmail.to;
+
     if (!isToAddressExpected) {
       logger.silly("All Emails", JSON.stringify({ numEmails: emailsToLog.length, emailsToLog }));
       return {
@@ -1236,7 +1268,9 @@ export function expectWebhookToHaveBeenCalledWith(
   logger.silly("Scanning fetchCalls for webhook", safeStringify(fetchCalls));
   const webhookFetchCall = webhooksToSubscriberUrl.find((call) => {
     const body = call[1]?.body;
+
     const parsedBody = JSON.parse((body as string) || "{}");
+
     return parsedBody.triggerEvent === data.triggerEvent;
   });
 
@@ -1264,6 +1298,7 @@ export function expectWebhookToHaveBeenCalledWith(
     }
     if (data.payload.responses !== undefined)
       expect(parsedBody.payload.responses).toEqual(expect.objectContaining(data.payload.responses));
+
     const { responses: _1, metadata: _2, ...remainingPayload } = data.payload;
     expect(parsedBody.payload).toEqual(expect.objectContaining(remainingPayload));
   }
@@ -2125,6 +2160,7 @@ import type { EventBusyDate, IntervalLimit } from "@calcom/types/Calendar";
 import { getMockPaymentService } from "./MockPaymentService";
 
 logger.settings.minLevel = 0;
+
 const log = logger.getSubLogger({ prefix: ["[bookingScenario]"] });
 
 type InputWebhook = {
@@ -2292,6 +2328,7 @@ async function addEventTypesToDb(
   log.silly("Fixed possible prismock bug by creating schedule separately");
   for (let i = 0; i < eventTypes.length; i++) {
     const eventType = eventTypes[i];
+
     const createdEventType = allEventTypes[i];
 
     if (eventType.schedule) {
@@ -2352,10 +2389,12 @@ async function addEventTypes(eventTypes: InputEventType[], usersStore: InputUser
       throw new Error(`eventTypes[number]: id ${eventType.id} is not unique`);
     }
     foundEvents[eventType.id] = true;
+
     const users =
       eventType.users?.map((userWithJustId) => {
         return usersStore.find((user) => user.id === userWithJustId.id);
       }) || [];
+
     return {
       ...baseEventType,
       ...eventType,
@@ -2407,7 +2446,9 @@ async function addBookingsToDb(
   log.silly("Handling Prismock bug-3");
   const fixedBookings = bookings.map((booking) => {
     const startTime = getDateObj(booking.startTime);
+
     const endTime = getDateObj(booking.endTime);
+
     return { ...booking, startTime, endTime };
   });
 
@@ -2471,6 +2512,7 @@ async function addBookings(bookings: InputBooking[]) {
             data: booking.attendees.map((attendee) => {
               if (attendee.bookingSeat) {
                 const { bookingSeat, ...attendeeWithoutBookingSeat } = attendee;
+
                 return {
                   ...attendeeWithoutBookingSeat,
                   bookingSeat: {
@@ -2590,7 +2632,9 @@ async function addUsers(users: InputUser[]) {
   const prismaUsersCreate = [];
   for (let i = 0; i < users.length; i++) {
     const newUser = users[i];
+
     const user = users[i];
+
     if (user.schedules) {
       newUser.schedules = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -3149,6 +3193,7 @@ export function mockCalendar(
     busySlots?: { start: `${string}Z`; end: `${string}Z` }[];
     creationCrash?: boolean;
     updationCrash?: boolean;
+
     getAvailabilityCrash?: boolean;
   }
 ) {
@@ -3335,6 +3380,7 @@ export function mockVideoApp({
                   credential,
                   args: rest,
                 });
+
                 if (!bookingRef.type) {
                   throw new Error("bookingRef.type is not defined");
                 }
@@ -3342,6 +3388,7 @@ export function mockVideoApp({
                   throw new Error("calEvent.organizer is not defined");
                 }
                 log.silly("MockVideoApiAdapter.updateMeeting", JSON.stringify({ bookingRef, calEvent }));
+
                 return Promise.resolve({
                   type: appStoreMetadata[metadataLookupKey as keyof typeof appStoreMetadata].type,
                   ...videoMeetingData,
@@ -4997,11 +5044,14 @@ const parseWorkingHours = (workingHours: string) => {
   const times = workingHours.split("-").map((time) => dayjs(time, "hh:mm").toDate());
   return { start: times[0], end: times[1] };
 };
+
 const p = parseWorkingHours;
 
 // mocked working hours
 const fulltimeWH = p("09:00-17:00");
+
 const morningWH = p("09:00-12:00");
+
 const afternoonWH = p("13:00-17:00");
 
 it("should return an empty availability array when received an empty schedule", async () => {
@@ -5307,7 +5357,9 @@ const { getSubdomainRegExp } = require("../../getSubdomainRegExp");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { match, pathToRegexp } = require("next/dist/compiled/path-to-regexp");
 type MatcherRes = (path: string) => { params: Record<string, string> };
+
 let orgUserTypeRouteMatch: MatcherRes;
+
 let orgUserRouteMatch: MatcherRes;
 
 beforeAll(async () => {
@@ -6550,6 +6602,7 @@ export const abTestMiddlewareFactory =
     const override = req.cookies.has(FUTURE_ROUTES_OVERRIDE_COOKIE_NAME);
 
     const route = ROUTES.find(([regExp]) => regExp.test(req.url)) ?? null;
+
     const enabled = route !== null ? route[1] || override : false;
 
     if (pathname.includes("future") || !enabled) {
@@ -6792,12 +6845,15 @@ test.describe("Organization", () => {
     const orgOwner = await users.create({
       role: "ADMIN",
     });
+
     const instanceAdmin = await users.create({
       username: `admin-${uuid()}`,
       email: users.trackEmail({ username: "admin", domain: "example.com" }),
       role: "ADMIN",
     });
+
     const orgDomain = `${orgOwner.username}-org`;
+
     const orgName = capitalize(`${orgOwner.username}-org`);
     await orgOwner.apiLogin();
     await page.goto("/settings/organizations/new");
@@ -6984,6 +7040,7 @@ test.describe("Organization", () => {
         const usernameDerivedFromEmail = `${invitedUserEmail.split("@")[0]}-domain`;
 
         await inviteAnEmail(page, invitedUserEmail);
+
         const inviteLink = await expectInvitationEmailToBeReceived(
           page,
           emails,
@@ -7022,10 +7079,12 @@ test.describe("Organization", () => {
 
       await test.step("By invite link", async () => {
         const inviteLink = await copyInviteLink(page);
+
         const email = users.trackEmail({ username: "rick", domain: "domain.com" });
         // '-domain' because the email doesn't match orgAutoAcceptEmail
         const usernameDerivedFromEmail = `${email.split("@")[0]}-domain`;
         await signupFromInviteLink({ browser, inviteLink, email });
+
         const dbUser = await prisma.user.findUnique({ where: { email } });
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
         await expectUserToBeAMemberOfOrganization({
@@ -7047,6 +7106,7 @@ test.describe("Organization", () => {
       await test.step("By email", async () => {
         await page.goto(`/settings/teams/${team.id}/members`);
         await page.waitForLoadState("networkidle");
+
         const invitedUserEmail = users.trackEmail({ username: "rick", domain: "domain.com" });
         // '-domain' because the email doesn't match orgAutoAcceptEmail
         const usernameDerivedFromEmail = `${invitedUserEmail.split("@")[0]}-domain`;
@@ -7069,6 +7129,7 @@ test.describe("Organization", () => {
         });
 
         await page.waitForLoadState("networkidle");
+
         const inviteLink = await expectInvitationEmailToBeReceived(
           page,
           emails,
@@ -7109,7 +7170,9 @@ test.describe("Organization", () => {
 
       await test.step("By invite link", async () => {
         await page.goto(`/settings/teams/${team.id}/members`);
+
         const inviteLink = await copyInviteLink(page);
+
         const email = users.trackEmail({ username: "rick", domain: "domain.com" });
         // '-domain' because the email doesn't match orgAutoAcceptEmail
         const usernameDerivedFromEmail = `${email.split("@")[0]}-domain`;
@@ -7147,8 +7210,10 @@ test.describe("Organization", () => {
 
       await test.step("By email", async () => {
         const invitedUserEmail = users.trackEmail({ username: "rick", domain: "example.com" });
+
         const usernameDerivedFromEmail = invitedUserEmail.split("@")[0];
         await inviteAnEmail(page, invitedUserEmail);
+
         const inviteLink = await expectInvitationEmailToBeReceived(
           page,
           emails,
@@ -7187,7 +7252,9 @@ test.describe("Organization", () => {
 
       await test.step("By invite link", async () => {
         const inviteLink = await copyInviteLink(page);
+
         const email = users.trackEmail({ username: "rick", domain: "example.com" });
+
         const usernameDerivedFromEmail = email.split("@")[0];
         await signupFromInviteLink({ browser, inviteLink, email });
 
@@ -7218,7 +7285,9 @@ test.describe("Organization", () => {
       await test.step("By email", async () => {
         await page.goto(`/settings/teams/${team.id}/members`);
         await page.waitForLoadState("networkidle");
+
         const invitedUserEmail = users.trackEmail({ username: "rick", domain: "example.com" });
+
         const usernameDerivedFromEmail = invitedUserEmail.split("@")[0];
         await inviteAnEmail(page, invitedUserEmail);
         await expectUserToBeAMemberOfTeam({
@@ -7237,6 +7306,7 @@ test.describe("Organization", () => {
           isMemberShipAccepted: true,
           email: invitedUserEmail,
         });
+
         const inviteLink = await expectInvitationEmailToBeReceived(
           page,
           emails,
@@ -7279,6 +7349,7 @@ test.describe("Organization", () => {
         await page.goto(`/settings/teams/${team.id}/members`);
 
         const inviteLink = await copyInviteLink(page);
+
         const email = users.trackEmail({ username: "rick", domain: "example.com" });
         // '-domain' because the email doesn't match orgAutoAcceptEmail
         const usernameDerivedFromEmail = `${email.split("@")[0]}`;
@@ -7466,6 +7537,7 @@ test.describe("user1NotMemberOfOrg1 is part of team1MemberOfOrg1", () => {
     await user1NotMemberOfOrg1.apiLogin();
 
     await page.goto(`/settings/teams/${team1MemberOfOrg1.id}/profile`);
+
     const domain = await page.locator(".testid-leading-text-team-url").textContent();
     expect(domain).toContain(org.slug);
   });
@@ -7580,6 +7652,7 @@ test.describe("Users can impersonate", async () => {
 
     await page.goto("/settings/admin/impersonation");
     await page.waitForLoadState();
+
     const adminInput = page.getByTestId("admin-impersonation-input");
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore the username does exist
@@ -7592,6 +7665,7 @@ test.describe("Users can impersonate", async () => {
     const stopImpersonatingButton = page.getByTestId("stop-impersonating-button");
 
     const impersonatedUsernameInput = page.locator("input[name='username']");
+
     const impersonatedUser = await impersonatedUsernameInput.inputValue();
 
     await expect(stopImpersonatingButton).toBeVisible();
@@ -7678,6 +7752,7 @@ test.afterEach(({ users }) => users.deleteAll());
 testBothFutureAndLegacyRoutes.describe("App Store - Authed", (routeVariant) => {
   test("should render /apps page", async ({ page, users, context }) => {
     test.skip(routeVariant === "future", "Future route not ready yet");
+
     const user = await users.create();
 
     await user.apiLogin();
@@ -8010,6 +8085,7 @@ test.describe("Change username on settings", () => {
 
     // Validate modal text fields
     const currentUsernameText = page.locator("[data-testid=current-username]").innerText();
+
     const newUsernameText = page.locator("[data-testid=new-username]").innerText();
 
     expect(currentUsernameText).not.toBe(newUsernameText);
@@ -8090,6 +8166,7 @@ testBothFutureAndLegacyRoutes.describe("free user", () => {
 
   test("cannot book same slot multiple times", async ({ page, users, emails }) => {
     const [user] = users.get();
+
     const bookerObj = {
       email: users.trackEmail({ username: "testEmail", domain: "example.com" }),
       name: "testBooker",
@@ -8106,6 +8183,7 @@ testBothFutureAndLegacyRoutes.describe("free user", () => {
 
     // Make sure we're navigated to the success page
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
+
     const { title: eventTitle } = await user.getFirstEventAsOwner();
 
     await expectEmailsToHaveSubject({
@@ -8140,6 +8218,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
 
   test("can reschedule a booking", async ({ page, users, bookings }) => {
     const [pro] = users.get();
+
     const [eventType] = pro.eventTypes;
     await bookings.create(pro.id, pro.username, eventType.id);
 
@@ -8212,6 +8291,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
 
     const cancelledHeadline = page.locator('[data-testid="cancelled-headline"]');
     await expect(cancelledHeadline).toBeVisible();
+
     const bookingCancelledId = new URL(page.url()).pathname.split("/booking/")[1];
     await page.goto(`/reschedule/${bookingCancelledId}`);
     // Should be redirected to the booking details page which shows the cancelled headline
@@ -8223,6 +8303,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     users,
   }) => {
     await bookOptinEvent(page);
+
     const [pro] = users.get();
     await pro.apiLogin();
 
@@ -8263,11 +8344,13 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
 
     const initialUrl = page.url();
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     const pageTwo = await context.newPage();
     await pageTwo.goto(initialUrl);
     await pageTwo.waitForURL(initialUrl);
 
     await pageTwo.waitForSelector('[data-testid="event-type-link"]');
+
     const eventTypeLink = pageTwo.locator('[data-testid="event-type-link"]').first();
     await eventTypeLink.click();
 
@@ -8280,6 +8363,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
 
     // 9:30 should be the first available time slot
     await pageTwo.locator('[data-testid="time"]').nth(0).waitFor();
+
     const firstSlotAvailable = pageTwo.locator('[data-testid="time"]').nth(0);
     // Find text inside the element
     const firstSlotAvailableText = await firstSlotAvailable.innerText();
@@ -8292,6 +8376,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
   }) => {
     const initialUrl = page.url();
     await page.waitForSelector('[data-testid="event-type-link"]');
+
     const eventTypeLink = page.locator('[data-testid="event-type-link"]').first();
     await eventTypeLink.click();
     await selectFirstAvailableTimeSlotNextMonth(page);
@@ -8301,6 +8386,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     await pageTwo.waitForURL(initialUrl);
 
     await pageTwo.waitForSelector('[data-testid="event-type-link"]');
+
     const eventTypeLinkTwo = pageTwo.locator('[data-testid="event-type-link"]').first();
     await eventTypeLinkTwo.click();
 
@@ -8315,6 +8401,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     await pageTwo.locator('[data-testid="day"][data-disabled="false"]').nth(0).click();
 
     await pageTwo.locator('[data-testid="time"]').nth(0).waitFor();
+
     const firstSlotAvailable = pageTwo.locator('[data-testid="time"]').nth(0);
 
     // Find text inside the element
@@ -8457,6 +8544,7 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
         teammates: teamMatesObj,
       }
     );
+
     const team = await testUser.getFirstTeamMembership();
     await page.goto(`/team/${team.team.slug}`);
   });
@@ -8491,6 +8579,7 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     const host = page.locator('[data-testid="booking-host-name"]');
+
     const hostName = await host.innerText();
 
     //expect teammate-1 to be booked, test-user is not available at this time
@@ -8521,6 +8610,7 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     const hostSecondBooking = page.locator('[data-testid="booking-host-name"]');
+
     const hostNameSecondBooking = await hostSecondBooking.innerText();
     expect(hostNameSecondBooking).toBe("teammate-1"); // teammate-1 should be booked again
   });
@@ -8632,7 +8722,9 @@ test.describe("Can signup from a team invite", async () => {
 
   test("Team invites validations work and can accept invite", async ({ browser, page, users, prisma }) => {
     const [proUser] = users.get();
+
     const teamName = `${proUser.username}'s Team`;
+
     const testUser = {
       username: `${proUser.username}-member`,
       password: `${proUser.username}-member`,
@@ -9288,6 +9380,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9308,6 +9401,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("phone", "phone-test", "phone test", false, "phone test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9330,6 +9424,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9350,6 +9445,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9372,6 +9468,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9392,6 +9489,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", false, "textarea test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9420,6 +9518,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           "multiemail test"
         );
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9446,6 +9545,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           "multiemail test"
         );
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9468,6 +9568,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9488,6 +9589,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9510,6 +9612,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("number", "number-test", "number test", true, "number test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9530,6 +9633,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("number", "number-test", "number test", false, "number test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9552,6 +9656,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9572,6 +9677,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("radio", "radio-test", "radio test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9594,6 +9700,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9614,6 +9721,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9636,6 +9744,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9656,6 +9765,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9713,6 +9823,7 @@ test.describe("Booking With All Questions", () => {
       "select",
       "text",
     ];
+
     for (const question of allQuestions) {
       if (
         question !== "number" &&
@@ -9841,6 +9952,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9861,6 +9973,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9883,6 +9996,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9902,6 +10016,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9924,6 +10039,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9944,6 +10060,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", false, "textarea test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9973,6 +10090,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           "multiemail test"
         );
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -9999,6 +10117,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           "multiemail test"
         );
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10021,6 +10140,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10041,6 +10161,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10063,6 +10184,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("number", "number-test", "number test", true, "number test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10083,6 +10205,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("number", "number-test", "number test", false, "number test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10105,6 +10228,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10125,6 +10249,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("radio", "radio-test", "radio test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10147,6 +10272,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10167,6 +10293,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10189,6 +10316,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10209,6 +10337,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10781,6 +10910,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10801,6 +10931,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10823,6 +10954,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10842,6 +10974,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10864,6 +10997,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10884,6 +11018,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", false, "textarea test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10912,6 +11047,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           "multiemail test"
         );
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10938,6 +11074,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           "multiemail test"
         );
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10960,6 +11097,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", true);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -10980,6 +11118,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11002,6 +11141,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("number", "number-test", "number test", true, "number test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11022,6 +11162,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("number", "number-test", "number test", false, "number test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11044,6 +11185,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11064,6 +11206,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("phone", "phone-test", "phone test", false, "phone test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11086,6 +11229,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11106,6 +11250,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11128,6 +11273,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11148,6 +11294,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -11183,6 +11330,7 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
     await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
     await bookingPage.addQuestion("address", "address-test", "address test", true, "address test");
     await bookingPage.updateEventType();
+
     const eventTypePage = await bookingPage.previewEventType();
     await bookingPage.selectTimeSlot(eventTypePage);
     await bookingPage.fillAndConfirmBooking({
@@ -11205,6 +11353,7 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
     await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
     await bookingPage.addQuestion("address", "address-test", "address test", false, "address test");
     await bookingPage.updateEventType();
+
     const eventTypePage = await bookingPage.previewEventType();
     await bookingPage.selectTimeSlot(eventTypePage);
     await bookingPage.fillAndConfirmBooking({
@@ -11448,6 +11597,7 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
     await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
     await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
     await bookingPage.updateEventType();
+
     const eventTypePage = await bookingPage.previewEventType();
     await bookingPage.selectTimeSlot(eventTypePage);
     await bookingPage.fillAndConfirmBooking({
@@ -11673,6 +11823,7 @@ test.describe("Booking with recurring checked", () => {
   test("Updates and shows recurring schedule correctly in booking page", async ({ bookingPage }) => {
     await bookingPage.updateRecurringTab("2", "3");
     await bookingPage.updateEventType();
+
     const eventTypePage = await bookingPage.previewEventType();
     await bookingPage.fillRecurringFieldAndConfirm(eventTypePage);
   });
@@ -12132,6 +12283,7 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
         );
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -12158,6 +12310,7 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
         );
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -12186,6 +12339,7 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
         );
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -12212,6 +12366,7 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
         );
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
         await bookingPage.updateEventType();
+
         const eventTypePage = await bookingPage.previewEventType();
         await bookingPage.selectTimeSlot(eventTypePage);
         await bookingPage.fillAndConfirmBooking({
@@ -12273,6 +12428,7 @@ test.describe("Booking With All Questions", () => {
       "select",
       "text",
     ];
+
     for (const question of allQuestions) {
       if (
         question !== "number" &&
@@ -12296,6 +12452,7 @@ test.describe("Booking With All Questions", () => {
     }
 
     await bookingPage.updateEventType();
+
     const eventTypePage = await bookingPage.previewEventType();
     await bookingPage.selectTimeSlot(eventTypePage);
     await bookingPage.fillAllQuestions(eventTypePage, allQuestions, bookingOptions);
@@ -12319,6 +12476,7 @@ test.describe("Booking With All Questions", () => {
       "select",
       "text",
     ];
+
     for (const question of allQuestions) {
       if (
         question !== "number" &&
@@ -12342,6 +12500,7 @@ test.describe("Booking With All Questions", () => {
     }
 
     await bookingPage.updateEventType();
+
     const eventTypePage = await bookingPage.previewEventType();
     await bookingPage.selectTimeSlot(eventTypePage);
     await bookingPage.fillAllQuestions(eventTypePage, allQuestions, {
@@ -12658,6 +12817,7 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
 
         await page.locator("#location-select").click();
         await page.locator(`text="Organizer Phone Number"`).click();
+
         const locationInputName = "locations[0].hostPhoneNumber";
         await page.locator(`input[name="${locationInputName}"]`).waitFor();
         await page.locator(`input[name="${locationInputName}"]`).fill("9199999999");
@@ -12708,6 +12868,7 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         await bookTimeSlot(page);
 
         await expect(page.locator("[data-testid=success-page]")).toBeVisible();
+
         const linkElement = await page.locator("[data-testid=where] > a");
         expect(await linkElement.getAttribute("href")).toBe(testUrl);
       });
@@ -12744,6 +12905,7 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         page,
       }) => {
         const $eventTypes = page.locator("[data-testid=event-types] > li a");
+
         const firstEventTypeElement = $eventTypes.first();
         await firstEventTypeElement.click();
         await page.waitForURL((url) => {
@@ -13454,6 +13616,7 @@ test.describe("Out of office", () => {
 
   test("User can configure booking redirect", async ({ page, users }) => {
     const user = await users.create({ name: "userOne" });
+
     const userTo = await users.create({ name: "userTwo" });
 
     const team = await prisma.team.create({
@@ -13503,7 +13666,9 @@ test.describe("Out of office", () => {
 
   test("Profile redirection", async ({ page, users }) => {
     const user = await users.create({ name: "userOne" });
+
     const userTo = await users.create({ name: "userTwo" });
+
     const uuid = uuidv4();
     await prisma.outOfOfficeEntry.create({
       data: {
@@ -13730,6 +13895,7 @@ test.describe("Stripe integration", () => {
 
   test("when enabling Stripe, team credentialId is included", async ({ page, users }) => {
     const ownerObj = { username: "pro-user", name: "pro-user" };
+
     const teamMatesObj = [
       { name: "teammate-1" },
       { name: "teammate-2" },
@@ -13743,7 +13909,9 @@ test.describe("Stripe integration", () => {
       schedulingType: SchedulingType.COLLECTIVE,
     });
     await owner.apiLogin();
+
     const { team } = await owner.getFirstTeamMembership();
+
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     const teamEvent = await owner.getFirstTeamEvent(team.id);
@@ -13788,6 +13956,7 @@ test.describe("Stripe integration", () => {
 
   test("Can book a paid booking", async ({ page, users }) => {
     const user = await users.create();
+
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
     await user.apiLogin();
     await page.goto("/apps/installed");
@@ -13801,6 +13970,7 @@ test.describe("Stripe integration", () => {
 
   test("Pending payment booking should not be confirmed by default", async ({ page, users }) => {
     const user = await users.create();
+
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
     await user.apiLogin();
     await page.goto("/apps/installed");
@@ -13825,6 +13995,7 @@ test.describe("Stripe integration", () => {
 
   test("Paid booking should be able to be rescheduled", async ({ page, users }) => {
     const user = await users.create();
+
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
     await user.apiLogin();
     await page.goto("/apps/installed");
@@ -13848,6 +14019,7 @@ test.describe("Stripe integration", () => {
 
   test("Paid booking should be able to be cancelled", async ({ page, users }) => {
     const user = await users.create();
+
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
     await user.apiLogin();
     await page.goto("/apps/installed");
@@ -13864,6 +14036,7 @@ test.describe("Stripe integration", () => {
 
   test.describe("When event is paid and confirmed", () => {
     let user: Awaited<ReturnType<Fixtures["users"]["create"]>>;
+
     let eventType: Prisma.EventType;
 
     test.beforeEach(async ({ page, users }) => {
@@ -14123,6 +14296,7 @@ test.describe("Manage Booking Questions", () => {
 
       await test.step("Go to EventType Page ", async () => {
         const $eventTypes = page.locator("[data-testid=event-types] > li a");
+
         const firstEventTypeElement = $eventTypes.first();
 
         await firstEventTypeElement.click();
@@ -14142,6 +14316,7 @@ test.describe("Manage Booking Questions", () => {
       const webhookReceiver = await addWebhook(user);
       await test.step("Go to first EventType Page ", async () => {
         const $eventTypes = page.locator("[data-testid=event-types] > li a");
+
         const firstEventTypeElement = $eventTypes.first();
 
         await firstEventTypeElement.click();
@@ -14291,6 +14466,7 @@ test.describe("Manage Booking Questions", () => {
 
       await test.step("Go to First Team Event", async () => {
         const $eventTypes = page.locator("[data-testid=event-types]").nth(1).locator("li a");
+
         const firstEventTypeElement = $eventTypes.first();
 
         await firstEventTypeElement.click();
@@ -14496,6 +14672,7 @@ async function expectSystemFieldsToBeThereOnBookingPage({
 
   if (values?.guests) {
     const allGuestsLocators = guestsLocator.locator('[type="email"]');
+
     for (let i = 0; i < values.guests.length; i++) {
       await expect(allGuestsLocators.nth(i)).toHaveValue(values.guests[i] || "");
     }
@@ -14769,6 +14946,7 @@ test.describe("Login with api request", () => {
     await pro.apiLogin();
 
     const contextCookies = await page.context().cookies();
+
     const cookiesMap = new Map(contextCookies.map(({ name, value }) => [name, value]));
 
     // The browser context will already contain all the cookies from the API response.
@@ -14789,6 +14967,7 @@ import { MembershipRole } from "@calcom/prisma/client";
 import { test } from "./lib/fixtures";
 
 const linter = new Linter();
+
 const eslintRules = {
   "no-undef": "error",
   "no-unused-vars": "off",
@@ -14811,6 +14990,7 @@ test.describe("Embed Code Generator Tests", () => {
 
       test("open Embed Dialog and choose Inline for First Event Type", async ({ page, users }) => {
         const [pro] = users.get();
+
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
         await expectToBeNavigatingToEmbedTypesDialog(page, {
           embedUrl,
@@ -14848,6 +15028,7 @@ test.describe("Embed Code Generator Tests", () => {
 
       test("open Embed Dialog and choose floating-popup for First Event Type", async ({ page, users }) => {
         const [pro] = users.get();
+
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
 
         await expectToBeNavigatingToEmbedTypesDialog(page, {
@@ -14884,6 +15065,7 @@ test.describe("Embed Code Generator Tests", () => {
 
       test("open Embed Dialog and choose element-click for First Event Type", async ({ page, users }) => {
         const [pro] = users.get();
+
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
 
         await expectToBeNavigatingToEmbedTypesDialog(page, {
@@ -14929,6 +15111,7 @@ test.describe("Embed Code Generator Tests", () => {
 
       test("open Embed Dialog for the Event Type", async ({ page }) => {
         const basePage = new URL(page.url()).pathname;
+
         const embedUrl = await clickEmbedButton(page);
         await expectToBeNavigatingToEmbedTypesDialog(page, {
           embedUrl,
@@ -14977,7 +15160,9 @@ test.describe("Embed Code Generator Tests", () => {
 
       test("open Embed Dialog and choose Inline for First Event Type", async ({ page, users }) => {
         const [user] = users.get();
+
         const { team: org } = await user.getOrgMembership();
+
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
         await expectToBeNavigatingToEmbedTypesDialog(page, {
           embedUrl,
@@ -15016,6 +15201,7 @@ test.describe("Embed Code Generator Tests", () => {
 
       test("open Embed Dialog and choose floating-popup for First Event Type", async ({ page, users }) => {
         const [user] = users.get();
+
         const { team: org } = await user.getOrgMembership();
 
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
@@ -15055,7 +15241,9 @@ test.describe("Embed Code Generator Tests", () => {
 
       test("open Embed Dialog and choose element-click for First Event Type", async ({ page, users }) => {
         const [user] = users.get();
+
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
+
         const { team: org } = await user.getOrgMembership();
 
         await expectToBeNavigatingToEmbedTypesDialog(page, {
@@ -15299,8 +15487,10 @@ import { test } from "./lib/fixtures";
 test.describe.configure({ mode: "parallel" });
 
 const title = (name: string) => `${name} is unpublished`;
+
 const description = (entity: string) =>
   `This ${entity} link is currently not available. Please contact the ${entity} owner or ask them to publish it.`;
+
 const avatar = (slug: string, entity = "team") => `/${entity}/${slug}/avatar.png`;
 
 test.afterAll(async ({ users }) => {
@@ -15310,7 +15500,9 @@ test.afterAll(async ({ users }) => {
 test.describe("Unpublished", () => {
   test("Regular team profile", async ({ page, users }) => {
     const owner = await users.create(undefined, { hasTeam: true, isUnpublished: true });
+
     const { team } = await owner.getFirstTeamMembership();
+
     const { requestedSlug } = team.metadata as { requestedSlug: string };
     await page.goto(`/team/${requestedSlug}`);
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
@@ -15325,8 +15517,11 @@ test.describe("Unpublished", () => {
       isUnpublished: true,
       schedulingType: SchedulingType.COLLECTIVE,
     });
+
     const { team } = await owner.getFirstTeamMembership();
+
     const { requestedSlug } = team.metadata as { requestedSlug: string };
+
     const { slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
     await page.goto(`/team/${requestedSlug}/${teamEventSlug}`);
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
@@ -15337,7 +15532,9 @@ test.describe("Unpublished", () => {
 
   test("Organization profile", async ({ users, page }) => {
     const owner = await users.create(undefined, { hasTeam: true, isUnpublished: true, isOrg: true });
+
     const { team: org } = await owner.getOrgMembership();
+
     const { requestedSlug } = org.metadata as { requestedSlug: string };
     await page.goto(`/org/${requestedSlug}`);
     await page.waitForLoadState("networkidle");
@@ -15354,8 +15551,11 @@ test.describe("Unpublished", () => {
       isOrg: true,
       hasSubteam: true,
     });
+
     const { team: org } = await owner.getOrgMembership();
+
     const { requestedSlug } = org.metadata as { requestedSlug: string };
+
     const [{ slug: subteamSlug }] = org.children as { slug: string }[];
     await page.goto(`/org/${requestedSlug}/team/${subteamSlug}`);
     await page.waitForLoadState("networkidle");
@@ -15372,9 +15572,13 @@ test.describe("Unpublished", () => {
       isOrg: true,
       hasSubteam: true,
     });
+
     const { team: org } = await owner.getOrgMembership();
+
     const { requestedSlug } = org.metadata as { requestedSlug: string };
+
     const [{ slug: subteamSlug, id: subteamId }] = org.children as { slug: string; id: number }[];
+
     const { slug: subteamEventSlug } = await owner.getFirstTeamEvent(subteamId);
     await page.goto(`/org/${requestedSlug}/team/${subteamSlug}/${subteamEventSlug}`);
     await page.waitForLoadState("networkidle");
@@ -15387,7 +15591,9 @@ test.describe("Unpublished", () => {
 
   test("Organization user", async ({ users, page }) => {
     const owner = await users.create(undefined, { hasTeam: true, isUnpublished: true, isOrg: true });
+
     const { team: org } = await owner.getOrgMembership();
+
     const { requestedSlug } = org.metadata as { requestedSlug: string };
     await page.goto(`/org/${requestedSlug}/${owner.username}`);
     await page.waitForLoadState("networkidle");
@@ -15399,8 +15605,11 @@ test.describe("Unpublished", () => {
 
   test("Organization user event-type", async ({ users, page }) => {
     const owner = await users.create(undefined, { hasTeam: true, isUnpublished: true, isOrg: true });
+
     const { team: org } = await owner.getOrgMembership();
+
     const { requestedSlug } = org.metadata as { requestedSlug: string };
+
     const [{ slug: ownerEventType }] = owner.eventTypes;
     await page.goto(`/org/${requestedSlug}/${owner.username}/${ownerEventType}`);
     await page.waitForLoadState("networkidle");
@@ -15470,7 +15679,9 @@ test.afterEach(async ({ users }) => {
 test.describe("Team", () => {
   test("Invitation (non verified)", async ({ browser, page, users, emails }) => {
     const t = await localize("en");
+
     const teamOwner = await users.create(undefined, { hasTeam: true });
+
     const { team } = await teamOwner.getFirstTeamMembership();
     await teamOwner.apiLogin();
     await page.goto(`/settings/teams/${team.id}/members`);
@@ -15554,7 +15765,9 @@ test.describe("Team", () => {
 
   test("Invitation (verified)", async ({ browser, page, users, emails }) => {
     const t = await localize("en");
+
     const teamOwner = await users.create({ name: `team-owner-${Date.now()}` }, { hasTeam: true });
+
     const { team } = await teamOwner.getFirstTeamMembership();
     await teamOwner.apiLogin();
     await page.goto(`/settings/teams/${team.id}/members`);
@@ -16347,13 +16560,21 @@ const createTestCLient = async () => {
 import { test } from "./lib/fixtures";
 
 const SAML_DATABASE_URL = process.env.SAML_DATABASE_URL!;
+
 const SAML_ADMINS = process.env.SAML_ADMINS!;
+
 const SAML_ADMIN_EMAIL = process.env.E2E_TEST_SAML_ADMIN_EMAIL!;
+
 const SAML_ADMIN_PASSWORD = process.env.E2E_TEST_SAML_ADMIN_PASSWORD!;
+
 const OIDC_CLIENT_ID = process.env.E2E_TEST_OIDC_CLIENT_ID!;
+
 const OIDC_CLIENT_SECRET = process.env.E2E_TEST_OIDC_CLIENT_SECRET!;
+
 const OIDC_PROVIDER_DOMAIN = process.env.E2E_TEST_OIDC_PROVIDER_DOMAIN!;
+
 const OIDC_USER_EMAIL = process.env.E2E_TEST_OIDC_USER_EMAIL!;
+
 const OIDC_USER_PASSWORD = process.env.E2E_TEST_OIDC_USER_PASSWORD!;
 
 const SHOULD_SKIP_TESTS =
@@ -16428,6 +16649,7 @@ test.describe("Payment app", () => {
   test("Should be able to edit alby price, currency", async ({ page, users }) => {
     const user = await users.create();
     await user.apiLogin();
+
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
     expect(paymentEvent).not.toBeNull();
     await prisma.credential.create({
@@ -16468,6 +16690,7 @@ test.describe("Payment app", () => {
   test("Should be able to edit stripe price, currency", async ({ page, users }) => {
     const user = await users.create();
     await user.apiLogin();
+
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
     expect(paymentEvent).not.toBeNull();
     await prisma.credential.create({
@@ -16512,6 +16735,7 @@ test.describe("Payment app", () => {
   test("Should be able to edit paypal price, currency", async ({ page, users }) => {
     const user = await users.create();
     await user.apiLogin();
+
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
     expect(paymentEvent).not.toBeNull();
     await prisma.credential.create({
@@ -16558,6 +16782,7 @@ test.describe("Payment app", () => {
   test("Should display App is not setup already for alby", async ({ page, users }) => {
     const user = await users.create();
     await user.apiLogin();
+
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
     expect(paymentEvent).not.toBeNull();
     await prisma.credential.create({
@@ -16584,6 +16809,7 @@ test.describe("Payment app", () => {
   test("Should display App is not setup already for paypal", async ({ page, users }) => {
     const user = await users.create();
     await user.apiLogin();
+
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
     expect(paymentEvent).not.toBeNull();
     await prisma.credential.create({
@@ -16642,7 +16868,9 @@ test.describe("Payment app", () => {
   test("Should only be allowed to enable one payment app", async ({ page, users }) => {
     const user = await users.create();
     await user.apiLogin();
+
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     if (!paymentEvent) {
       throw new Error("No payment event found");
     }
@@ -16686,7 +16914,9 @@ test.describe("Payment app", () => {
   }) => {
     const user = await users.create();
     await user.apiLogin();
+
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     if (!paymentEvent) {
       throw new Error("No payment event found");
     }
@@ -17486,6 +17716,7 @@ test.describe("Webhook tests", async () => {
       ];
       return body;
     };
+
     const bodyProps = {
       createdAt: "[redacted/dynamic]",
       payload: {
@@ -17705,6 +17936,7 @@ testBothFutureAndLegacyRoutes.describe("Teams A/B tests", (routeVariant) => {
   test("should render the /teams page", async ({ page, users, context }) => {
     // TODO: Revert until OOM issue is resolved
     test.skip(routeVariant === "future", "Future route not ready yet");
+
     const user = await users.create();
 
     await user.apiLogin();
@@ -17724,7 +17956,9 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
 
   test("Team Onboarding Invite Members", async ({ page, users }) => {
     const user = await users.create(undefined, { hasTeam: true });
+
     const { team } = await user.getFirstTeamMembership();
+
     const inviteeEmail = `${user.username}+invitee@example.com`;
 
     await user.apiLogin();
@@ -17782,7 +18016,9 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
         schedulingType: SchedulingType.COLLECTIVE,
       }
     );
+
     const { team } = await owner.getFirstTeamMembership();
+
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
@@ -17811,6 +18047,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
       { name: "teammate-3" },
       { name: "teammate-4" },
     ];
+
     const owner = await users.create(
       { username: "pro-user", name: "pro-user" },
       {
@@ -17821,6 +18058,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
     );
 
     const { team } = await owner.getFirstTeamMembership();
+
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
@@ -17845,6 +18083,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
 
   test("Non admin team members cannot create team in org", async ({ page, users }) => {
     test.skip(routeVariant === "future", "Future route not ready yet");
+
     const teamMateName = "teammate-1";
 
     const owner = await users.create(undefined, {
@@ -17854,6 +18093,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
     });
 
     const allUsers = await users.get();
+
     const memberUser = allUsers.find((user) => user.name === teamMateName);
 
     // eslint-disable-next-line playwright/no-conditional-in-test
@@ -17880,6 +18120,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
 
   test("Can create team with same name as user", async ({ page, users }) => {
     test.skip(routeVariant === "future", "Future route not ready yet");
+
     const user = await users.create();
     // Name to be used for both user and team
     const uniqueName = user.username!;
@@ -17939,6 +18180,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
     );
 
     await owner.apiLogin();
+
     const { team } = await owner.getFirstTeamMembership();
 
     // Mark team as private
@@ -17976,10 +18218,12 @@ test.describe("Teams - Org", () => {
     const org = await orgs.create({
       name: "TestOrg",
     });
+
     const user = await users.create({
       organizationId: org.id,
       roleInOrganization: MembershipRole.ADMIN,
     });
+
     const inviteeEmail = `${user.username}+invitee@example.com`;
     await user.apiLogin();
     await page.goto("/teams");
@@ -18041,6 +18285,7 @@ test.describe("Teams - Org", () => {
     const org = await orgs.create({
       name: "TestOrg",
     });
+
     const teamMatesObj = [
       { name: "teammate-1" },
       { name: "teammate-2" },
@@ -18061,7 +18306,9 @@ test.describe("Teams - Org", () => {
         schedulingType: SchedulingType.COLLECTIVE,
       }
     );
+
     const { team } = await owner.getFirstTeamMembership();
+
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
@@ -18101,6 +18348,7 @@ test.describe("Teams - Org", () => {
       { name: "teammate-3" },
       { name: "teammate-4" },
     ];
+
     const owner = await users.create(
       { username: "pro-user", name: "pro-user" },
       {
@@ -18111,6 +18359,7 @@ test.describe("Teams - Org", () => {
     );
 
     const { team } = await owner.getFirstTeamMembership();
+
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
@@ -18141,6 +18390,7 @@ test.describe("Teams - Org", () => {
     const org = await orgs.create({
       name: "TestOrg",
     });
+
     const teamMatesObj = [
       { name: "teammate-1" },
       { name: "teammate-2" },
@@ -18161,10 +18411,13 @@ test.describe("Teams - Org", () => {
         schedulingType: SchedulingType.COLLECTIVE,
       }
     );
+
     const { team } = await owner.getFirstTeamMembership();
+
     const { slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     const teamSlugUpperCase = team.slug?.toUpperCase();
+
     const teamEventSlugUpperCase = teamEventSlug.toUpperCase();
 
     // This is the most closest to the actual user flow as org1.cal.com maps to /org/orgSlug
@@ -18246,6 +18499,7 @@ test.describe("Signup Flow Test", async () => {
   test("Premium Username Flow - creates stripe checkout", async ({ page, users, prisma }) => {
     // eslint-disable-next-line playwright/no-skipped-test
     test.skip(!IS_PREMIUM_USERNAME_ENABLED, "Only run on Cal.com");
+
     const userToCreate = users.buildForSignup({
       username: "rock",
       password: "Password99!",
@@ -18267,6 +18521,7 @@ test.describe("Signup Flow Test", async () => {
     const expectedUrl = "https://checkout.stripe.com";
 
     await page.waitForURL((url) => url.href.startsWith(expectedUrl));
+
     const url = page.url();
 
     // Check that the URL matches the expected URL
@@ -18296,6 +18551,7 @@ test.describe("Signup Flow Test", async () => {
 
     // Check that the URL matches the expected URL
     expect(page.url()).toContain("/auth/verify-email");
+
     const dbUser = await prisma.user.findUnique({ where: { email: userToCreate.email } });
     // Verify that the username is the same as the one provided and isn't accidentally changed to email derived username - That happens only for organization member signup
     expect(dbUser?.username).toBe(userToCreate.username);
@@ -18306,6 +18562,7 @@ test.describe("Signup Flow Test", async () => {
 
     // Fill form
     const usernameInput = page.locator('input[name="username"]');
+
     const emailInput = page.locator('input[name="email"]');
 
     expect(await usernameInput.inputValue()).toBe("rick-jones");
@@ -18314,6 +18571,7 @@ test.describe("Signup Flow Test", async () => {
   test("Signup with token prefils correct fields", async ({ page, users, prisma }) => {
     //Create a user and create a token
     const token = randomBytes(32).toString("hex");
+
     const userToCreate = users.buildForSignup({
       username: "rick-team",
     });
@@ -18355,6 +18613,7 @@ test.describe("Signup Flow Test", async () => {
     await page.goto(signupUrlWithToken);
 
     const usernameField = page.locator('input[name="username"]');
+
     const emailField = page.locator('input[name="email"]');
 
     expect(await usernameField.inputValue()).toBe(userToCreate.username);
@@ -18376,6 +18635,7 @@ test.describe("Signup Flow Test", async () => {
       where: { slug: "email-verification" },
       data: { enabled: true },
     });
+
     const userToCreate = users.buildForSignup({
       email: users.trackEmail({ username: "email-verify", domain: "example.com" }),
       username: "email-verify",
@@ -18415,7 +18675,9 @@ test.describe("Signup Flow Test", async () => {
     test.skip(process.env.NEXT_PUBLIC_DISABLE_SIGNUP !== "true", "Skipping due to signup being enabled");
 
     const t = await localize("en");
+
     const teamOwner = await users.create(undefined, { hasTeam: true });
+
     const { team } = await teamOwner.getFirstTeamMembership();
     await teamOwner.apiLogin();
     await page.goto(`/settings/teams/${team.id}/members`);
@@ -18481,6 +18743,7 @@ declare let global: {
 const requestInterceptor = setupServer(
   rest.post("https://api.hubapi.com/oauth/v1/token", (req, res, ctx) => {
     console.log(req.body);
+
     return res(ctx.status(200));
   })
 );
@@ -18515,6 +18778,7 @@ const addOauthBasedIntegration = async function ({
   // Note the difference b/w MSW wildcard and Playwright wildards. Playwright requires query params to be explicitly specified.
   page.route(`${authorization.url}?**`, (route, request) => {
     const u = new URL(request.url());
+
     const result = authorization.verify({
       requestHeaders: request.allHeaders(),
       params: u.searchParams,
@@ -18793,6 +19057,7 @@ test.fixme("Integrations", () => {
             expect(params.get("code")).toBe(code);
             expect(params.get("client_id")).toBeTruthy();
             expect(params.get("client_secret")).toBeTruthy();
+
             return {
               status: 200,
               body: {
@@ -18839,6 +19104,7 @@ test.describe("Change Theme Test", () => {
     expect(toast).toBeTruthy();
     //Go to the profile page and check if the theme is dark
     await page.goto(`/${pro.username}`);
+
     const darkModeClass = await page.getAttribute("html", "class");
     expect(darkModeClass).toContain("dark");
   });
@@ -18859,6 +19125,7 @@ test.describe("Change Theme Test", () => {
     expect(toast).toBeTruthy();
     //Go to the profile page and check if the theme is light
     await page.goto(`/${pro.username}`);
+
     const darkModeClass = await page.getAttribute("html", "class");
     expect(darkModeClass).toContain("light");
   });
@@ -19105,6 +19372,7 @@ export function createHttpServer(opts: { requestHandler?: RequestHandler } = {})
     new Promise<void>((resolve) => {
       if (requestList.length === count) {
         resolve();
+
         return;
       }
 
@@ -19209,6 +19477,7 @@ export async function localize(locale: string) {
   const localeMap = await import(localeModule);
   return (message: string) => {
     if (message in localeMap) return localeMap[message];
+
     throw "No locale found for the given entry message";
   };
 }
@@ -19246,6 +19515,7 @@ export async function gotoRoutingLink({
   if (!formId) {
     // Instead of clicking on the preview link, we are going to the preview link directly because the earlier opens a new tab which is a bit difficult to manage with Playwright
     const href = await page.locator('[data-testid="form-action-preview"]').getAttribute("href");
+
     if (!href) {
       throw new Error("Preview link not found");
     }
@@ -19505,7 +19775,9 @@ const reschedulePlaceholderText = "Let others know why you need to reschedule";
 export const scheduleSuccessfullyText = "This meeting is scheduled";
 
 const EMAIL = "test@test.com";
+
 const EMAIL2 = "test2@test.com";
+
 const PHONE = "+55 (32) 983289947";
 
 type BookingOptions = {
@@ -19624,45 +19896,56 @@ const fillAllQuestions = async (eventTypePage: Page, questions: string[], option
           await eventTypePage.getByPlaceholder("Email").click();
           await eventTypePage.getByPlaceholder("Email").fill(EMAIL);
           break;
+
         case "phone":
           await eventTypePage.getByPlaceholder("Phone test").click();
           await eventTypePage.getByPlaceholder("Phone test").fill(PHONE);
           break;
+
         case "address":
           await eventTypePage.getByPlaceholder("Address test").click();
           await eventTypePage.getByPlaceholder("Address test").fill("123 Main St, City, Country");
           break;
+
         case "textarea":
           await eventTypePage.getByPlaceholder("Textarea test").click();
           await eventTypePage.getByPlaceholder("Textarea test").fill("This is a sample text for textarea.");
           break;
+
         case "select":
           await eventTypePage.getByLabel("select-dropdown").last().click();
           await eventTypePage.getByTestId("select-option-Option 1").click();
           break;
+
         case "multiselect":
           // select-dropdown
           await eventTypePage.getByLabel("multi-select-dropdown").click();
           await eventTypePage.getByTestId("select-option-Option 1").click();
           break;
+
         case "number":
           await eventTypePage.getByLabel("number test").click();
           await eventTypePage.getByLabel("number test").fill("123");
           break;
+
         case "radio":
           await eventTypePage.getByRole("radiogroup").getByText("Option 1").check();
           break;
+
         case "text":
           await eventTypePage.getByPlaceholder("Text test").click();
           await eventTypePage.getByPlaceholder("Text test").fill("Sample text");
           break;
+
         case "checkbox":
           await eventTypePage.getByLabel("Option 1").first().check();
           await eventTypePage.getByLabel("Option 2").first().check();
           break;
+
         case "boolean":
           await eventTypePage.getByLabel(`${question} test`).check();
           break;
+
         case "multiemail":
           await eventTypePage.getByRole("button", { name: "multiemail test" }).click();
           await eventTypePage.getByPlaceholder("multiemail test").fill(EMAIL);
@@ -20277,6 +20560,7 @@ export const createEmbedsFixture = (page: Page) => {
               api = window.Cal.ns[calNamespace];
             }
             console.log("PlaywrightTest:", `Adding listener for __iframeReady on namespace:${calNamespace}`);
+
             if (!api) {
               throw new Error(`namespace "${calNamespace}" not found`);
             }
@@ -20290,6 +20574,7 @@ export const createEmbedsFixture = (page: Page) => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 const store = window.eventsFiredStoreForPlaywright;
+
                 const eventStore = (store[`${e.detail.type}-${e.detail.namespace}`] =
                   store[`${e.detail.type}-${e.detail.namespace}`] || []);
                 eventStore.push(e.detail);
@@ -20337,6 +20622,7 @@ type CreateWorkflowProps = {
 export function createWorkflowPageFixture(page: Page) {
   const createWorkflow = async (props: CreateWorkflowProps) => {
     const { name, isTeam, trigger } = props;
+
     if (isTeam) {
       await page.getByTestId("create-button-dropdown").click();
       await page.getByTestId("option-team-1").click();
@@ -20369,6 +20655,7 @@ export function createWorkflowPageFixture(page: Page) {
 
   const editSelectedWorkflow = async (name: string) => {
     const selectedWorkflow = page.getByTestId("workflow-list").getByTestId(nameToTestId(name));
+
     const editButton = selectedWorkflow.getByRole("button").nth(0);
 
     await editButton.click();
@@ -20386,6 +20673,7 @@ export function createWorkflowPageFixture(page: Page) {
 
   const deleteAndConfirm = async (workflow: Locator) => {
     const deleteButton = workflow.getByTestId("delete-button");
+
     const confirmDeleteText = (await localize("en"))("confirm_delete_workflow");
 
     await deleteButton.click();
@@ -20409,6 +20697,7 @@ export function createWorkflowPageFixture(page: Page) {
   const workflowOptionsAreDisabled = async (workflow: string, negate?: boolean) => {
     const getWorkflowButton = async (buttonTestId: string) =>
       page.getByTestId(nameToTestId(workflow)).getByTestId(buttonTestId);
+
     const [editButton, deleteButton] = await Promise.all([
       getWorkflowButton("edit-button"),
       getWorkflowButton("delete-button"),
@@ -20424,6 +20713,7 @@ export function createWorkflowPageFixture(page: Page) {
         eventTypeId,
       },
     });
+
     const workflowReminders = await prisma.workflowReminder.findMany({
       where: {
         bookingUid: booking?.uid ?? "",
@@ -20645,6 +20935,7 @@ const hasUUID = (query: string) => {
 export const createEmailsFixture = () => {
   if (IS_MAILHOG_ENABLED) {
     const mailhogAPI = mailhog();
+
     return {
       search: (query: string, kind?: string, start?: number, limit?: number) => {
         if (kind === "from" || kind === "to") {
@@ -21249,7 +21540,9 @@ export const createUsersFixture = (
           workerInfo
         );
         store.teams.push(team);
+
         const teamEvent = await createTeamEventType(user, team, scenario);
+
         if (scenario.teammates) {
           // Create Teammate users
           const teamMatesIds = [];
@@ -21324,6 +21617,7 @@ export const createUsersFixture = (
       const ids = store.users.map((u) => u.id);
       if (emails) {
         const emailMessageIds: string[] = [];
+
         for (const user of store.trackedEmails.concat(store.users.map((u) => ({ email: u.email })))) {
           const emailMessages = await emails.search(user.email);
           if (emailMessages && emailMessages.count > 0) {
@@ -21772,6 +22066,7 @@ test.describe.configure({ mode: "parallel" });
 test.afterEach(({ users }) => users.deleteAll());
 
 const APPLE_CALENDAR_EMAIL = process.env.E2E_TEST_APPLE_CALENDAR_EMAIL!;
+
 const APPLE_CALENDAR_PASSWORD = process.env.E2E_TEST_APPLE_CALENDAR_PASSWORD!;
 
 const SHOULD_SKIP_TESTS = !APPLE_CALENDAR_EMAIL || !APPLE_CALENDAR_PASSWORD;
@@ -21805,6 +22100,7 @@ test.afterEach(({ users }) => users.deleteAll());
 test.describe("Teams", () => {
   test("Profile page is loaded for users in Organization", async ({ page, users }) => {
     const teamMatesObj = [{ name: "teammate-1" }, { name: "teammate-2" }];
+
     const owner = await users.create(undefined, {
       hasTeam: true,
       isOrg: true,
@@ -21881,6 +22177,7 @@ test.describe("Booking with Seats", () => {
     await page.goto("/event-types");
     // We wait until loading is finished
     await page.waitForSelector('[data-testid="event-types"]');
+
     const eventTitle = "My 2-seated event";
     await createNewSeatedEventType(page, { eventTitle });
     await expect(page.locator(`text=Event type updated successfully`)).toBeVisible();
@@ -22112,6 +22409,7 @@ test.describe("Reschedule for booking with seats", () => {
       { name: "Jane Second", email: "second+seats@cal.com", timeZone: "Europe/Berlin" },
     ]);
     await user.apiLogin();
+
     const bookingWithEventType = await prisma.booking.findFirst({
       where: { uid: booking.uid },
       select: {
@@ -22161,6 +22459,7 @@ test.describe("Reschedule for booking with seats", () => {
       'p[data-testid="attendee-email-first+seats@cal.com"]'
     );
     await expect(foundFirstAttendeeAsOwner).toHaveCount(1);
+
     const foundSecondAttendeeAsOwner = await page.locator(
       'p[data-testid="attendee-email-second+seats@cal.com"]'
     );
@@ -22178,6 +22477,7 @@ test.describe("Reschedule for booking with seats", () => {
     const notFoundSecondAttendee = await page.locator('p[data-testid="attendee-email-second+seats@cal.com"]');
 
     await expect(notFoundSecondAttendee).toHaveCount(0);
+
     const foundFirstAttendee = await page.locator('p[data-testid="attendee-email-first+seats@cal.com"]');
     await expect(foundFirstAttendee).toHaveCount(1);
 
@@ -22198,6 +22498,7 @@ test.describe("Reschedule for booking with seats", () => {
     const foundSecondAttendee = await page.locator('p[data-testid="attendee-email-second+seats@cal.com"]');
 
     await expect(foundSecondAttendee).toHaveCount(1);
+
     const foundFirstAttendeeAgain = await page
       .locator('p[data-testid="attendee-email-first+seats@cal.com"]')
       .first();
@@ -22214,6 +22515,7 @@ test.describe("Reschedule for booking with seats", () => {
       { name: "Jane Second", email: "second+seats@cal.com", timeZone: "Europe/Berlin" },
       { name: "John Third", email: "third+seats@cal.com", timeZone: "Europe/Berlin" },
     ]);
+
     const getBooking = await booking.self();
 
     await page.goto(`/booking/${booking.uid}`);
@@ -22243,11 +22545,13 @@ test.describe("Reschedule for booking with seats", () => {
 
     // data displayed in form should be user owner
     const nameElement = await page.locator("input[name=name]");
+
     const name = await nameElement.inputValue();
     expect(name).toBe(user.name);
 
     //same for email
     const emailElement = await page.locator("input[name=email]");
+
     const email = await emailElement.inputValue();
     expect(email).toBe(user.email);
 
@@ -22285,6 +22589,7 @@ test.describe("Reschedule for booking with seats", () => {
       { name: "Jane Second", email: "second+seats@cal.com", timeZone: "Europe/Berlin" },
       { name: "John Third", email: "third+seats@cal.com", timeZone: "Europe/Berlin" },
     ]);
+
     const getBooking = await booking.self();
 
     await page.goto(`/${user.username}/seats?rescheduleUid=${getBooking?.uid}&bookingUid=null`);
@@ -22345,6 +22650,7 @@ test.describe("Workflow Tab - Event Type", () => {
 
       test("Deleting an existing workflow", async ({ page, workflowPage }) => {
         const { hasWorkflowInList, deleteAndConfirm, assertListCount } = workflowPage;
+
         const firstWorkflow = page
           .getByTestId("workflow-list")
           .getByTestId(/workflow/)
@@ -22357,7 +22663,9 @@ test.describe("Workflow Tab - Event Type", () => {
 
       test("Create an action and check if workflow is triggered", async ({ page, users, workflowPage }) => {
         const { createWorkflow, assertWorkflowReminders } = workflowPage;
+
         const [user] = users.get();
+
         const [eventType] = user.eventTypes;
 
         await createWorkflow({ name: "A New Workflow", trigger: WorkflowTriggerEvents.NEW_EVENT });
@@ -22467,6 +22775,7 @@ test.describe("Wipe my Cal App Test", () => {
     bookings,
   }) => {
     const pro = await users.create();
+
     const [eventType] = pro.eventTypes;
     await prisma.credential.create({
       data: {
@@ -22491,6 +22800,7 @@ test.describe("Wipe my Cal App Test", () => {
     await expect(page.locator("data-testid=wipe-today-button")).toBeVisible();
 
     const $openBookingCount = await page.locator('[data-testid="bookings"] > *').count();
+
     const $todayBookingCount = await page.locator('[data-testid="today-bookings"] > *').count();
     expect($openBookingCount + $todayBookingCount).toBe(3);
 
@@ -22812,6 +23122,7 @@ test.describe("Limits Tab - Event Type", () => {
     await bookingPage.checkBufferTime();
 
     await bookingPage.updateEventType();
+
     const eventTypePage = await bookingPage.previewEventType();
 
     await eventTypePage.waitForTimeout(10000);
@@ -22963,6 +23274,7 @@ test.afterAll(async ({ users }) => {
 test.describe("Insights", async () => {
   test("should be able to go to insights as admins", async ({ page, users }) => {
     const user = await users.create();
+
     const userTwo = await users.create();
     await createTeamsAndMembership(user.id, userTwo.id);
 
@@ -22979,6 +23291,7 @@ test.describe("Insights", async () => {
 
   test("should be able to go to insights as members", async ({ page, users }) => {
     const user = await users.create();
+
     const userTwo = await users.create();
 
     await userTwo.apiLogin();
@@ -23000,6 +23313,7 @@ test.describe("Insights", async () => {
     users,
   }) => {
     const user = await users.create();
+
     const userTwo = await users.create();
 
     await user.apiLogin();
@@ -23015,6 +23329,7 @@ test.describe("Insights", async () => {
     await page
       .locator('div[class="flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1"]')
       .click();
+
     const teamSelectFilter = await page.locator(
       'div[class="hover:bg-muted flex items-center py-2 pl-3 pr-2.5 hover:cursor-pointer"]'
     );
@@ -23045,6 +23360,7 @@ test.describe("Insights", async () => {
 
   test("should have all option in team-and-self filter as admin", async ({ page, users }) => {
     const owner = await users.create();
+
     const member = await users.create();
 
     await createTeamsAndMembership(owner.id, member.id);
@@ -23058,6 +23374,7 @@ test.describe("Insights", async () => {
     await page
       .locator('div[class="flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1"]')
       .click();
+
     const teamSelectFilter = await page.locator(
       'div[class="hover:bg-muted flex items-center py-2 pl-3 pr-2.5 hover:cursor-pointer"]'
     );
@@ -23067,6 +23384,7 @@ test.describe("Insights", async () => {
 
   test("should be able to switch between teams and self profile for insights", async ({ page, users }) => {
     const owner = await users.create();
+
     const member = await users.create();
 
     await createTeamsAndMembership(owner.id, member.id);
@@ -23080,6 +23398,7 @@ test.describe("Insights", async () => {
     await page
       .locator('div[class="flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1"]')
       .click();
+
     const teamSelectFilter = await page.locator(
       'div[class="hover:bg-muted flex items-center py-2 pl-3 pr-2.5 hover:cursor-pointer"]'
     );
@@ -23098,6 +23417,7 @@ test.describe("Insights", async () => {
 
   test("should be able to switch between memberUsers", async ({ page, users }) => {
     const owner = await users.create();
+
     const member = await users.create();
 
     await createTeamsAndMembership(owner.id, member.id);
@@ -23134,6 +23454,7 @@ test.describe("Insights", async () => {
 
   test("should test download button", async ({ page, users }) => {
     const owner = await users.create();
+
     const member = await users.create();
 
     await createTeamsAndMembership(owner.id, member.id);
@@ -23156,6 +23477,7 @@ test.describe("Insights", async () => {
 
     // Start waiting for download before clicking. Note no await.
     await page.getByText("as CSV").click();
+
     const download = await downloadPromise;
 
     // Wait for the download process to complete and save the downloaded file somewhere.
@@ -23229,6 +23551,7 @@ test.describe("Reschedule Tests", async () => {
 
   test("Should display request reschedule send on bookings/cancelled", async ({ page, users, bookings }) => {
     const user = await users.create();
+
     const booking = await bookings.create(user.id, user.username, user.eventTypes[0].id, {
       status: BookingStatus.CANCELLED,
       rescheduled: true,
@@ -23244,7 +23567,9 @@ test.describe("Reschedule Tests", async () => {
 
   test("Should do a reschedule from user owner", async ({ page, users, bookings }) => {
     const user = await users.create();
+
     const [eventType] = user.eventTypes;
+
     const booking = await bookings.create(user.id, user.username, eventType.id, {
       status: BookingStatus.CANCELLED,
       rescheduled: true,
@@ -23264,6 +23589,7 @@ test.describe("Reschedule Tests", async () => {
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     const newBooking = await prisma.booking.findFirstOrThrow({ where: { fromReschedule: booking.uid } });
+
     const rescheduledBooking = await prisma.booking.findFirstOrThrow({ where: { uid: booking.uid } });
 
     expect(newBooking).not.toBeNull();
@@ -23281,11 +23607,13 @@ test.describe("Reschedule Tests", async () => {
   test("Unpaid rescheduling should go to payment page", async ({ page, users, bookings, payments }) => {
     // eslint-disable-next-line playwright/no-skipped-test
     test.skip(!IS_STRIPE_ENABLED, "Skipped as Stripe is not installed");
+
     const user = await users.create();
     await user.apiLogin();
     await user.getPaymentCredential();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const eventType = user.eventTypes.find((e) => e.slug === "paid")!;
+
     const booking = await bookings.create(user.id, user.username, eventType.id, {
       rescheduled: true,
       status: BookingStatus.CANCELLED,
@@ -23307,6 +23635,7 @@ test.describe("Reschedule Tests", async () => {
         },
       },
     });
+
     const payment = await payments.create(booking.id);
     await page.goto(`/${user.username}/${eventType.slug}?rescheduleUid=${booking.uid}`);
 
@@ -23328,6 +23657,7 @@ test.describe("Reschedule Tests", async () => {
     await users.logout();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const eventType = user.eventTypes.find((e) => e.slug === "paid")!;
+
     const booking = await bookings.create(user.id, user.username, eventType.id, {
       rescheduled: true,
       status: BookingStatus.CANCELLED,
@@ -23348,6 +23678,7 @@ test.describe("Reschedule Tests", async () => {
     const user = await users.create();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const eventType = user.eventTypes.find((e) => e.slug === "opt-in")!;
+
     const booking = await bookings.create(user.id, user.username, eventType.id, {
       status: BookingStatus.ACCEPTED,
     });
@@ -23369,6 +23700,7 @@ test.describe("Reschedule Tests", async () => {
     const user = await users.create();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const eventType = user.eventTypes.find((e) => e.slug === "opt-in")!;
+
     const booking = await bookings.create(user.id, user.username, eventType.id, {
       status: BookingStatus.ACCEPTED,
     });
@@ -23389,7 +23721,9 @@ test.describe("Reschedule Tests", async () => {
 
   test("Attendee should be able to reschedule a booking", async ({ page, users, bookings }) => {
     const user = await users.create();
+
     const eventType = user.eventTypes[0];
+
     const booking = await bookings.create(user.id, user.username, eventType.id);
 
     // Go to attendee's reschedule link
@@ -23412,6 +23746,7 @@ test.describe("Reschedule Tests", async () => {
     bookings,
   }) => {
     const user = await users.create();
+
     const eventType = user.eventTypes[0];
 
     let firstOfNextMonth = dayjs().add(1, "month").startOf("month");
@@ -23424,6 +23759,7 @@ test.describe("Reschedule Tests", async () => {
 
     // set startTime to first available slot
     const startTime = firstOfNextMonth.set("hour", 9).set("minute", 0).toDate();
+
     const endTime = firstOfNextMonth.set("hour", 9).set("minute", 30).toDate();
 
     const booking = await bookings.create(user.id, user.username, eventType.id, {}, startTime, endTime);
@@ -23459,7 +23795,9 @@ test.describe("Reschedule Tests", async () => {
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     const pageUrl = new URL(page.url());
+
     const pathSegments = pageUrl.pathname.split("/");
+
     const bookingUID = pathSegments[pathSegments.length - 1];
 
     const currentBooking = await prisma.booking.findFirst({ where: { uid: bookingUID } });
@@ -23484,6 +23822,7 @@ test.describe("Reschedule Tests", async () => {
         const booking = await prisma.booking.findFirst({ where: { id: newBooking.id } });
         expect(booking).not.toBeUndefined();
         expect(booking?.status).toBe(BookingStatus.ACCEPTED);
+
         const locationVideoCallUrl = bookingMetadataSchema.parse(booking?.metadata || {})?.videoCallUrl;
         expect(locationVideoCallUrl).not.toBeUndefined();
 
@@ -23503,6 +23842,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 export {};
+
 const TwoFactorAuthAPI = {
   async setup(password: string) {
     return fetch("/api/auth/two-factor/totp/setup", {
@@ -23536,6 +23876,7 @@ const TwoFactorAuthAPI = {
 };
 
 export default TwoFactorAuthAPI;
+
 const TwoFactorAuthAPI = {
   async setup(password: string) {
     return fetch("/api/auth/two-factor/totp/setup", {
@@ -23641,6 +23982,7 @@ describe("buildNonce", () => {
     const array = Array(22)
       .fill(0)
       .map((_, i) => i);
+
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
@@ -23653,6 +23995,7 @@ describe("buildNonce", () => {
     const array = Array(22)
       .fill(0)
       .map((_, i) => i + 64);
+
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
@@ -23665,6 +24008,7 @@ describe("buildNonce", () => {
     const array = Array(22)
       .fill(0)
       .map((_, i) => i + 128);
+
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
@@ -23677,6 +24021,7 @@ describe("buildNonce", () => {
     const array = Array(22)
       .fill(0)
       .map((_, i) => i + 192);
+
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
@@ -23689,6 +24034,7 @@ describe("buildNonce", () => {
     const array = Array(22)
       .fill(0)
       .map((_, i) => 2 * i);
+
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
@@ -23701,6 +24047,7 @@ describe("buildNonce", () => {
     const array = Array(22)
       .fill(0)
       .map(() => 0);
+
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
@@ -23713,6 +24060,7 @@ describe("buildNonce", () => {
     const array = Array(22)
       .fill(0)
       .map(() => 0xff);
+
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
@@ -24144,9 +24492,11 @@ async function getUniqueUserThatDoesntBelongToOrg(
         username: userName,
       },
     });
+
     const foundUsers = matchingUsers.filter(
       (user) => user.organizationId === excludeOrgId || user.organizationId === null
     );
+
     if (foundUsers.length > 1) {
       throw new Error(`More than one user found with username: ${userName}`);
     }
@@ -24269,6 +24619,7 @@ async function addRedirect({
   const orgSlug = organization.slug || (organization.metadata as { requestedSlug?: string })?.requestedSlug;
   if (!orgSlug) {
     log.debug("No slug for org. Not adding the redirect", safeStringify({ organization, nonOrgUserName }));
+
     return;
   }
   // If the user had a username earlier, we need to redirect it to the new org username
@@ -24347,6 +24698,7 @@ async function addTeamRedirect({
   }
   if (!orgSlug) {
     log.warn(`No slug for org. Not adding the redirect`);
+
     return;
   }
   const orgUrlPrefix = getOrgFullOrigin(orgSlug);
@@ -24509,6 +24861,7 @@ async function removeTeamRedirect(teamSlug: string | null) {
       statusCode: 400,
       message: "No slug for team. Not removing the redirect",
     });
+
     return;
   }
 
@@ -24818,6 +25171,7 @@ export function csp(req: IncomingMessage | NextRequest | null, res: OutgoingMess
 
   if (existingNonce) {
     const existingNoneParsed = z.string().safeParse(existingNonce);
+
     return { nonce: existingNoneParsed.success ? existingNoneParsed.data : "" };
   }
   if (!req.url) {
@@ -24892,6 +25246,7 @@ export const useInViewObserver = (onInViewCallback: () => void) => {
     }
 
     let observer: IntersectionObserver;
+
     if (node && node.parentElement) {
       observer = new IntersectionObserver(
         ([entry]) => {
@@ -24948,11 +25303,13 @@ const useMediaQuery = (query: string) => {
 
   useEffect(() => {
     const media = window.matchMedia(query);
+
     if (media.matches !== matches) {
       setMatches(media.matches);
     }
     const listener = () => setMatches(media.matches);
     window.addEventListener("resize", listener);
+
     return () => window.removeEventListener("resize", listener);
   }, [matches, query]);
 
@@ -25271,6 +25628,7 @@ const timeZone = (selectedTimeZone?: string) => {
 export { is24h, timeZone };
 // TODO: Remove this file once every `classNames` is imported from `@calcom/lib`
 export { default } from "@calcom/lib/classNames";
+
 const BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /*
@@ -25368,10 +25726,12 @@ export const getTemporaryOrgRedirect = async ({
   // Use the same order as in input slugs - It is important from Dynamic Group perspective as the first user's settings are used for various things
   const newSlugs = slugs.map((slug) => {
     const redirect = redirects.find((redirect) => redirect.from === slug);
+
     if (!redirect) {
       return slug;
     }
     const newSlug = new URL(redirect.toUrl).pathname.slice(1);
+
     return newSlug;
   });
 
@@ -27440,6 +27800,7 @@ function mockARedirectInDB({
         const matchingRedirect = mockData.redirects.find((redirect) => {
           return where.type === redirect.redirectType && whereSlug === redirect.from && where.fromOrgId === 0;
         });
+
         if (matchingRedirect) {
           tempOrgRedirects.push(matchingRedirect);
         }
@@ -27456,6 +27817,7 @@ beforeEach(() => {
 describe("getTemporaryOrgRedirect", () => {
   it("should generate event-type URL without existing query params", async () => {
     mockARedirectInDB({ slug: "slug", toUrl: "https://calcom.cal.com", redirectType: RedirectType.User });
+
     const redirect = await getTemporaryOrgRedirect({
       slugs: "slug",
       redirectType: RedirectType.User,
@@ -27831,6 +28193,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         key: keys,
       },
     });
+
     return res.status(200).json({ message: `Credentials updated for userId: ${reqBody.userId}` });
   } else {
     await prisma.credential.create({
@@ -27841,6 +28204,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         type: appMetadata.type,
       },
     });
+
     return res.status(200).json({ message: `Credentials created for userId: ${reqBody.userId}` });
   }
 }
@@ -28043,6 +28407,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const t = await getTranslation(booking?.user?.locale ?? "en", "common");
+
     const attendeesListPromises = booking.attendees.map(async (attendee) => {
       return {
         id: attendee.id,
@@ -28068,7 +28433,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     const response = await getDownloadLinkOfCalVideoByRecordingId(recording_id);
+
     const downloadLinkResponse = downloadLinkSchema.parse(response);
+
     const downloadLink = downloadLinkResponse.download_link;
 
     const evt: CalendarEvent = {
@@ -28107,9 +28474,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // send emails to all attendees only when user has team plan
     await sendDailyVideoRecordingEmails(evt, downloadLink);
+
     return res.status(200).json({ message: "Success" });
   } catch (err) {
     console.error("Error in /recorded-daily-video", err);
+
     return res.status(500).json({ message: "something went wrong" });
   }
 }
@@ -28150,6 +28519,7 @@ import type { OAuthTokenPayload } from "@calcom/types/oauth";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Invalid method" });
+
     return;
   }
 
@@ -28157,6 +28527,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (grant_type !== "authorization_code") {
     res.status(400).json({ message: "grant_type invalid" });
+
     return;
   }
 
@@ -28174,6 +28545,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!client || client.redirectUri !== redirect_uri) {
     res.status(401).json({ message: "Unauthorized" });
+
     return;
   }
 
@@ -28206,6 +28578,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!accessCode) {
     res.status(401).json({ message: "Unauthorized" });
+
     return;
   }
 
@@ -28247,6 +28620,7 @@ import type { OAuthTokenPayload } from "@calcom/types/oauth";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Invalid method" });
+
     return;
   }
 
@@ -28256,6 +28630,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (grant_type !== "refresh_token") {
     res.status(400).json({ message: "grant type invalid" });
+
     return;
   }
 
@@ -28273,6 +28648,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!client) {
     res.status(401).json({ message: "Unauthorized" });
+
     return;
   }
 
@@ -28284,11 +28660,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     decodedRefreshToken = jwt.verify(refreshToken, secretKey) as OAuthTokenPayload;
   } catch {
     res.status(401).json({ message: "Unauthorized" });
+
     return;
   }
 
   if (!decodedRefreshToken || decodedRefreshToken.token_type !== "Refresh Token") {
     res.status(401).json({ message: "Unauthorized" });
+
     return;
   }
 
@@ -28368,6 +28746,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!session || !session.user || !session.user.email) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
 
@@ -28384,6 +28763,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!user) {
     res.status(404).json({ message: "User not found" });
+
     return;
   }
 
@@ -28520,9 +28900,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Don't leak info about whether the user exists
     if (!user) return res.status(201).json({ message: "password_reset_email_sent" });
     await passwordResetRequest(user);
+
     return res.status(201).json({ message: "password_reset_email_sent" });
   } catch (reason) {
     console.error(reason);
+
     return res.status(500).json({ message: "Unable to create password reset request" });
   }
 }
@@ -28656,6 +29038,7 @@ export default async function handler(req: RequestWithUsernameStatus, res: NextA
       return res.status(e.statusCode).json({ message: e.message });
     }
     logger.error(e);
+
     return res.status(500).json({ message: "Internal server error" });
   }
 }
@@ -28679,12 +29062,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!session.user?.id) {
     console.error("Session is missing a user id.");
+
     return res.status(500).json({ error: ErrorCode.InternalServerError });
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) {
     console.error(`Session references user that no longer exists.`);
+
     return res.status(401).json({ message: "Not authenticated" });
   }
 
@@ -28698,6 +29083,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!process.env.CALENDSO_ENCRYPTION_KEY) {
     console.error("Missing encryption key; cannot proceed with two factor setup.");
+
     return res.status(500).json({ error: ErrorCode.InternalServerError });
   }
 
@@ -28706,6 +29092,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error(
       `Two factor secret decryption failed. Expected key with length 32 but got ${secret.length}`
     );
+
     return res.status(500).json({ error: ErrorCode.InternalServerError });
   }
 
@@ -28747,12 +29134,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!session.user?.id) {
     console.error("Session is missing a user id.");
+
     return res.status(500).json({ error: ErrorCode.InternalServerError });
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) {
     console.error(`Session references user that no longer exists.`);
+
     return res.status(401).json({ message: "Not authenticated" });
   }
 
@@ -28766,6 +29155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (user.password && user.identityProvider === IdentityProvider.CAL) {
     const isCorrectPassword = await verifyPassword(req.body.password, user.password);
+
     if (!isCorrectPassword) {
       return res.status(400).json({ error: ErrorCode.IncorrectPassword });
     }
@@ -28786,6 +29176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // check if user-supplied code matches one
     const index = backupCodes.indexOf(req.body.backupCode.replaceAll("-", ""));
+
     if (index === -1) {
       return res.status(400).json({ error: ErrorCode.IncorrectBackupCode });
     }
@@ -28810,6 +29201,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const secret = symmetricDecrypt(user.twoFactorSecret, process.env.CALENDSO_ENCRYPTION_KEY);
+
     if (secret.length !== 32) {
       console.error(
         `Two factor secret decryption failed. Expected key with length 32 but got ${secret.length}`
@@ -28819,6 +29211,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // If user has 2fa enabled, check if body.code is correct
     const isValidToken = totpAuthenticatorCheck(req.body.code, secret);
+
     if (!isValidToken) {
       return res.status(400).json({ error: ErrorCode.IncorrectTwoFactorCode });
 
@@ -28863,12 +29256,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!session.user?.id) {
     console.error("Session is missing a user id.");
+
     return res.status(500).json({ error: ErrorCode.InternalServerError });
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) {
     console.error(`Session references user that no longer exists.`);
+
     return res.status(401).json({ message: "Not authenticated" });
   }
 
@@ -28886,6 +29281,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!process.env.CALENDSO_ENCRYPTION_KEY) {
     console.error("Missing encryption key; cannot proceed with two factor setup.");
+
     return res.status(500).json({ error: ErrorCode.InternalServerError });
   }
 
@@ -29081,6 +29477,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!parsedBody.success) {
     log.error("moveTeamToOrg failed:", safeStringify(parsedBody.error));
+
     return res.status(400).json({ message: JSON.stringify(parsedBody.error) });
   }
 
@@ -29107,6 +29504,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(error.statusCode).json({ message: error.message });
     }
     log.error("moveTeamToOrg failed:", safeStringify(error));
+
     const errorMessage = error instanceof Error ? error.message : "Something went wrong";
 
     return res.status(500).json({ message: errorMessage });
@@ -29158,6 +29556,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (parsedBody.success) {
     const { userId, targetOrgId } = parsedBody.data;
+
     try {
       await removeUserFromOrg({ targetOrgId, userId });
     } catch (error) {
@@ -29213,6 +29612,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!parsedBody.success) {
     log.error("RemoveTeamFromOrg failed:", safeStringify(parsedBody.error));
+
     return res.status(400).json({ message: JSON.stringify(parsedBody.error) });
   }
   const { teamId, targetOrgId } = parsedBody.data;
@@ -29234,7 +29634,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(error.statusCode).json({ message: error.message });
     }
     log.error("RemoveTeamFromOrg failed:", safeStringify(error));
+
     const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+
     return res.status(500).json({ message: errorMessage });
   }
 
@@ -29270,6 +29672,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!session) {
     res.status(403).json({ message: "No session found" });
+
     return;
   }
 
@@ -29278,7 +29681,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (parsedBody.success) {
     const { userId, userName, shouldMoveTeams, targetOrgId, targetOrgUsername, targetOrgRole } =
       parsedBody.data;
+
     const isAllowed = isAdmin;
+
     if (isAllowed) {
       try {
         await moveUserToOrg({
@@ -29303,6 +29708,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(error.statusCode).json({ message: error.message });
         }
         log.error("Migration failed:", safeStringify(error));
+
         const errorMessage = error instanceof Error ? error.message : "Something went wrong";
 
         return res.status(400).json({ message: errorMessage });
@@ -29502,6 +29908,7 @@ import logger from "@calcom/lib/logger";
 import prisma from "@calcom/prisma";
 
 const log = logger.getSubLogger({ prefix: ["team/[slug]"] });
+
 const querySchema = z
   .object({
     username: z.string(),
@@ -29584,6 +29991,7 @@ async function getIdentityData(req: NextApiRequest) {
     }
 
     const org = orgs[0];
+
     return {
       org: org?.slug,
       name: org?.name,
@@ -29613,6 +30021,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.setHeader("x-cal-org", identity.org);
     }
     res.writeHead(302, { Location: img });
+
     return res.end();
   }
 
@@ -29798,6 +30207,7 @@ async function getTeamLogos(subdomain: string, isValidOrgDomain: boolean) {
     }
     // load from DB
     const { default: prisma } = await import("@calcom/prisma");
+
     const team = await prisma.team.findFirst({
       where: {
         slug: subdomain,
@@ -29820,6 +30230,7 @@ async function getTeamLogos(subdomain: string, isValidOrgDomain: boolean) {
     };
   } catch (error) {
     if (error instanceof Error) log.debug(error.message);
+
     return {
       appLogo: undefined,
       appIconLogo: undefined,
@@ -29850,7 +30261,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const response = await fetch(filteredLogo);
+
     const arrayBuffer = await response.arrayBuffer();
+
     let buffer = Buffer.from(arrayBuffer);
 
     // If we need to resize the team logos (via Next.js' built-in image processing)
@@ -29911,6 +30324,7 @@ const defaultIntegrationAddHandler = async ({
         ...(teamId ? { AND: [{ userId: user.id }, { teamId }] } : { userId: user.id }),
       },
     });
+
     if (alreadyInstalled) {
       throw new Error("App is already installed");
     }
@@ -29935,11 +30349,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     /* Absolute path didn't work */
     const handlerMap = (await import("@calcom/app-store/apps.server.generated")).apiHandlers;
+
     const handlerKey = deriveAppDictKeyFromType(appName, handlerMap);
+
     const handlers = await handlerMap[handlerKey as keyof typeof handlerMap];
+
     if (!handlers) throw new HttpError({ statusCode: 404, message: `No handlers found for ${handlerKey}` });
+
     const handler = handlers[apiEndpoint as keyof typeof handlers] as AppHandler;
+
     let redirectUrl = "/apps/installed";
+
     if (typeof handler === "undefined")
       throw new HttpError({ statusCode: 404, message: `API handler not found` });
 
@@ -29951,9 +30371,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.json({ url: redirectUrl, newTab: handler.redirect?.newTab });
     }
     if (!res.writableEnded) return res.status(200);
+
     return res;
   } catch (error) {
     console.error(error);
+
     if (error instanceof HttpError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
@@ -30046,6 +30468,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new HttpCode({ statusCode: 405, message: "Method Not Allowed" });
     }
     const sig = req.headers["stripe-signature"];
+
     if (!sig) {
       throw new HttpCode({ statusCode: 400, message: "Missing stripe-signature" });
     }
@@ -30054,11 +30477,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new HttpCode({ statusCode: 500, message: "Missing process.env.STRIPE_WEBHOOK_SECRET_APPS" });
     }
     const requestBuffer = await buffer(req);
+
     const payload = requestBuffer.toString();
 
     const event = stripe.webhooks.constructEvent(payload, sig, process.env.STRIPE_WEBHOOK_SECRET_APPS);
 
     const handler = webhookHandlers[event.type];
+
     if (handler) {
       await handler(event);
     } else {
@@ -30075,6 +30500,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: err.message,
       stack: IS_PRODUCTION ? undefined : err.stack,
     });
+
     return;
   }
 
@@ -30163,6 +30589,7 @@ async function handler(req: NextApiRequest & { userId?: number }, res: NextApiRe
         for (const reference of eachRecurringBooking.references!) {
           if (reference.thirdPartyRecurringEventId) {
             thirdPartyRecurringEventId = reference.thirdPartyRecurringEventId;
+
             break;
           }
         }
@@ -30271,6 +30698,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     res.end();
+
     return;
   }
 
@@ -30300,13 +30728,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === "GET") {
     // Get appKeys from google-calendar
     const { client_id, client_secret } = await getAppKeysFromSlug("google-calendar");
+
     if (!client_id || typeof client_id !== "string")
       return res.status(400).json({ message: "Google client_id missing." });
+
     if (!client_secret || typeof client_secret !== "string")
       return res.status(400).json({ message: "Google client_secret missing." });
 
     // use differnt callback to normal calendar connection
     const redirect_uri = `${WEBAPP_URL}/api/teams/googleworkspace/callback`;
+
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uri);
 
     const authUrl = oAuth2Client.generateAuthUrl({
@@ -30348,6 +30779,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await throwIfNotHaveAdminAccessToTeam({ teamId: Number(teamId) ?? null, userId: session.user.id });
   if (code && typeof code !== "string") {
     res.status(400).json({ message: "`code` must be a string" });
+
     return;
   }
 
@@ -30599,6 +31031,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
 
   if (!session || !session.user || !session.user.email) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
 
@@ -30610,6 +31043,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
   /* Only admins can opt-in to future routes for now */
   if (session.user.role !== "ADMIN") {
     res.redirect(redirectUrl);
+
     return;
   }
 
@@ -30647,6 +31081,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!session?.user?.id) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
 
@@ -30665,6 +31100,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
   if (!userWithCredentials) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
   const { credentials, ...user } = userWithCredentials;
@@ -30720,7 +31156,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const calendarCredentials = getCalendarCredentials(credentials);
     // get all the connected integrations' calendars (from third party)
     const { connectedCalendars } = await getConnectedCalendars(calendarCredentials, user.selectedCalendars);
+
     const calendars = connectedCalendars.flatMap((c) => c.calendars).filter(notEmpty);
+
     const selectableCalendars = calendars.map((cal) => {
       return { selected: selectedCalendarIds.findIndex((s) => s.externalId === cal.externalId) > -1, ...cal };
     });
@@ -30893,11 +31331,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (process.env.CRON_API_KEY !== apiKey) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
 
   if (req.method !== "POST") {
     res.status(405).json({ message: "Invalid method" });
+
     return;
   }
 
@@ -31116,11 +31556,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       EventData["mostBookedEvents"] = bookingsFromSelected.map((booking) => {
         const eventTypeSelected = eventTypeHashMap.get(booking.eventTypeId ?? 0);
+
         if (!eventTypeSelected) {
           return {};
         }
 
         let eventSlug = "";
+
         if (eventTypeSelected.userId) {
           eventSlug = `${eventTypeSelected?.users[0]?.username}/${eventTypeSelected?.slug}`;
         }
@@ -31233,10 +31675,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const apiKey = req.headers.authorization || req.query.apiKey;
   if (process.env.CRON_API_KEY !== apiKey) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
   if (req.method !== "POST") {
     res.status(405).json({ message: "Invalid method" });
+
     return;
   }
 
@@ -31306,6 +31750,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const name = user?.name || user?.username;
       if (!user || !name || !user.timeZone) {
         console.error(`Booking ${booking.id} is missing required properties for booking reminder`, { user });
+
         continue;
       }
 
@@ -31378,10 +31823,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const apiKey = req.headers.authorization || req.query.apiKey;
   if (process.env.CRON_API_KEY !== apiKey) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
   if (req.method !== "POST") {
     res.status(405).json({ message: "Invalid method" });
+
     return;
   }
 
@@ -31441,6 +31888,7 @@ import { prisma } from "@calcom/prisma";
 import type { AppCategories, Prisma } from "@calcom/prisma/client";
 
 const isDryRun = process.env.CRON_ENABLE_APP_SYNC !== "true";
+
 const log = logger.getSubLogger({
   prefix: ["[api/cron/syncAppMeta]", ...(isDryRun ? ["(dry-run)"] : [])],
 });
@@ -31453,10 +31901,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const apiKey = req.headers.authorization || req.query.apiKey;
   if (process.env.CRON_API_KEY !== apiKey) {
     res.status(401).json({ message: "Not authenticated" });
+
     return;
   }
   if (req.method !== "POST") {
     res.status(405).json({ message: "Invalid method" });
+
     return;
   }
 
@@ -31466,6 +31916,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   for await (const dbApp of dbApps) {
     const app = await getAppWithMetadata(dbApp);
+
     const updates: Prisma.AppUpdateManyMutationInput = {};
 
     if (!app) {
@@ -31557,6 +32008,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Response>) {
   try {
     /** @see https://trpc.io/docs/server-side-calls */
     const ctx = await createContext({ req, res }, sessionGetter);
+
     const caller = bookingsRouter.createCaller({
       ...ctx,
       req,
@@ -31571,8 +32023,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Response>) {
     });
   } catch (e) {
     let message = "Error confirming booking";
+
     if (e instanceof TRPCError) message = (e as TRPCError).message;
     res.redirect(`/booking/${bookingUid}?error=${encodeURIComponent(message)}`);
+
     return;
   }
 
@@ -32440,6 +32894,7 @@ export const POST = async (request: NextRequest) => {
       to: envelope.from,
       from: aiEmail,
     });
+
     return new NextResponse("Email missing text and subject", { status: 400 });
   }
 
@@ -32516,6 +32971,7 @@ export const POST = async (request: NextRequest) => {
       from: aiEmail,
     });
     console.error(availability.error);
+
     return new NextResponse("Error fetching availability. Please try again.", { status: 400 });
   }
 
@@ -32527,6 +32983,7 @@ export const POST = async (request: NextRequest) => {
       from: aiEmail,
     });
     console.error(eventTypes.error);
+
     return new NextResponse("Error fetching event types. Please try again.", { status: 400 });
   }
 
@@ -32607,6 +33064,7 @@ export const extractUsers = async (text: string) => {
   const usersFromUsernames = usernames
     ? usernames.map((username) => {
         const user = dbUsersFromUsernames.find((u) => u.username === username);
+
         return user
           ? {
               username,
@@ -32641,6 +33099,7 @@ export const extractUsers = async (text: string) => {
   const usersFromEmails = emails
     ? emails.map((email) => {
         const user = dbUsersFromEmails.find((u) => u.email === email);
+
         return user
           ? {
               email,
@@ -32913,6 +33372,7 @@ describe("HTTP Methods function only allows the correct HTTP Methods", () => {
     };
 
     const serverNext = vi.fn((next: void) => Promise.resolve(next));
+
     const middlewareSpy = vi.spyOn(middleware, "fn");
 
     await middleware.fn(req, res, serverNext);
@@ -33010,6 +33470,7 @@ afterEach(() => {
 describe("API - withMiddleware test", () => {
   it("Custom prisma should be before verifyApiKey", async () => {
     const customPrismaClientIndex = middlewareOrder.indexOf("customPrismaClient");
+
     const verifyApiKeyIndex = middlewareOrder.indexOf("verifyApiKey");
     expect(customPrismaClientIndex).toBeLessThan(verifyApiKeyIndex);
   });
@@ -33227,6 +33688,7 @@ describe.skipIf(true)("POST /api/bookings", () => {
         prismaMock.webhook.findMany.mockResolvedValue([]);
 
         await handler(req, res);
+
         const data = JSON.parse(res._getData());
 
         expect(prismaMock.booking.create).toHaveBeenCalledTimes(12);
@@ -33457,8 +33919,11 @@ export const membershipIdSchema = schemaQueryIdAsString
   .merge(z.object({ teamId: z.union([stringOrNumber, z.array(stringOrNumber)]) }).partial())
   .transform((v, ctx) => {
     const [userIdStr, teamIdStr] = v.id.split("_");
+
     const userIdInt = schemaQueryIdParseInt.safeParse({ id: userIdStr });
+
     const teamIdInt = schemaQueryIdParseInt.safeParse({ id: teamIdStr });
+
     if (!userIdInt.success) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "userId is not a number" });
       return z.NEVER;
@@ -33622,6 +34087,7 @@ import { z } from "zod";
 // Helper schema for JSON fields
 type Literal = boolean | number | string;
 type Json = Literal | { [key: string]: Json } | Json[];
+
 const literalSchema = z.union([z.string(), z.number(), z.boolean()]);
 export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
   z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)])
@@ -34396,14 +34862,17 @@ export const selectedCalendarIdSchema = schemaQueryIdAsString.transform((v, ctx)
   const userIdInt = schemaQueryIdParseInt.safeParse({ id: userIdStr });
   if (!userIdInt.success) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "userId is not a number" });
+
     return z.NEVER;
   }
   if (!_integration) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Missing integration" });
+
     return z.NEVER;
   }
   if (!externalId) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Missing externalId" });
+
     return z.NEVER;
   }
   return {
@@ -34629,6 +35098,7 @@ export const addRequestId: NextMiddleware = async (_req, res, next) => {
   // Ensure all OPTIONS request are automatically successful. Headers are already set above.
   if (_req.method === "OPTIONS") {
     res.status(200).end();
+
     return;
   }
   // Let remaining middleware and API route execute
@@ -34639,6 +35109,7 @@ export default function parseJSONSafely(str: string) {
     return JSON.parse(str);
   } catch (e) {
     console.error((e as Error).message);
+
     if ((e as Error).message.includes("Unexpected token")) {
       return {
         success: false,
@@ -34717,6 +35188,7 @@ export const customPrismaClient: NextMiddleware = async (req, res, next) => {
   if (!key) {
     req.prisma = customPrisma();
     await next();
+
     return;
   }
 
@@ -34727,6 +35199,7 @@ export const customPrismaClient: NextMiddleware = async (req, res, next) => {
 
   if (!databaseUrl) {
     res.status(400).json({ error: "no databaseUrl set up at your instance yet" });
+
     return;
   }
   req.prisma = customPrisma({ datasources: { db: { url: databaseUrl } } });
@@ -34756,7 +35229,9 @@ export const captureErrors: NextMiddleware = async (_req, res, next) => {
     await next();
   } catch (error) {
     Sentry.captureException(error);
+
     const redactedError = redactError(error);
+
     if (redactedError instanceof Error) {
       res.status(400).json({ message: redactedError.message, error: redactedError });
       return;
@@ -34806,6 +35281,7 @@ export const verifyApiKey: NextMiddleware = async (req, res, next) => {
   // If the user is an admin and using a license key (from customPrisma), skip the apiKey check.
   if (isCustomPrisma && isAdmin) {
     await next();
+
     return;
   }
   // Check if the apiKey query param is provided.
@@ -35149,6 +35625,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -35430,6 +35907,7 @@ async function checkPermissions(req: NextApiRequest, body: z.infer<typeof schema
   if (bookingId) {
     // Ensure that the booking the attendee is being added to belongs to the user
     const booking = await prisma.booking.findFirst({ where: { id: bookingId, userId } });
+
     if (!booking) throw new HttpError({ statusCode: 403, message: "You don't have access to the booking" });
   }
 }
@@ -35446,6 +35924,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -36143,6 +36622,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -36451,6 +36931,7 @@ async function handler(req: NextApiRequest) {
         email: true,
       },
     });
+
     if (!user) {
       throw new HttpError({ message: "User not found", statusCode: 500 });
     }
@@ -36491,6 +36972,7 @@ export default async function ensureOnlyMembersAsHosts(
         userId: { in: body.hosts.map((host) => host.userId) },
       },
     });
+
     if (teamMemberCount !== body.hosts.length) {
       throw new Error("You can only add members of the team to a team event type.");
     }
@@ -37333,6 +37815,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -37499,6 +37982,7 @@ async function getHandler(req: NextApiRequest) {
     event_types: (await defaultScheduleId<(typeof data)[number]>({ eventTypes: data, prisma, userIds })).map(
       (eventType) => {
         const link = getCalLink(eventType);
+
         return schemaEventTypeReadPublic.parse({ ...eventType, link });
       }
     ),
@@ -37550,12 +38034,14 @@ async function defaultScheduleId<T extends DefaultScheduleIdEventTypeBase>({
 
   const defaultScheduleIds = users.reduce((result, user) => {
     result[user.id] = user.defaultScheduleId;
+
     return result;
   }, {} as { [x: number]: number | null });
 
   return eventTypes.map((eventType) => {
     // realistically never happens, userId should't be null on personal event types.
     if (!eventType.userId) return eventType;
+
     return {
       ...eventType,
       scheduleId: eventType.scheduleId || defaultScheduleIds[eventType.userId],
@@ -37676,6 +38162,7 @@ import { authMiddleware } from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -37718,8 +38205,10 @@ function handleAdminRequests(req: CustomNextApiRequest) {
   const { userId, isAdmin } = req;
   if (isAdmin && req.query.userId) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
+
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
     req.args.where = { userId: { in: userIds } };
+
     if (Array.isArray(query.userId)) req.args.orderBy = { userId: "asc" };
   }
 }
@@ -38039,6 +38528,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -38217,8 +38707,10 @@ async function handler(req: NextApiRequest) {
 
   if (isAdmin && req.query.userId) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
+
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
     args.where = { userId: { in: userIds } };
+
     if (Array.isArray(query.userId)) args.orderBy = { userId: "asc" };
   }
   const data = await prisma.schedule.findMany(args);
@@ -38328,6 +38820,7 @@ async function postHandler(req: NextApiRequest) {
     const eventType = await prisma.eventType.findFirst({
       where: { id: parsedBody.eventTypeId, userId: parsedBody.userId },
     });
+
     if (!eventType)
       throw new HttpError({
         statusCode: 400,
@@ -38361,6 +38854,7 @@ async function checkPermissions(req: NextApiRequest, userId: number) {
   /* User should only be able to create for their own destination calendars*/
   if (!isAdmin && body.eventTypeId) {
     const ownsEventType = await req.prisma.eventType.findFirst({ where: { id: body.eventTypeId, userId } });
+
     if (!ownsEventType) throw new HttpError({ statusCode: 401, message: "Unauthorized" });
   }
   // TODO:: Add support for team event types with validation
@@ -38644,7 +39138,9 @@ async function verifyCredentialsAndGetId({
       [],
       parsedBody.externalId
     );
+
     const eligibleCalendars = connectedCalendars[0]?.calendars?.filter((calendar) => !calendar.readOnly);
+
     const calendar = eligibleCalendars?.find(
       (c) => c.externalId === parsedBody.externalId && c.integration === parsedBody.integration
     );
@@ -38654,6 +39150,7 @@ async function verifyCredentialsAndGetId({
         statusCode: 400,
         message: "Bad request, credential id invalid",
       });
+
     return calendar?.credentialId;
   }
   return currentCredentialId;
@@ -38774,6 +39271,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -38975,6 +39473,7 @@ async function postHandler(req: NextApiRequest) {
     const eventType = await prisma.eventType.findFirst({
       where: { id: eventTypeId, userId },
     });
+
     if (!eventType) throw new HttpError({ statusCode: 403, message: "Forbidden" });
   }
 
@@ -39157,6 +39656,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -39664,6 +40164,7 @@ async function checkPermissions(req: NextApiRequest) {
     const membership = await prisma.membership.findFirst({
       where: { userId, teamId, role: { in: ["ADMIN", "OWNER"] } },
     });
+
     if (!membership || (membership.role !== "OWNER" && req.body.role === "OWNER"))
       throw new HttpError({ statusCode: 403, message: "Forbidden" });
   }
@@ -39681,6 +40182,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -39787,7 +40289,9 @@ function getUserIds(req: NextApiRequest) {
   if (!isAdmin && req.query.userId) throw new HttpError({ statusCode: 403, message: "ADMIN required" });
   if (isAdmin && req.query.userId) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
+
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
+
     return userIds;
   }
   // Return all memberships for ADMIN, limit to current user to non-admins
@@ -39803,7 +40307,9 @@ function getTeamIds(req: NextApiRequest) {
   if (!isAdmin && req.query.teamId) throw new HttpError({ statusCode: 403, message: "ADMIN required" });
   if (isAdmin && req.query.teamId) {
     const query = schemaQuerySingleOrMultipleTeamIds.parse(req.query);
+
     const teamIds = Array.isArray(query.teamId) ? query.teamId : [query.teamId];
+
     return teamIds;
   }
   return undefined;
@@ -40154,6 +40660,7 @@ export async function patchHandler(req: NextApiRequest) {
   // disable role or branding changes unless admin.
   if (!isAdmin) {
     if (body.role) body.role = undefined;
+
     if (body.hideBranding) body.hideBranding = undefined;
   }
 
@@ -40343,6 +40850,7 @@ async function postHandler(req: NextApiRequest) {
         },
       },
     });
+
     if (alreadyExist) throw new HttpError({ statusCode: 409, message: "Team slug already exists" });
   }
 
@@ -40351,6 +40859,7 @@ async function postHandler(req: NextApiRequest) {
     const parentTeam = await prisma.team.findFirst({
       where: { id: data.parentId, members: { some: { userId, role: { in: ["OWNER", "ADMIN"] } } } },
     });
+
     if (!parentTeam)
       throw new HttpError({
         statusCode: 401,
@@ -40556,6 +41065,7 @@ const patchHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       PATCH: Promise.resolve({ default: defaultResponder(patchHandler) }),
     })(req, res);
@@ -40782,6 +41292,7 @@ export async function patchHandler(req: NextApiRequest) {
     const parentTeam = await prisma.team.findFirst({
       where: { id: data.parentId, members: { some: { userId, role: { in: ["OWNER", "ADMIN"] } } } },
     });
+
     if (!parentTeam)
       throw new HttpError({
         statusCode: 401,
@@ -40796,6 +41307,7 @@ export async function patchHandler(req: NextApiRequest) {
       requestedSlug: data.slug,
     };
     delete data.slug;
+
     if (IS_TEAM_BILLING_ENABLED) {
       const checkoutSession = await purchaseTeamSubscription({
         teamId: _team.id,
@@ -40850,6 +41362,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -41182,6 +41695,7 @@ async function handler(req: NextApiRequest) {
   });
   const memberRoles: MemberRoles = team.members.reduce((acc: MemberRoles, membership) => {
     acc[membership.userId] = membership.role;
+
     return acc;
   }, {} as MemberRoles);
   // check if the user is a team Admin or Owner, if it is a team request, or a system Admin
@@ -41458,6 +41972,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -41633,6 +42148,7 @@ async function postHandler(req: NextApiRequest) {
 
   if (eventTypeId) {
     const where: Prisma.EventTypeWhereInput = { id: eventTypeId };
+
     if (!isAdmin) where.userId = userId;
     await prisma.eventType.findFirstOrThrow({ where });
     args.data.eventTypeId = eventTypeId;
@@ -41815,6 +42331,7 @@ export async function patchHandler(req: NextApiRequest) {
 
   if (eventTypeId) {
     const where: Prisma.EventTypeWhereInput = { id: eventTypeId };
+
     if (!isAdmin) where.userId = userId;
     await prisma.eventType.findFirstOrThrow({ where });
     args.data.eventTypeId = eventTypeId;
@@ -41849,6 +42366,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -41946,8 +42464,10 @@ async function getHandler(req: NextApiRequest) {
   if (!isAdmin && req.query.userId) throw new HttpError({ statusCode: 403, message: "ADMIN required" });
   if (isAdmin && req.query.userId) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
+
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
     args.where = { OR: [{ eventType: { userId: { in: userIds } } }, { userId: { in: userIds } }] };
+
     if (Array.isArray(query.userId)) args.orderBy = { userId: "asc", eventType: { userId: "asc" } };
   }
 
@@ -42192,6 +42712,7 @@ import authMiddleware from "./_auth-middleware";
 export default withMiddleware()(
   defaultResponder(async (req: NextApiRequest, res: NextApiResponse) => {
     await authMiddleware(req);
+
     return defaultHandler({
       GET: import("./_get"),
       PATCH: import("./_patch"),
@@ -42297,8 +42818,10 @@ async function getHandler(req: NextApiRequest) {
   if (!isAdmin && req.query.userId) throw new HttpError({ statusCode: 403, message: "ADMIN required" });
   if (isAdmin && req.query.userId) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
+
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
     args.where = { userId: { in: userIds } };
+
     if (Array.isArray(query.userId)) args.orderBy = { userId: "asc" };
   }
 
@@ -42338,13 +42861,18 @@ dayjs.extend(timezone);
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { usernameList, ...rest } = req.query;
+
     let slugs = usernameList;
+
     if (!Array.isArray(usernameList)) {
       slugs = usernameList ? [usernameList] : undefined;
     }
     const input = getScheduleSchema.parse({ usernameList: slugs, ...rest });
+
     const timeZoneSupported = input.timeZone ? isSupportedTimeZone(input.timeZone) : false;
+
     const availableSlots = await getAvailableSlots({ ctx: await createContext({ req, res }), input });
+
     const slotsInProvidedTimeZone = timeZoneSupported
       ? Object.keys(availableSlots.slots).reduce(
           (acc: Record<string, { time: string; attendees?: number; bookingUid?: string }[]>, date) => {
@@ -42352,6 +42880,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               ...slot,
               time: dayjs(slot.time).tz(input.timeZone).format(),
             }));
+
             return acc;
           },
           {}
