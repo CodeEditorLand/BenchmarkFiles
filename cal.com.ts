@@ -25057,6 +25057,7 @@ export function ensureArray<T>(val: unknown): T[] {
   }
   return [val] as T[];
 }
+
 const MAX_IMAGE_SIZE = 512;
 
 export type Area = {
