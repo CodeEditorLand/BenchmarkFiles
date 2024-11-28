@@ -95,9 +95,13 @@ function getAbsolutePath(value) {
   return dirname(require.resolve(join(value, "package.json")));
 }
 export * from "./Examples";
+
 export * from "./Note";
+
 export * from "./VariantsTable";
+
 export * from "./Title";
+
 export * from "./CustomArgsTable";
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
@@ -651,6 +655,7 @@ import type { TRPCContext } from "@calcom/trpc/server/createContext";
 import { appRouter } from "@calcom/trpc/server/routers/_app";
 
 export const getServerCaller = (ctx: TRPCContext) => appRouter.createCaller(ctx);
+
 export type Params = {
   [param: string]: string | string[] | undefined;
 };
@@ -824,6 +829,7 @@ export function createMockNextJsRequest(...args: Parameters<typeof createMocks>)
 import { getDate } from "@calcom/web/test/utils/bookingScenario/bookingScenario";
 
 export const DEFAULT_TIMEZONE_BOOKER = "Asia/Kolkata";
+
 export function getBasicMockRequestDataForBooking() {
   return {
     start: `${getDate({ dateIncrement: 1 }).dateString}T04:00:00.000Z`,
@@ -3608,6 +3614,7 @@ const getMockAppStatus = ({
     errors: [],
   };
 };
+
 export const getMockFailingAppStatus = ({ slug }: { slug: string }) => {
   return getMockAppStatus({ slug, failures: 1, success: 0 });
 };
@@ -6724,10 +6731,14 @@ export async function getTranslations<TParams extends { locale?: string }>(
   };
 }
 export const GOOGLE_API_CREDENTIALS = process.env.GOOGLE_API_CREDENTIALS || "{}";
+
 export const { client_id: GOOGLE_CLIENT_ID, client_secret: GOOGLE_CLIENT_SECRET } =
   JSON.parse(GOOGLE_API_CREDENTIALS)?.web || {};
+
 export const GOOGLE_LOGIN_ENABLED = process.env.GOOGLE_LOGIN_ENABLED === "true";
+
 export const IS_GOOGLE_LOGIN_ENABLED = !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET && GOOGLE_LOGIN_ENABLED);
+
 export const IS_SAML_LOGIN_ENABLED = !!(process.env.SAML_DATABASE_URL && process.env.SAML_ADMINS);
 import type { GetServerSidePropsContext } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -19352,9 +19363,11 @@ type RequestHandlerOptions = { req: Request; res: ServerResponse };
 type RequestHandler = (opts: RequestHandlerOptions) => void;
 
 export const testEmail = "test@example.com";
+
 export const testName = "Test Testson";
 
 export const teamEventTitle = "Team Event - 30min";
+
 export const teamEventSlug = "team-event-30min";
 
 export function createHttpServer(opts: { requestHandler?: RequestHandler } = {}) {
@@ -19772,6 +19785,7 @@ import { localize } from "../lib/testUtils";
 import type { createUsersFixture } from "./users";
 
 const reschedulePlaceholderText = "Let others know why you need to reschedule";
+
 export const scheduleSuccessfullyText = "This meeting is scheduled";
 
 const EMAIL = "test@test.com";
@@ -20867,6 +20881,7 @@ const createServerFixture = (server: Server) => {
     delete: async () => store.server.close(),
   };
 };
+
 export enum TimeZoneEnum {
   USA = "America/Phoenix",
   UK = "Europe/London",
@@ -20932,6 +20947,7 @@ const unimplemented = () => {
 const hasUUID = (query: string) => {
   return /[a-zA-Z0-9]{22}/.test(query) || /[0-9a-f]{8}/.test(query);
 };
+
 export const createEmailsFixture = () => {
   if (IS_MAILHOG_ENABLED) {
     const mailhogAPI = mailhog();
@@ -22114,6 +22130,7 @@ test.describe("Teams", () => {
     await page.getByTestId("profile-upload-avatar").isVisible();
   });
 });
+
 export {};
 //  TODO: @sean - I can't run E2E locally - causing me a lot of pain to try and debug.
 //  Will tackle in follow up once i reset my system.
@@ -23841,6 +23858,7 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   tracesSampleRate: 1.0,
 });
+
 export {};
 
 const TwoFactorAuthAPI = {
@@ -24078,7 +24096,9 @@ const hasKeyInMetadata = <T extends string>(
   isPrismaObj(x?.metadata) && !!x?.metadata && key in x.metadata;
 
 export default hasKeyInMetadata;
+
 export type SVGComponent = React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+
 export type TimeRange = {
   start: Date;
   end: Date;
@@ -24097,6 +24117,7 @@ export type WorkingHours = {
   startTime: number;
   endTime: number;
 };
+
 export type BookingResponse = Awaited<
   ReturnType<typeof import("@calcom/features/bookings/lib/handleNewBooking").default>
 >;
@@ -24110,6 +24131,7 @@ type GetSSRFn<TProps> = (...args: any[]) => Promise<GetSSRResult<TProps>>;
 export type inferSSRProps<TFn extends GetSSRFn<any>> = TFn extends GetSSRFn<infer TProps>
   ? NonNullable<TProps>
   : never;
+
 export class HttpError<TCode extends number = number> extends Error {
   public readonly cause?: Error;
   public readonly statusCode: TCode;
@@ -25684,6 +25706,7 @@ import { safeStringify } from "@calcom/lib/safeStringify";
 import type { RedirectType } from "@calcom/prisma/client";
 
 const log = logger.getSubLogger({ prefix: ["lib", "getTemporaryOrgRedirect"] });
+
 export const getTemporaryOrgRedirect = async ({
   slugs,
   redirectType,
@@ -25842,6 +25865,7 @@ import withEmbedSsr from "./withEmbedSsr";
 export type CustomNextApiRequest = NextApiRequest & Request;
 
 export type CustomNextApiResponse = NextApiResponse & Response;
+
 export function createMockNextJsRequest(...args: Parameters<typeof createMocks>) {
   return createMocks<CustomNextApiRequest, CustomNextApiResponse>(...args);
 }
@@ -28097,6 +28121,7 @@ describe("getTemporaryOrgRedirect", () => {
     });
   });
 });
+
 export const validStatuses = ["upcoming", "recurring", "past", "cancelled", "unconfirmed"] as const;
 import OtherTeamListView from "@calcom/features/ee/organizations/pages/settings/other-team-listing-view";
 
@@ -28116,8 +28141,11 @@ const Page = TeamListView as CalPageWrapper;
 Page.PageWrapper = PageWrapper;
 
 export default Page;
+
 export { getServerSideProps, default } from "../../../../team/[slug]/[type]";
+
 export { getServerSideProps, default } from "../../../../team/[slug]";
+
 export { getServerSideProps, default } from "../../team/[slug]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import z from "zod";
@@ -30288,6 +30316,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 export { default, config } from "@calcom/features/ee/payments/api/webhook";
+
 export { default, config } from "@calcom/app-store/alby/api/webhook";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Session } from "next-auth";
@@ -30840,6 +30869,7 @@ const checkoutSessionMetadataSchema = z.object({
 type CheckoutSessionMetadata = z.infer<typeof checkoutSessionMetadataSchema>;
 
 export const schemaTeamReadPublic = Team.omit({});
+
 export const schemaMembershipPublic = Membership.merge(z.object({ team: Team }).partial());
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -31020,6 +31050,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 export default defaultHandler({
   GET: Promise.resolve({ default: defaultResponder(handler) }),
 });
+
 export { default } from "@calcom/features/ee/teams/api/upgrade";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -31658,8 +31689,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   res.json({ ok: true });
 }
 export { default } from "@calcom/features/ee/workflows/api/scheduleEmailReminders";
+
 export { default } from "@calcom/features/ee/workflows/api/scheduleSMSReminders";
+
 export { default } from "@calcom/features/ee/workflows/api/scheduleWhatsappReminders";
+
 export { default } from "@calcom/features/webhooks/lib/cron";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -32647,6 +32681,7 @@ const editBookingTool = (apiKey: string, userId: number) => {
 };
 
 export default editBookingTool;
+
 export type Availability = {
   busy: {
     start: string;
@@ -32672,6 +32707,7 @@ export type Availability = {
   };
   currentSeats: number;
 };
+
 export type EventType = {
   id: number;
   title: string;
@@ -32685,11 +32721,13 @@ export type EventType = {
   hidden: boolean;
   // ...
 };
+
 export type WorkingHours = {
   days: number[];
   startTime: number;
   endTime: number;
 };
+
 export enum BOOKING_STATUS {
   ACCEPTED = "ACCEPTED",
   PENDING = "PENDING",
@@ -33235,6 +33273,7 @@ ${
 };
 
 export default agent;
+
 export const context = { apiKey: "", userId: "" };
 import mail from "@sendgrid/mail";
 
@@ -33279,6 +33318,7 @@ const send = async ({
 };
 
 export default send;
+
 export default function now(timeZone: string, options: Intl.DateTimeFormatOptions = {}) {
   return new Date().toLocaleString("en-US", {
     timeZone,
@@ -33818,6 +33858,7 @@ import { _PaymentModel as Payment } from "@calcom/prisma/zod";
 
 // FIXME: Payment seems a delicate endpoint, do we need to remove anything here?
 export const schemaPaymentBodyParams = Payment.omit({ id: true });
+
 export const schemaPaymentPublic = Payment.omit({ externalId: true });
 import { z } from "zod";
 
@@ -34066,7 +34107,9 @@ const schemaAttendeeEditParams = z
     timeZone: timeZone.optional(),
   })
   .strict();
+
 export const schemaAttendeeEditBodyParams = schemaAttendeeBaseBodyParams.merge(schemaAttendeeEditParams);
+
 export const schemaAttendeeCreateBodyParams = schemaAttendeeBaseBodyParams.merge(schemaAttendeeCreateParams);
 
 export const schemaAttendeeReadPublic = Attendee.pick({
@@ -34090,6 +34133,7 @@ type Literal = boolean | number | string;
 type Json = Literal | { [key: string]: Json } | Json[];
 
 const literalSchema = z.union([z.string(), z.number(), z.boolean()]);
+
 export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
   z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)])
 );
@@ -34280,6 +34324,7 @@ export const schemaBookingReferenceReadPublic = BookingReference.pick({
 export const schemaBookingCreateBodyParams = BookingReference.omit({ id: true, bookingId: true })
   .merge(denullishShape(BookingReference.pick({ bookingId: true })))
   .strict();
+
 export const schemaBookingEditBodyParams = schemaBookingCreateBodyParams.partial();
 import { z } from "zod";
 
@@ -34578,6 +34623,7 @@ const schemaEventTypeEditParams = z
   .strict();
 
 export const schemaEventTypeEditBodyParams = schemaEventTypeBaseBodyParams.merge(schemaEventTypeEditParams);
+
 export const schemaEventTypeReadPublic = EventType.pick({
   id: true,
   title: true,
@@ -34923,6 +34969,7 @@ export type TeamResponse = BaseResponse & {
   team?: Partial<Team>;
   owner?: Partial<Membership>;
 };
+
 export type TeamsResponse = BaseResponse & {
   teams?: Partial<Team>[];
 };
@@ -34931,6 +34978,7 @@ export type TeamsResponse = BaseResponse & {
 export type SelectedCalendarResponse = BaseResponse & {
   selected_calendar?: Partial<SelectedCalendar>;
 };
+
 export type SelectedCalendarsResponse = BaseResponse & {
   selected_calendars?: Partial<SelectedCalendar>[];
 };
@@ -34949,6 +34997,7 @@ export type AttendeesResponse = BaseResponse & {
 export type AvailabilityResponse = BaseResponse & {
   availability?: Partial<Availability>;
 };
+
 export type AvailabilitiesResponse = BaseResponse & {
   availabilities?: Partial<Availability>[];
 };
@@ -34957,6 +35006,7 @@ export type AvailabilitiesResponse = BaseResponse & {
 export type BookingReferenceResponse = BaseResponse & {
   booking_reference?: Partial<BookingReference>;
 };
+
 export type BookingReferencesResponse = BaseResponse & {
   booking_references?: Partial<BookingReference>[];
 };
@@ -34965,6 +35015,7 @@ export type BookingReferencesResponse = BaseResponse & {
 export type BookingResponse = BaseResponse & {
   booking?: Partial<Booking>;
 };
+
 export type BookingsResponse = BaseResponse & {
   bookings?: Partial<Booking>[];
 };
@@ -34973,6 +35024,7 @@ export type BookingsResponse = BaseResponse & {
 export type CredentialResponse = BaseResponse & {
   credential?: Partial<Credential>;
 };
+
 export type CredentialsResponse = BaseResponse & {
   credentials?: Partial<Credential>[];
 };
@@ -34981,6 +35033,7 @@ export type CredentialsResponse = BaseResponse & {
 export type DestinationCalendarResponse = BaseResponse & {
   destination_calendar?: Partial<DestinationCalendar>;
 };
+
 export type DestinationCalendarsResponse = BaseResponse & {
   destination_calendars?: Partial<DestinationCalendar>[];
 };
@@ -34989,6 +35042,7 @@ export type DestinationCalendarsResponse = BaseResponse & {
 export type MembershipResponse = BaseResponse & {
   membership?: Partial<Membership>;
 };
+
 export type MembershipsResponse = BaseResponse & {
   memberships?: Partial<Membership>[];
 };
@@ -34997,6 +35051,7 @@ export type MembershipsResponse = BaseResponse & {
 export type EventTypeCustomInputResponse = BaseResponse & {
   event_type_custom_input?: Partial<EventTypeCustomInput>;
 };
+
 export type EventTypeCustomInputsResponse = BaseResponse & {
   event_type_custom_inputs?: Partial<EventTypeCustomInput>[];
 };
@@ -35035,6 +35090,7 @@ interface EventTypeExtended extends Omit<EventType, "recurringEvent" | "location
 export type EventTypeResponse = BaseResponse & {
   event_type?: Partial<EventType | EventTypeExtended>;
 };
+
 export type EventTypesResponse = BaseResponse & {
   event_types?: Partial<EventType | EventTypeExtended>[];
 };
@@ -35043,6 +35099,7 @@ export type EventTypesResponse = BaseResponse & {
 export type PaymentResponse = BaseResponse & {
   payment?: Partial<Payment>;
 };
+
 export type PaymentsResponse = BaseResponse & {
   payments?: Partial<Payment>[];
 };
@@ -35051,6 +35108,7 @@ export type PaymentsResponse = BaseResponse & {
 export type ScheduleResponse = BaseResponse & {
   schedule?: Partial<Schedule>;
 };
+
 export type SchedulesResponse = BaseResponse & {
   schedules?: Partial<Schedule>[];
 };
@@ -35059,6 +35117,7 @@ export type SchedulesResponse = BaseResponse & {
 export type WebhookResponse = BaseResponse & {
   webhook?: Partial<Webhook> | null;
 };
+
 export type WebhooksResponse = BaseResponse & {
   webhooks?: Partial<Webhook>[];
 };
@@ -35067,9 +35126,11 @@ export type WebhooksResponse = BaseResponse & {
 export type ReminderMailResponse = BaseResponse & {
   reminder_mail?: Partial<ReminderMail>;
 };
+
 export type ReminderMailsResponse = BaseResponse & {
   reminder_mails?: Partial<ReminderMail>[];
 };
+
 export const PRISMA_CLIENT_CACHING_TIME = 1000 * 60 * 60 * 24; // one day in ms
 import type { NextMiddleware } from "next-api-middleware";
 
@@ -35105,6 +35166,7 @@ export const addRequestId: NextMiddleware = async (_req, res, next) => {
   // Let remaining middleware and API route execute
   await next();
 };
+
 export default function parseJSONSafely(str: string) {
   try {
     return JSON.parse(str);
@@ -35147,10 +35209,15 @@ export const httpMethods = (allowedHttpMethod: string[]): NextMiddleware => {
 };
 
 export const HTTP_POST = httpMethod("POST");
+
 export const HTTP_GET = httpMethod("GET");
+
 export const HTTP_PATCH = httpMethod("PATCH");
+
 export const HTTP_DELETE = httpMethod("DELETE");
+
 export const HTTP_GET_DELETE_PATCH = httpMethods(["GET", "DELETE", "PATCH"]);
+
 export const HTTP_GET_OR_POST = httpMethods(["GET", "POST"]);
 import type { NextMiddleware } from "next-api-middleware";
 
