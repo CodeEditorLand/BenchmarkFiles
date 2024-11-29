@@ -36,6 +36,7 @@ const config: StorybookConfig = {
 
   webpackFinal: async (config, { configType }) => {
     config.resolve = config.resolve || {};
+
     config.resolve.fallback = {
       fs: false,
       assert: false,
@@ -64,7 +65,9 @@ const config: StorybookConfig = {
     };
 
     config.module = config.module || {};
+
     config.module.rules = config.module.rules || [];
+
     config.module.rules.push({
       test: /\.css$/,
       use: [
@@ -302,6 +305,7 @@ export const SnippedGenerator = {
                     const { spec, oasPathMethod } = req.toJS();
 
                     const { path, method } = oasPathMethod;
+
                     console.log(spec, oasPathMethod, path, method);
                     // run OpenAPISnippet for target node
                     const targets = ["java_okhttp"];
@@ -747,12 +751,16 @@ export function getMockPaymentService() {
 
       return paymentData;
     }
+
     async afterPayment(
       event: CalendarEvent,
       booking: {
         user: { email: string | null; name: string | null; timeZone: string } | null;
+
         id: number;
+
         startTime: { toISOString: () => string };
+
         uid: string;
       },
       paymentData: Payment
@@ -799,10 +807,14 @@ export function setupAndTeardown() {
 
     // Ensure that Rate Limiting isn't enforced for tests
     delete process.env.UPSTASH_REDIS_REST_URL;
+
     mockNoTranslations();
     // mockEnableEmailFeature();
+
     enableEmailFeature();
+
     globalThis.testEmails = [];
+
     fetchMock.resetMocks();
   });
   afterEach(() => {
@@ -810,8 +822,11 @@ export function setupAndTeardown() {
     delete process.env.CALENDSO_ENCRYPTION_KEY;
     //@ts-expect-error - It is a readonly variable
     delete process.env.STRIPE_WEBHOOK_SECRET;
+
     delete process.env.DAILY_API_KEY;
+
     globalThis.testEmails = [];
+
     fetchMock.resetMocks();
     // process.env.DAILY_API_KEY = "MOCK_DAILY_API_KEY";
   });
@@ -848,10 +863,15 @@ export function getMockRequestDataForBooking({
 }: {
   data: Partial<ReturnType<typeof getBasicMockRequestDataForBooking>> & {
     eventTypeId: number;
+
     rescheduleUid?: string;
+
     bookingUid?: string;
+
     recurringEventId?: string;
+
     recurringCount?: number;
+
     responses: {
       email: string;
       name: string;
@@ -934,6 +954,7 @@ export const testWithAndWithoutOrg = (
     Fixtures & {
       org: {
         organization: { id: number | null };
+
         urlOrigin?: string;
       } | null;
     }
@@ -1046,7 +1067,9 @@ type ExpectedEmail = {
   to: string;
   bookingTimeRange?: {
     start: Date;
+
     end: Date;
+
     timeZone: string;
   };
   // TODO: Implement these and more
@@ -1061,8 +1084,11 @@ type ExpectedEmail = {
   // };
   ics?: {
     filename: string;
+
     iCalUID?: string;
+
     recurrence?: Recurrence;
+
     method: string;
   };
   /**
@@ -1097,6 +1123,7 @@ expect.extend({
         message: () => `No email sent to ${to}. All emails are ${JSON.stringify(emailsToLog)}`,
       };
     }
+
     const ics = testEmail.icalEvent;
 
     const icsObject = ics?.content ? ical.sync.parseICS(ics?.content) : null;
@@ -1126,6 +1153,7 @@ expect.extend({
     };
 
     const expectedEmailContent = getExpectedEmailContent(expectedEmail);
+
     assertHasRecurrence(expectedEmail.ics?.recurrence, (iCalUidData as VEvent)?.rrule?.toString() || "");
 
     const isEmailContentMatched = this.equals(
@@ -1194,6 +1222,7 @@ expect.extend({
         if (appStatus.success && !appStatus.failures) {
           return `${appStatus.appName} ✅`;
         }
+
         return `${appStatus.appName} ❌`;
       });
 
@@ -1264,6 +1293,7 @@ export function expectWebhookToHaveBeenCalledWith(
   subscriberUrl: string,
   data: {
     triggerEvent: WebhookTriggerEvents;
+
     payload: Record<string, unknown> | null;
   }
 ) {
@@ -1302,10 +1332,12 @@ export function expectWebhookToHaveBeenCalledWith(
     if (data.payload.metadata !== undefined) {
       expect(parsedBody.payload.metadata).toEqual(expect.objectContaining(data.payload.metadata));
     }
+
     if (data.payload.responses !== undefined)
       expect(parsedBody.payload.responses).toEqual(expect.objectContaining(data.payload.responses));
 
     const { responses: _1, metadata: _2, ...remainingPayload } = data.payload;
+
     expect(parsedBody.payload).toEqual(expect.objectContaining(remainingPayload));
   }
 }
@@ -1742,6 +1774,7 @@ export function expectBookingRequestRescheduledEmails({
   organizer: ReturnType<typeof getOrganizer>;
   loggedInUser: {
     email: string;
+
     name: string;
   };
   booker: { email: string; name: string };
@@ -1966,12 +1999,16 @@ export function expectSuccessfulCalendarEventCreationInCalendar(
   expected:
     | {
         calendarId?: string | null;
+
         videoCallUrl: string;
+
         destinationCalendars?: Partial<DestinationCalendar>[];
       }
     | {
         calendarId?: string | null;
+
         videoCallUrl: string;
+
         destinationCalendars?: Partial<DestinationCalendar>[];
       }[]
 ) {
@@ -2010,7 +2047,9 @@ export function expectSuccessfulCalendarEventUpdationInCalendar(
   },
   expected: {
     externalCalendarId: string;
+
     calEvent: Partial<CalendarEvent>;
+
     uid: string;
   }
 ) {
@@ -2035,7 +2074,9 @@ export function expectSuccessfulCalendarEventDeletionInCalendar(
   },
   expected: {
     externalCalendarId: string;
+
     calEvent: Partial<CalendarEvent>;
+
     uid: string;
   }
 ) {
@@ -2083,6 +2124,7 @@ export function expectSuccessfulVideoMeetingUpdationInCalendar(
   expected: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     bookingRef: any;
+
     calEvent: Partial<CalendarEvent>;
   }
 ) {
@@ -2224,6 +2266,7 @@ type InputUser = Omit<typeof TestData.users.example, "defaultScheduleId"> & {
   selectedCalendars?: InputSelectedCalendar[];
   teams?: {
     membership: Partial<Membership>;
+
     team: {
       id: number;
       name: string;
@@ -2233,13 +2276,16 @@ type InputUser = Omit<typeof TestData.users.example, "defaultScheduleId"> & {
   schedules: {
     // Allows giving id in the input directly so that it can be referenced somewhere else as well
     id?: number;
+
     name: string;
+
     availability: {
       days: number[];
       startTime: Date;
       endTime: Date;
       date: string | null;
     }[];
+
     timeZone: string;
   }[];
   destinationCalendar?: Prisma.DestinationCalendarCreateInput;
@@ -2283,6 +2329,7 @@ type WhiteListedBookingProps = {
   status: BookingStatus;
   attendees?: {
     email: string;
+
     bookingSeat?: AttendeeBookingSeatInput | null;
   }[];
   references?: (Omit<ReturnType<typeof getMockBookingReference>, "credentialId"> & {
@@ -2391,9 +2438,11 @@ async function addEventTypes(eventTypes: InputEventType[], usersStore: InputUser
     if (!eventType.slotInterval && !eventType.length) {
       throw new Error("eventTypes[number]: slotInterval or length must be defined");
     }
+
     if (foundEvents[eventType.id]) {
       throw new Error(`eventTypes[number]: id ${eventType.id} is not unique`);
     }
+
     foundEvents[eventType.id] = true;
 
     const users =
@@ -2487,6 +2536,7 @@ async function addBookings(bookings: InputBooking[]) {
         })
       );
     }
+
     return {
       uid: booking.uid || uuidv4(),
       workflowReminders: [],
@@ -2659,6 +2709,7 @@ async function addUsers(users: InputUser[]) {
         },
       };
     }
+
     if (user.credentials) {
       newUser.credentials = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -2684,6 +2735,7 @@ async function addUsers(users: InputUser[]) {
         },
       };
     }
+
     if (user.selectedCalendars) {
       newUser.selectedCalendars = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -2763,8 +2815,11 @@ export async function createOrganization(orgData: { name: string; slug: string }
 export const getDate = (
   param: {
     dateIncrement?: number;
+
     monthIncrement?: number;
+
     yearIncrement?: number;
+
     fromDate?: Date;
   } = {}
 ) => {
@@ -2790,11 +2845,13 @@ export const getDate = (
   const numberOfDaysForNextMonth = +_date - +lastDayOfMonth;
   if (numberOfDaysForNextMonth > 0) {
     _date = numberOfDaysForNextMonth;
+
     _month = _month + 1;
   }
 
   if (_month === 13) {
     _month = 1;
+
     year = year + 1;
   }
 
@@ -2838,9 +2895,13 @@ export function getMockedCredential({
   metadataLookupKey: string;
   key: {
     expiry_date?: number;
+
     token_type?: string;
+
     access_token?: string;
+
     refresh_token?: string;
+
     scope: string;
   };
 }) {
@@ -3041,6 +3102,7 @@ export const TestData = {
 export class MockError extends Error {
   constructor(message: string) {
     super(message);
+
     this.name = "MockError";
   }
 }
@@ -3101,11 +3163,17 @@ export function getScenarioData(
   }: // hosts = [],
   {
     organizer: ReturnType<typeof getOrganizer>;
+
     eventTypes: ScenarioData["eventTypes"];
+
     apps?: ScenarioData["apps"];
+
     usersApartFromOrganizer?: ScenarioData["users"];
+
     webhooks?: ScenarioData["webhooks"];
+
     workflows?: ScenarioData["workflows"];
+
     bookings?: ScenarioData["bookings"];
     // hosts?: ScenarioData["hosts"];
   },
@@ -3191,13 +3259,17 @@ export function mockCalendar(
       uid?: string;
       iCalUID?: string;
     };
+
     update?: {
       id?: string;
       uid: string;
       iCalUID?: string;
     };
+
     busySlots?: { start: `${string}Z`; end: `${string}Z` }[];
+
     creationCrash?: boolean;
+
     updationCrash?: boolean;
 
     getAvailabilityCrash?: boolean;
@@ -3332,7 +3404,9 @@ export function mockVideoApp({
   appStoreLookupKey?: string;
   videoMeetingData?: {
     password: string;
+
     id: string;
+
     url: string;
   };
   creationCrash?: boolean;
@@ -3366,6 +3440,7 @@ export function mockVideoApp({
                 if (creationCrash) {
                   throw new Error("MockVideoApiAdapter.createMeeting fake error");
                 }
+
                 createMeetingCalls.push({
                   credential,
                   args: rest,
@@ -3381,7 +3456,9 @@ export function mockVideoApp({
                 if (updationCrash) {
                   throw new Error("MockVideoApiAdapter.updateMeeting fake error");
                 }
+
                 const [bookingRef, calEvent] = rest;
+
                 updateMeetingCalls.push({
                   credential,
                   args: rest,
@@ -3390,9 +3467,11 @@ export function mockVideoApp({
                 if (!bookingRef.type) {
                   throw new Error("bookingRef.type is not defined");
                 }
+
                 if (!calEvent.organizer) {
                   throw new Error("calEvent.organizer is not defined");
                 }
+
                 log.silly("MockVideoApiAdapter.updateMeeting", JSON.stringify({ bookingRef, calEvent }));
 
                 return Promise.resolve({
@@ -3403,6 +3482,7 @@ export function mockVideoApp({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               deleteMeeting: async (...rest: any[]) => {
                 log.silly("MockVideoApiAdapter.deleteMeeting", JSON.stringify(rest));
+
                 deleteMeetingCalls.push({
                   credential,
                   args: rest,
@@ -3430,7 +3510,9 @@ export function mockSuccessfulVideoMeetingCreation({
   appStoreLookupKey?: string;
   videoMeetingData?: {
     password: string;
+
     id: string;
+
     url: string;
   };
 }) {
@@ -3533,6 +3615,7 @@ export async function mockPaymentSuccessWebhookFromStripe({ externalId }: { exte
     await handleStripePaymentSuccess(getMockedStripePaymentEvent({ paymentIntentId: externalId }));
   } catch (e) {
     log.silly("mockPaymentSuccessWebhookFromStripe:catch", JSON.stringify(e));
+
     webhookResponse = e as HttpError;
   }
   return { webhookResponse };
@@ -3562,6 +3645,7 @@ export function getMockBookingReference(
   if (bookingReference.type === appStoreMetadata.dailyvideo.type) {
     // Right now we seems to be storing credentialId for `dailyvideo` in BookingReference as null. Another possible value is 0 in there.
     credentialId = null;
+
     log.debug("Ensuring null credentialId for dailyvideo");
   }
   return {
@@ -3665,6 +3749,7 @@ expect.extend({
         message: () => `has no timeslots for ${dateString}`,
       };
     }
+
     if (
       !schedule.slots[`${dateString}`]
         .map((slot) => slot.time)
@@ -3681,6 +3766,7 @@ expect.extend({
           )}`,
       };
     }
+
     return {
       pass: true,
       message: () => "has correct timeslots ",
@@ -4499,6 +4585,7 @@ describe("getSchedule", () => {
         }
       );
     });
+
     test("test that booking limit is working correctly if user is all day available", async () => {
       const { dateString: plus1DateString } = getDate({ dateIncrement: 1 });
       const { dateString: plus2DateString } = getDate({ dateIncrement: 2 });
@@ -5428,6 +5515,7 @@ describe("next.config.js - Org Rewrite", () => {
         "some-other"
       );
     });
+
     it("Should ignore Vercel preview URLs", () => {
       const subdomainRegExp = getSubdomainRegExp("https://cal-xxxxxxxx-cal.vercel.app");
       expect(
@@ -5655,6 +5743,7 @@ const MOCK_DATA: Mockdata = {
 describe("Check Booking Limits Tests", () => {
   it("Should return no errors", async () => {
     prismaMock.booking.count.mockResolvedValue(0);
+
     expect(
       checkBookingLimits(MOCK_DATA.bookingLimits, MOCK_DATA.startDate, MOCK_DATA.id)
     ).resolves.toBeTruthy();
@@ -5662,6 +5751,7 @@ describe("Check Booking Limits Tests", () => {
   it("Should throw an error", async () => {
     // Mock there being two a day
     prismaMock.booking.count.mockResolvedValue(2);
+
     expect(
       checkBookingLimits(MOCK_DATA.bookingLimits, MOCK_DATA.startDate, MOCK_DATA.id)
     ).rejects.toThrowError();
@@ -5669,6 +5759,7 @@ describe("Check Booking Limits Tests", () => {
 
   it("Should pass with multiple booking limits", async () => {
     prismaMock.booking.count.mockResolvedValue(0);
+
     expect(
       checkBookingLimits(
         {
@@ -5682,6 +5773,7 @@ describe("Check Booking Limits Tests", () => {
   });
   it("Should pass with multiple booking limits with one undefined", async () => {
     prismaMock.booking.count.mockResolvedValue(0);
+
     expect(
       checkBookingLimits(
         {
@@ -5695,6 +5787,7 @@ describe("Check Booking Limits Tests", () => {
   });
   it("Should handle mutiple limits correctly", async () => {
     prismaMock.booking.count.mockResolvedValue(1);
+
     expect(
       checkBookingLimit({
         key: "PER_DAY",
@@ -5703,7 +5796,9 @@ describe("Check Booking Limits Tests", () => {
         eventId: MOCK_DATA.id,
       })
     ).resolves.not.toThrow();
+
     prismaMock.booking.count.mockResolvedValue(3);
+
     expect(
       checkBookingLimit({
         key: "PER_WEEK",
@@ -5757,18 +5852,21 @@ const MOCK_DATA: MockData = {
 describe("Check Duration Limits Tests", () => {
   it("Should return no errors if limit is not reached", async () => {
     prismaMock.$queryRaw.mockResolvedValue([{ totalMinutes: 0 }]);
+
     await expect(
       checkDurationLimits({ PER_DAY: 60 }, MOCK_DATA.startDate, MOCK_DATA.id)
     ).resolves.toBeTruthy();
   });
   it("Should throw an error if limit is reached", async () => {
     prismaMock.$queryRaw.mockResolvedValue([{ totalMinutes: 60 }]);
+
     await expect(
       checkDurationLimits({ PER_DAY: 60 }, MOCK_DATA.startDate, MOCK_DATA.id)
     ).rejects.toThrowError();
   });
   it("Should pass with multiple duration limits", async () => {
     prismaMock.$queryRaw.mockResolvedValue([{ totalMinutes: 30 }]);
+
     await expect(
       checkDurationLimits(
         {
@@ -5782,6 +5880,7 @@ describe("Check Duration Limits Tests", () => {
   });
   it("Should pass with multiple duration limits with one undefined", async () => {
     prismaMock.$queryRaw.mockResolvedValue([{ totalMinutes: 30 }]);
+
     await expect(
       checkDurationLimits(
         {
@@ -5795,6 +5894,7 @@ describe("Check Duration Limits Tests", () => {
   });
   it("Should return no errors if limit is not reached with multiple bookings", async () => {
     prismaMock.$queryRaw.mockResolvedValue([{ totalMinutes: 60 }]);
+
     await expect(
       checkDurationLimits(
         {
@@ -5808,6 +5908,7 @@ describe("Check Duration Limits Tests", () => {
   });
   it("Should throw an error if one of the limit is reached with multiple bookings", async () => {
     prismaMock.$queryRaw.mockResolvedValue([{ totalMinutes: 90 }]);
+
     await expect(
       checkDurationLimits(
         {
@@ -5825,6 +5926,7 @@ describe("Check Duration Limits Tests", () => {
 describe("Check Duration Limit Tests", () => {
   it("Should return no busyTimes and no error if limit is not reached", async () => {
     prismaMock.$queryRaw.mockResolvedValue([{ totalMinutes: 60 }]);
+
     await expect(
       checkDurationLimit({
         key: "PER_DAY",
@@ -6129,6 +6231,7 @@ describe("handleChildrenEventTypes", () => {
       expect(result.deletedUserIds).toEqual([]);
       expect(result.deletedExistentEventTypes).toEqual([123]);
     });
+
     it("Deletes existent event types for old users updated", async () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -6545,6 +6648,7 @@ describe("Handler: requestReschedule", () => {
         bookNewTimePath: "/team/team-1/event-type-1",
       });
     });
+
     test.todo("Verify that the email should go to organizer as well as the team members");
   });
 });
@@ -6644,6 +6748,7 @@ export const abTestMiddlewareFactory =
     }
 
     const url = req.nextUrl.clone();
+
     url.pathname = `future${pathname}/`;
 
     return NextResponse.rewrite(url, response);
@@ -6866,8 +6971,11 @@ test.describe("Organization", () => {
     const orgDomain = `${orgOwner.username}-org`;
 
     const orgName = capitalize(`${orgOwner.username}-org`);
+
     await orgOwner.apiLogin();
+
     await page.goto("/settings/organizations/new");
+
     await page.waitForLoadState("networkidle");
 
     await test.step("Basic info", async () => {
@@ -6894,6 +7002,7 @@ test.describe("Organization", () => {
       await test.step("Verification", async () => {
         // Code verification
         await expect(page.locator("#modal-title")).toBeVisible();
+
         await page.locator("input[name='2fa1']").fill(generateTotpCode(`john@${orgDomain}.com`));
         // Check admin email about DNS pending action
         await expectInvitationEmailToBeReceived(
@@ -7069,6 +7178,7 @@ test.describe("Organization", () => {
         });
 
         assertInviteLink(inviteLink);
+
         await signupFromEmailInviteLink({
           browser,
           inviteLink,
@@ -7077,6 +7187,7 @@ test.describe("Organization", () => {
         });
 
         const dbUser = await prisma.user.findUnique({ where: { email: invitedUserEmail } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
 
         await expectUserToBeAMemberOfOrganization({
@@ -7094,10 +7205,13 @@ test.describe("Organization", () => {
         const email = users.trackEmail({ username: "rick", domain: "domain.com" });
         // '-domain' because the email doesn't match orgAutoAcceptEmail
         const usernameDerivedFromEmail = `${email.split("@")[0]}-domain`;
+
         await signupFromInviteLink({ browser, inviteLink, email });
 
         const dbUser = await prisma.user.findUnique({ where: { email } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
+
         await expectUserToBeAMemberOfOrganization({
           page,
           username: usernameDerivedFromEmail,
@@ -7116,12 +7230,15 @@ test.describe("Organization", () => {
 
       await test.step("By email", async () => {
         await page.goto(`/settings/teams/${team.id}/members`);
+
         await page.waitForLoadState("networkidle");
 
         const invitedUserEmail = users.trackEmail({ username: "rick", domain: "domain.com" });
         // '-domain' because the email doesn't match orgAutoAcceptEmail
         const usernameDerivedFromEmail = `${invitedUserEmail.split("@")[0]}-domain`;
+
         await inviteAnEmail(page, invitedUserEmail);
+
         await expectUserToBeAMemberOfTeam({
           page,
           teamId: team.id,
@@ -7159,6 +7276,7 @@ test.describe("Organization", () => {
         });
 
         const dbUser = await prisma.user.findUnique({ where: { email: invitedUserEmail } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
 
         await expectUserToBeAMemberOfTeam({
@@ -7187,10 +7305,13 @@ test.describe("Organization", () => {
         const email = users.trackEmail({ username: "rick", domain: "domain.com" });
         // '-domain' because the email doesn't match orgAutoAcceptEmail
         const usernameDerivedFromEmail = `${email.split("@")[0]}-domain`;
+
         await signupFromInviteLink({ browser, inviteLink, email });
 
         const dbUser = await prisma.user.findUnique({ where: { email } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
+
         await expectUserToBeAMemberOfTeam({
           teamId: team.id,
           page,
@@ -7223,6 +7344,7 @@ test.describe("Organization", () => {
         const invitedUserEmail = users.trackEmail({ username: "rick", domain: "example.com" });
 
         const usernameDerivedFromEmail = invitedUserEmail.split("@")[0];
+
         await inviteAnEmail(page, invitedUserEmail);
 
         const inviteLink = await expectInvitationEmailToBeReceived(
@@ -7242,6 +7364,7 @@ test.describe("Organization", () => {
         });
 
         assertInviteLink(inviteLink);
+
         await signupFromEmailInviteLink({
           browser,
           inviteLink,
@@ -7250,6 +7373,7 @@ test.describe("Organization", () => {
         });
 
         const dbUser = await prisma.user.findUnique({ where: { email: invitedUserEmail } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
 
         await expectUserToBeAMemberOfOrganization({
@@ -7267,10 +7391,13 @@ test.describe("Organization", () => {
         const email = users.trackEmail({ username: "rick", domain: "example.com" });
 
         const usernameDerivedFromEmail = email.split("@")[0];
+
         await signupFromInviteLink({ browser, inviteLink, email });
 
         const dbUser = await prisma.user.findUnique({ where: { email } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
+
         await expectUserToBeAMemberOfOrganization({
           page,
           username: usernameDerivedFromEmail,
@@ -7295,12 +7422,15 @@ test.describe("Organization", () => {
 
       await test.step("By email", async () => {
         await page.goto(`/settings/teams/${team.id}/members`);
+
         await page.waitForLoadState("networkidle");
 
         const invitedUserEmail = users.trackEmail({ username: "rick", domain: "example.com" });
 
         const usernameDerivedFromEmail = invitedUserEmail.split("@")[0];
+
         await inviteAnEmail(page, invitedUserEmail);
+
         await expectUserToBeAMemberOfTeam({
           page,
           teamId: team.id,
@@ -7336,6 +7466,7 @@ test.describe("Organization", () => {
         });
 
         const dbUser = await prisma.user.findUnique({ where: { email: invitedUserEmail } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
 
         await expectUserToBeAMemberOfTeam({
@@ -7368,7 +7499,9 @@ test.describe("Organization", () => {
         await signupFromInviteLink({ browser, inviteLink, email });
 
         const dbUser = await prisma.user.findUnique({ where: { email } });
+
         expect(dbUser?.username).toBe(usernameDerivedFromEmail);
+
         await expectUserToBeAMemberOfTeam({
           teamId: team.id,
           page,
@@ -7377,6 +7510,7 @@ test.describe("Organization", () => {
           isMemberShipAccepted: true,
           email: email,
         });
+
         await expectUserToBeAMemberOfOrganization({
           page,
           username: usernameDerivedFromEmail,
@@ -7543,6 +7677,7 @@ test.describe("user1NotMemberOfOrg1 is part of team1MemberOfOrg1", () => {
     });
 
     const { team: team1MemberOfOrg1 } = await user1NotMemberOfOrg1.getFirstTeamMembership();
+
     await moveTeamToOrg({ team: team1MemberOfOrg1, org });
 
     await user1NotMemberOfOrg1.apiLogin();
@@ -7550,6 +7685,7 @@ test.describe("user1NotMemberOfOrg1 is part of team1MemberOfOrg1", () => {
     await page.goto(`/settings/teams/${team1MemberOfOrg1.id}/profile`);
 
     const domain = await page.locator(".testid-leading-text-team-url").textContent();
+
     expect(domain).toContain(org.slug);
   });
 
@@ -7567,10 +7703,13 @@ test.describe("user1NotMemberOfOrg1 is part of team1MemberOfOrg1", () => {
     });
 
     const { team: team1MemberOfOrg1 } = await user1NotMemberOfOrg1.getFirstTeamMembership();
+
     await moveTeamToOrg({ team: team1MemberOfOrg1, org });
 
     await user1NotMemberOfOrg1.apiLogin();
+
     await page.goto("/event-types");
+
     await page.waitForLoadState("networkidle");
 
     const userEventLinksLocators = await page
@@ -7659,15 +7798,18 @@ test.describe("Users can impersonate", async () => {
     const userToImpersonate = await users.create({ disableImpersonation: false });
 
     await user.apiLogin();
+
     await page.waitForLoadState();
 
     await page.goto("/settings/admin/impersonation");
+
     await page.waitForLoadState();
 
     const adminInput = page.getByTestId("admin-impersonation-input");
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore the username does exist
     await adminInput.fill(userToImpersonate.username);
+
     await page.getByTestId("impersonation-submit").click();
 
     // // Wait for sign in to complete
@@ -7680,6 +7822,7 @@ test.describe("Users can impersonate", async () => {
     const impersonatedUser = await impersonatedUsernameInput.inputValue();
 
     await expect(stopImpersonatingButton).toBeVisible();
+
     await expect(impersonatedUser).toBe(userToImpersonate.username);
 
     await stopImpersonatingButton.click();
@@ -7701,6 +7844,7 @@ import { test } from "../lib/fixtures";
 test.describe("UploadAvatar", async () => {
   test("can upload an image", async ({ page, users }) => {
     const user = await users.create({});
+
     await user.apiLogin();
 
     await test.step("Can upload an initial picture", async () => {
@@ -7779,6 +7923,7 @@ testBothFutureAndLegacyRoutes.describe("App Store - Authed", (routeVariant) => {
 
   test("Browse apple-calendar and try to install", async ({ page, users }) => {
     const pro = await users.create();
+
     await pro.apiLogin();
 
     await installAppleCalendar(page);
@@ -7788,12 +7933,19 @@ testBothFutureAndLegacyRoutes.describe("App Store - Authed", (routeVariant) => {
 
   test("Installed Apps - Navigation", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
+
     await page.goto("/apps/installed");
+
     await page.waitForSelector('[data-testid="connect-calendar-apps"]');
+
     await page.click('[data-testid="vertical-tab-payment"]');
+
     await page.waitForSelector('[data-testid="connect-payment-apps"]');
+
     await page.click('[data-testid="vertical-tab-automation"]');
+
     await page.waitForSelector('[data-testid="connect-automation-apps"]');
   });
 });
@@ -7840,31 +7992,41 @@ test("dynamic booking", async ({ page, users }) => {
   await test.step("can reschedule a booking", async () => {
     // Logged in
     await page.goto("/bookings/upcoming");
+
     await page.locator('[data-testid="edit_booking"]').nth(0).click();
+
     await page.locator('[data-testid="reschedule"]').click();
+
     await page.waitForURL((url) => {
       const bookingId = url.searchParams.get("rescheduleUid");
       return !!bookingId;
     });
+
     await selectSecondAvailableTimeSlotNextMonth(page);
 
     // No need to fill fields since they should be already filled
     await page.locator('[data-testid="confirm-reschedule-button"]').click();
+
     await page.waitForURL((url) => {
       return url.pathname.startsWith("/booking");
     });
+
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
   });
 
   await test.step("Can cancel the recently created booking", async () => {
     await page.goto("/bookings/upcoming");
+
     await page.locator('[data-testid="cancel"]').click();
+
     await page.waitForURL((url) => {
       return url.pathname.startsWith("/booking");
     });
+
     await page.locator('[data-testid="confirm_cancel"]').click();
 
     const cancelledHeadline = page.locator('[data-testid="cancelled-headline"]');
+
     await expect(cancelledHeadline).toBeVisible();
   });
 });
@@ -7872,6 +8034,7 @@ test("dynamic booking", async ({ page, users }) => {
 test.describe("Organization:", () => {
   test.afterEach(({ orgs, users }) => {
     orgs.deleteAll();
+
     users.deleteAll();
   });
   test("Can book a time slot for an organization", async ({ page, users, orgs }) => {
@@ -7890,6 +8053,7 @@ test.describe("Organization:", () => {
       name: "User 2",
       roleInOrganization: MembershipRole.ADMIN,
     });
+
     await doOnOrgDomain(
       {
         orgSlug: org.slug,
@@ -7897,10 +8061,13 @@ test.describe("Organization:", () => {
       },
       async () => {
         await page.goto(`/${user1.username}+${user2.username}`);
+
         await selectFirstAvailableTimeSlotNextMonth(page);
+
         await bookTimeSlot(page, {
           title: "Test meeting",
         });
+
         await expect(page.getByTestId("success-page")).toBeVisible();
         // All the teammates should be in the booking
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -7984,6 +8151,7 @@ testBothFutureAndLegacyRoutes.describe("Settings/admin tests", () => {
     const user = await users.create({
       role: "ADMIN",
     });
+
     await user.apiLogin();
 
     await page.goto("/settings/admin");
@@ -8029,7 +8197,9 @@ test.describe("Change username on settings", () => {
     const usernameInput = page.locator("[data-testid=username-input]");
 
     await usernameInput.fill("demousernamex");
+
     await page.click("[data-testid=update-username-btn]");
+
     await Promise.all([
       page.click("[data-testid=save-username]"),
       page.getByTestId("toast-success").waitFor(),
@@ -8054,11 +8224,14 @@ test.describe("Change username on settings", () => {
     const usernameInput = page.locator("[data-testid=username-input]");
     // User can change username to include dots(or periods)
     await usernameInput.fill("demo.username");
+
     await page.click("[data-testid=update-username-btn]");
+
     await Promise.all([
       page.click("[data-testid=save-username]"),
       page.getByTestId("toast-success").waitFor(),
     ]);
+
     await page.waitForLoadState("networkidle");
 
     const updatedUser = await prisma.user.findUniqueOrThrow({
@@ -8071,6 +8244,7 @@ test.describe("Change username on settings", () => {
 
     // Check if user avatar can be accessed and response headers contain 'image/' in the content type
     const response = await page.goto("/demo.username/avatar.png");
+
     expect(response?.headers()?.["content-type"]).toContain("image/");
   });
 
@@ -8081,9 +8255,11 @@ test.describe("Change username on settings", () => {
     test.skip(IS_SELF_HOSTED, "It shouldn't run on self hosted");
 
     const user = await users.create();
+
     await stripe.customers.create({ email: `${user?.username}@example.com` });
 
     await user.apiLogin();
+
     await page.goto("/settings/my-account/profile");
 
     // Change username from normal to premium
@@ -8136,6 +8312,7 @@ import { test } from "./lib/fixtures";
 test.describe("AppListCard", async () => {
   test("should remove the highlight from the URL", async ({ page, users }) => {
     const user = await users.create({});
+
     await user.apiLogin();
 
     await page.goto("/apps/installed/conferencing?hl=daily-video");
@@ -8172,6 +8349,7 @@ test.afterEach(async ({ users }) => {
 testBothFutureAndLegacyRoutes.describe("free user", () => {
   test.beforeEach(async ({ page, users }) => {
     const free = await users.create(freeUserObj);
+
     await page.goto(`/${free.username}`);
   });
 
@@ -8203,6 +8381,7 @@ testBothFutureAndLegacyRoutes.describe("free user", () => {
       booker: bookerObj,
       eventTitle,
     });
+
     await page.goto(bookingUrl);
 
     // book same time spot again
@@ -8215,11 +8394,13 @@ testBothFutureAndLegacyRoutes.describe("free user", () => {
 testBothFutureAndLegacyRoutes.describe("pro user", () => {
   test.beforeEach(async ({ page, users }) => {
     const pro = await users.create();
+
     await page.goto(`/${pro.username}`);
   });
 
   test("pro user's page has at least 2 visible events", async ({ page }) => {
     const $eventTypes = page.locator("[data-testid=event-types] > *");
+
     expect(await $eventTypes.count()).toBeGreaterThanOrEqual(2);
   });
 
@@ -8231,20 +8412,28 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     const [pro] = users.get();
 
     const [eventType] = pro.eventTypes;
+
     await bookings.create(pro.id, pro.username, eventType.id);
 
     await pro.apiLogin();
+
     await page.goto("/bookings/upcoming");
+
     await page.waitForSelector('[data-testid="bookings"]');
+
     await page.locator('[data-testid="edit_booking"]').nth(0).click();
+
     await page.locator('[data-testid="reschedule"]').click();
+
     await page.waitForURL((url) => {
       const bookingId = url.searchParams.get("rescheduleUid");
       return !!bookingId;
     });
+
     await selectFirstAvailableTimeSlotNextMonth(page);
 
     await page.locator('[data-testid="confirm-reschedule-button"]').click();
+
     await page.waitForURL((url) => {
       return url.pathname.startsWith("/booking");
     });
@@ -8256,27 +8445,37 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
   }, testInfo) => {
     // Because it tests the entire booking flow + the cancellation + rebooking
     test.setTimeout(testInfo.timeout * 3);
+
     await bookFirstEvent(page);
+
     await expect(page.locator(`[data-testid="attendee-email-${testEmail}"]`)).toHaveText(testEmail);
+
     await expect(page.locator(`[data-testid="attendee-name-${testName}"]`)).toHaveText(testName);
 
     const [pro] = users.get();
+
     await pro.apiLogin();
 
     await page.goto("/bookings/upcoming");
+
     await page.locator('[data-testid="cancel"]').click();
+
     await page.waitForURL((url) => {
       return url.pathname.startsWith("/booking/");
     });
+
     await page.locator('[data-testid="confirm_cancel"]').click();
 
     const cancelledHeadline = page.locator('[data-testid="cancelled-headline"]');
+
     await expect(cancelledHeadline).toBeVisible();
 
     await expect(page.locator(`[data-testid="attendee-email-${testEmail}"]`)).toHaveText(testEmail);
+
     await expect(page.locator(`[data-testid="attendee-name-${testName}"]`)).toHaveText(testName);
 
     await page.goto(`/${pro.username}`);
+
     await bookFirstEvent(page);
   });
 
@@ -8286,24 +8485,33 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
   }, testInfo) => {
     // Because it tests the entire booking flow + the cancellation + rebooking
     test.setTimeout(testInfo.timeout * 3);
+
     await bookFirstEvent(page);
+
     await expect(page.locator(`[data-testid="attendee-email-${testEmail}"]`)).toHaveText(testEmail);
+
     await expect(page.locator(`[data-testid="attendee-name-${testName}"]`)).toHaveText(testName);
 
     const [pro] = users.get();
+
     await pro.apiLogin();
 
     await page.goto("/bookings/upcoming");
+
     await page.locator('[data-testid="cancel"]').click();
+
     await page.waitForURL((url) => {
       return url.pathname.startsWith("/booking/");
     });
+
     await page.locator('[data-testid="confirm_cancel"]').click();
 
     const cancelledHeadline = page.locator('[data-testid="cancelled-headline"]');
+
     await expect(cancelledHeadline).toBeVisible();
 
     const bookingCancelledId = new URL(page.url()).pathname.split("/booking/")[1];
+
     await page.goto(`/reschedule/${bookingCancelledId}`);
     // Should be redirected to the booking details page which shows the cancelled headline
     await expect(page.locator('[data-testid="cancelled-headline"]')).toBeVisible();
@@ -8316,9 +8524,11 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     await bookOptinEvent(page);
 
     const [pro] = users.get();
+
     await pro.apiLogin();
 
     await page.goto("/bookings/unconfirmed");
+
     await Promise.all([
       page.click('[data-testid="confirm"]'),
       page.waitForResponse((response) => response.url().includes("/api/trpc/bookings/confirm")),
@@ -8331,13 +8541,19 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     const additionalGuests = ["test@gmail.com", "test2@gmail.com"];
 
     await page.click('[data-testid="event-type-link"]');
+
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await page.fill('[name="name"]', "test1234");
+
     await page.fill('[name="email"]', "test1234@example.com");
+
     await page.locator('[data-testid="add-guests"]').click();
 
     await page.locator('input[type="email"]').nth(1).fill(additionalGuests[0]);
+
     await page.locator('[data-testid="add-another-guest"]').click();
+
     await page.locator('input[type="email"]').nth(2).fill(additionalGuests[1]);
 
     await page.locator('[data-testid="confirm-book-button"]').click();
@@ -8347,6 +8563,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     const promises = additionalGuests.map(async (email) => {
       await expect(page.locator(`[data-testid="attendee-email-${email}"]`)).toHaveText(email);
     });
+
     await Promise.all(promises);
   });
 
@@ -8354,22 +8571,31 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     await page.click('[data-testid="event-type-link"]');
 
     const initialUrl = page.url();
+
     await selectFirstAvailableTimeSlotNextMonth(page);
 
     const pageTwo = await context.newPage();
+
     await pageTwo.goto(initialUrl);
+
     await pageTwo.waitForURL(initialUrl);
 
     await pageTwo.waitForSelector('[data-testid="event-type-link"]');
 
     const eventTypeLink = pageTwo.locator('[data-testid="event-type-link"]').first();
+
     await eventTypeLink.click();
 
     await pageTwo.waitForLoadState("networkidle");
+
     await pageTwo.locator('[data-testid="incrementMonth"]').waitFor();
+
     await pageTwo.click('[data-testid="incrementMonth"]');
+
     await pageTwo.waitForLoadState("networkidle");
+
     await pageTwo.locator('[data-testid="day"][data-disabled="false"]').nth(0).waitFor();
+
     await pageTwo.locator('[data-testid="day"][data-disabled="false"]').nth(0).click();
 
     // 9:30 should be the first available time slot
@@ -8378,6 +8604,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     const firstSlotAvailable = pageTwo.locator('[data-testid="time"]').nth(0);
     // Find text inside the element
     const firstSlotAvailableText = await firstSlotAvailable.innerText();
+
     expect(firstSlotAvailableText).toContain("9:30");
   });
 
@@ -8386,29 +8613,41 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
     page,
   }) => {
     const initialUrl = page.url();
+
     await page.waitForSelector('[data-testid="event-type-link"]');
 
     const eventTypeLink = page.locator('[data-testid="event-type-link"]').first();
+
     await eventTypeLink.click();
+
     await selectFirstAvailableTimeSlotNextMonth(page);
 
     const pageTwo = await context.newPage();
+
     await pageTwo.goto(initialUrl);
+
     await pageTwo.waitForURL(initialUrl);
 
     await pageTwo.waitForSelector('[data-testid="event-type-link"]');
 
     const eventTypeLinkTwo = pageTwo.locator('[data-testid="event-type-link"]').first();
+
     await eventTypeLinkTwo.click();
 
     await page.locator('[data-testid="back"]').waitFor();
+
     await page.click('[data-testid="back"]');
 
     await pageTwo.waitForLoadState("networkidle");
+
     await pageTwo.locator('[data-testid="incrementMonth"]').waitFor();
+
     await pageTwo.click('[data-testid="incrementMonth"]');
+
     await pageTwo.waitForLoadState("networkidle");
+
     await pageTwo.locator('[data-testid="day"][data-disabled="false"]').nth(0).waitFor();
+
     await pageTwo.locator('[data-testid="day"][data-disabled="false"]').nth(0).click();
 
     await pageTwo.locator('[data-testid="time"]').nth(0).waitFor();
@@ -8417,6 +8656,7 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
 
     // Find text inside the element
     const firstSlotAvailableText = await firstSlotAvailable.innerText();
+
     expect(firstSlotAvailableText).toContain("9:00");
   });
 });
@@ -8424,7 +8664,9 @@ testBothFutureAndLegacyRoutes.describe("pro user", () => {
 testBothFutureAndLegacyRoutes.describe("prefill", () => {
   test("logged in", async ({ page, users }) => {
     const prefill = await users.create({ name: "Prefill User" });
+
     await prefill.apiLogin();
+
     await page.goto("/pro/30min");
 
     await test.step("from session", async () => {
@@ -8449,15 +8691,23 @@ testBothFutureAndLegacyRoutes.describe("prefill", () => {
     users,
   }) => {
     await page.goto("/pro/30min");
+
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await page.fill('[name="name"]', "John Doe");
+
     await page.fill('[name="email"]', "john@example.com");
+
     await page.fill('[name="notes"]', "Test notes");
+
     await page.click('[data-testid="back"]');
 
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await expect(page.locator('[name="name"]')).toHaveValue("John Doe");
+
     await expect(page.locator('[name="email"]')).toHaveValue("john@example.com");
+
     await expect(page.locator('[name="notes"]')).toHaveValue("Test notes");
   });
 
@@ -8481,6 +8731,7 @@ testBothFutureAndLegacyRoutes.describe("prefill", () => {
 testBothFutureAndLegacyRoutes.describe("Booking on different layouts", () => {
   test.beforeEach(async ({ page, users }) => {
     const user = await users.create();
+
     await page.goto(`/${user.username}`);
   });
 
@@ -8496,7 +8747,9 @@ testBothFutureAndLegacyRoutes.describe("Booking on different layouts", () => {
 
     // Fill what is this meeting about? name email and notes
     await page.locator('[name="name"]').fill("Test name");
+
     await page.locator('[name="email"]').fill(`${randomString(4)}@example.com`);
+
     await page.locator('[name="notes"]').fill("Test notes");
 
     await page.click('[data-testid="confirm-book-button"]');
@@ -8521,7 +8774,9 @@ testBothFutureAndLegacyRoutes.describe("Booking on different layouts", () => {
 
     // Fill what is this meeting about? name email and notes
     await page.locator('[name="name"]').fill("Test name");
+
     await page.locator('[name="email"]').fill(`${randomString(4)}@example.com`);
+
     await page.locator('[name="notes"]').fill("Test notes");
 
     await page.click('[data-testid="confirm-book-button"]');
@@ -8557,11 +8812,13 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
     );
 
     const team = await testUser.getFirstTeamMembership();
+
     await page.goto(`/team/${team.team.slug}`);
   });
 
   test("Does not book round robin host outside availability with date override", async ({ page, users }) => {
     const [testUser] = users.get();
+
     await testUser.apiLogin();
 
     const team = await testUser.getFirstTeamMembership();
@@ -8577,6 +8834,7 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
     await page.waitForLoadState("networkidle");
 
     await page.locator('[name="name"]').fill("Test name");
+
     await page.locator('[name="email"]').fill(`${randomString(4)}@example.com`);
 
     await page.click('[data-testid="confirm-book-button"]');
@@ -8602,6 +8860,7 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
     await page.click('[data-testid="event-type-link"]');
 
     await page.click('[data-testid="incrementMonth"]');
+
     await page.click('[data-testid="incrementMonth"]');
 
     // Again book a 9AM slot for 120 minutes where test-user is not available
@@ -8610,6 +8869,7 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
     await page.waitForLoadState("networkidle");
 
     await page.locator('[name="name"]').fill("Test name");
+
     await page.locator('[name="email"]').fill(`${randomString(4)}@example.com`);
 
     await page.click('[data-testid="confirm-book-button"]');
@@ -8623,6 +8883,7 @@ testBothFutureAndLegacyRoutes.describe("Booking round robin event", () => {
     const hostSecondBooking = page.locator('[data-testid="booking-host-name"]');
 
     const hostNameSecondBooking = await hostSecondBooking.innerText();
+
     expect(hostNameSecondBooking).toBe("teammate-1"); // teammate-1 should be booked again
   });
 });
@@ -8645,6 +8906,7 @@ testBothFutureAndLegacyRoutes.describe("Forgot password", async () => {
     await page.goto("/auth/forgot-password");
 
     await page.fill('input[name="email"]', `${user.username}@example.com`);
+
     await page.press('input[name="email"]', "Enter");
 
     // wait for confirm page.
@@ -8696,6 +8958,7 @@ testBothFutureAndLegacyRoutes.describe("Forgot password", async () => {
     await page.waitForSelector("text=Reset Password");
 
     await page.fill('input[name="new_password"]', newPassword);
+
     await page.click('button[type="submit"]');
 
     await page.waitForSelector("text=Password updated");
@@ -8727,6 +8990,7 @@ import { test } from "../lib/fixtures";
 test.describe("Can signup from a team invite", async () => {
   test.beforeEach(async ({ users }) => {
     const proUser = await users.create();
+
     await proUser.apiLogin();
   });
   test.afterEach(async ({ users }) => users.deleteAll());
@@ -8741,17 +9005,23 @@ test.describe("Can signup from a team invite", async () => {
       password: `${proUser.username}-member`,
       email: `${proUser.username}-member@example.com`,
     };
+
     await page.goto("/settings/teams/new");
+
     await page.waitForLoadState("networkidle");
 
     // Create a new team
     await page.locator('input[name="name"]').fill(teamName);
+
     await page.locator('input[name="slug"]').fill(teamName);
+
     await page.locator('button[type="submit"]').click();
 
     // Add new member to team
     await page.click('[data-testid="new-member-button"]');
+
     await page.fill('input[id="inviteUser"]', testUser.email);
+
     await page.click('[data-testid="invite-new-member-button"]');
 
     // TODO: Adapt to new flow
@@ -8857,6 +9127,7 @@ test.describe("Booking With Address Question and Each Other Question", () => {
 
   test.beforeEach(async ({ page, users }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
   });
 
@@ -9340,8 +9611,11 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
 
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -9389,11 +9663,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and Phone Question", () => {
       test("Checkbox Group required and Phone required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9402,19 +9680,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "phone",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and Phone not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("phone", "phone-test", "phone test", false, "phone test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9423,9 +9709,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "phone",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9433,11 +9723,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and checkbox Question", () => {
       test("Checkbox Group required and checkbox required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9446,19 +9740,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "boolean",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and checkbox not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9467,9 +9769,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "boolean",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9477,11 +9783,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and Long text Question", () => {
       test("Checkbox Group required and Long text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9490,19 +9800,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "textarea",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and Long text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", false, "textarea test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9511,9 +9829,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "textarea",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9521,6 +9843,7 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and Multi email Question", () => {
       test("Checkbox Group required and Multi email required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion(
           "multiemail",
           "multiemail-test",
@@ -9528,10 +9851,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           true,
           "multiemail test"
         );
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9540,14 +9866,19 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "multiemail",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and Multi email not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion(
           "multiemail",
           "multiemail-test",
@@ -9555,10 +9886,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           false,
           "multiemail test"
         );
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9567,9 +9901,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "multiemail",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9577,11 +9915,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and multiselect Question", () => {
       test("Checkbox Group required and multiselect text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9590,19 +9932,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "multiselect",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and multiselect text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9611,9 +9961,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "multiselect",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9621,11 +9975,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and Number Question", () => {
       test("Checkbox Group required and Number required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("number", "number-test", "number test", true, "number test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9634,19 +9992,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "number",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and Number not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("number", "number-test", "number test", false, "number test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9655,9 +10021,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "number",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9665,11 +10035,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and Radio group Question", () => {
       test("Checkbox Group required and Radio group required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9678,19 +10052,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "radio",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and Radio group not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("radio", "radio-test", "radio test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9699,9 +10081,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "radio",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9709,11 +10095,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and select Question", () => {
       test("Checkbox Group required and select required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9722,19 +10112,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "select",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and select not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9743,9 +10141,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "select",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9753,11 +10155,15 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
     test.describe("Booking With Checkbox Group Question and Short text question", () => {
       test("Checkbox Group required and Short Text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9766,19 +10172,27 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "text",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Checkbox Group and Short Text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9787,9 +10201,13 @@ test.describe("Booking With Checkbox Group Question and Each Other Question", ()
           secondQuestion: "text",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -9817,8 +10235,11 @@ const resolutions = [
 test.describe("Booking With All Questions", () => {
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
 
     const allQuestions = [
@@ -9871,8 +10292,11 @@ test.describe("Booking With All Questions", () => {
 test.describe("Booking With no questions", () => {
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -9889,8 +10313,11 @@ test.describe("Booking With no questions", () => {
 test.describe("Booking page with no questions", () => {
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -9911,8 +10338,11 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
 
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -9961,11 +10391,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
       const bookingOptions = { hasPlaceholder: false, isRequired: true };
       test("Phone and checkbox group required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9974,19 +10408,27 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "checkbox",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and checkbox group not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -9995,9 +10437,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "checkbox",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10005,11 +10451,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
     test.describe("Booking With Phone Question and checkbox Question", () => {
       test("Phone and checkbox required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10018,18 +10468,26 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "boolean",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
       test("Phone required and checkbox not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10038,9 +10496,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "boolean",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10048,11 +10510,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
     test.describe("Booking With Phone Question and Long text Question", () => {
       test("Phone and Long text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10061,19 +10527,27 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "textarea",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and Long text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", false, "textarea test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10082,9 +10556,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "textarea",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10093,6 +10571,7 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
       const bookingOptions = { hasPlaceholder: true, isRequired: true };
       test("Phone and Multi email required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion(
           "multiemail",
           "multiemail-test",
@@ -10100,10 +10579,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           true,
           "multiemail test"
         );
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10112,14 +10594,19 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "multiemail",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and Multi email not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion(
           "multiemail",
           "multiemail-test",
@@ -10127,10 +10614,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           false,
           "multiemail test"
         );
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10139,9 +10629,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "multiemail",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10149,11 +10643,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
     test.describe("Booking With Phone Question and multiselect Question", () => {
       test("Phone and multiselect text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10162,19 +10660,27 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "multiselect",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and multiselect text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10183,9 +10689,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "multiselect",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10193,11 +10703,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
     test.describe("Booking With Phone Question and Number Question", () => {
       test("Phone and Number required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("number", "number-test", "number test", true, "number test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10206,19 +10720,27 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "number",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and Number not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("number", "number-test", "number test", false, "number test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10227,9 +10749,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "number",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10237,11 +10763,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
     test.describe("Booking With Phone Question and Radio group Question", () => {
       test("Phone and Radio group required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10250,19 +10780,27 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "radio",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and Radio group not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("radio", "radio-test", "radio test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10271,9 +10809,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "radio",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10281,11 +10823,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
     test.describe("Booking With Phone Question and select Question", () => {
       test("Phone and select required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10294,19 +10840,27 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "select",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and select not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10315,9 +10869,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "select",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10325,11 +10883,15 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
     test.describe("Booking With Phone Question and Short text question", () => {
       test("Phone and Short text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10338,19 +10900,27 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "text",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Phone required and Short text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10359,9 +10929,13 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
           secondQuestion: "text",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10377,47 +10951,74 @@ test.describe("Collective event type", () => {
       { name: "testuser" },
       { hasTeam: true, schedulingType: "COLLECTIVE", teamEventTitle }
     );
+
     await userFixture.apiLogin();
+
     userId = userFixture.id;
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType(teamEventTitle);
   });
   test("Book a Collective event type", async ({ bookingPage }) => {
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.selectTimeSlot(eventTypePage);
+
     await bookingPage.fillEmailAndName(eventTypePage);
+
     await bookingPage.confirmBooking(eventTypePage);
+
     await bookingPage.backToBookings(eventTypePage);
+
     await bookingPage.assertLabelWithCorrectTeamName(eventTypePage, teamEventTitle);
+
     await bookingPage.assertBookingWithCorrectTitleAndDescription(eventTypePage, {
       profileName: "testuser",
       bookingName: teamEventTitle,
       teamName: `user-id-${userId}'s Team`,
     });
+
     await bookingPage.clickOnBooking(eventTypePage, teamEventTitle);
+
     await bookingPage.rescheduleBooking(eventTypePage);
+
     await bookingPage.assertBookingRescheduled(eventTypePage);
+
     await bookingPage.cancelBookingWithReason(eventTypePage);
+
     await bookingPage.assertBookingCanceled(eventTypePage);
   });
   test("Book a Collective event type (with added guest)", async ({ bookingPage }) => {
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.selectTimeSlot(eventTypePage);
+
     await bookingPage.fillEmailAndName(eventTypePage);
+
     await bookingPage.addGuests(eventTypePage, { guests: ["test@example.com"] });
+
     await bookingPage.confirmBooking(eventTypePage);
+
     await bookingPage.backToBookings(eventTypePage);
+
     await bookingPage.assertLabelWithCorrectTeamName(eventTypePage, teamEventTitle);
+
     await bookingPage.assertBookingWithCorrectTitleAndDescription(eventTypePage, {
       profileName: "testuser",
       bookingName: teamEventTitle,
       teamName: `user-id-${userId}'s Team`,
       aditionalGuestEmail: "test@example.com",
     });
+
     await bookingPage.clickOnBooking(eventTypePage, teamEventTitle);
+
     await bookingPage.rescheduleBooking(eventTypePage);
+
     await bookingPage.assertBookingRescheduled(eventTypePage);
+
     await bookingPage.cancelBookingWithReason(eventTypePage);
+
     await bookingPage.assertBookingCanceled(eventTypePage);
   });
 });
@@ -10429,8 +11030,11 @@ test.describe("Booking With Phone Question and Each Other Question", () => {
 
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -10870,8 +11474,11 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
 
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -10919,11 +11526,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and checkbox group Question", () => {
       test("Radio required and checkbox group required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10932,19 +11543,27 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "checkbox",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and checkbox group not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("checkbox", "checkbox-test", "checkbox test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10953,9 +11572,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "checkbox",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -10963,11 +11586,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and checkbox Question", () => {
       test("Radio required and checkbox required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10976,18 +11603,26 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "boolean",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
       test("Radio and checkbox not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("boolean", "boolean-test", "boolean test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -10996,9 +11631,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "boolean",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11006,11 +11645,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and Long text Question", () => {
       test("Radio required and Long text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11019,19 +11662,27 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "textarea",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and Long text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", false, "textarea test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11040,9 +11691,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "textarea",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11050,6 +11705,7 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and Multi email Question", () => {
       test("Radio required and Multi email required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion(
           "multiemail",
           "multiemail-test",
@@ -11057,10 +11713,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           true,
           "multiemail test"
         );
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11069,14 +11728,19 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "multiemail",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and Multi email not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion(
           "multiemail",
           "multiemail-test",
@@ -11084,10 +11748,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           false,
           "multiemail test"
         );
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11096,9 +11763,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "multiemail",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11106,11 +11777,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and multiselect Question", () => {
       test("Radio required and multiselect text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", true);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11119,19 +11794,27 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "multiselect",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and multiselect text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11140,9 +11823,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "multiselect",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11150,11 +11837,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and Number Question", () => {
       test("Radio required and Number required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("number", "number-test", "number test", true, "number test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11163,19 +11854,27 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "number",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and Number not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("number", "number-test", "number test", false, "number test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11184,9 +11883,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "number",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11194,11 +11897,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and Phone Question", () => {
       test("Radio required and Phone required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("phone", "phone-test", "phone test", true, "phone test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11207,19 +11914,27 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "phone",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and Phone not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("phone", "phone-test", "phone test", false, "phone test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11228,9 +11943,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "phone",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11238,11 +11957,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and select Question", () => {
       test("Radio required and select required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11251,19 +11974,27 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "select",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and select not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11272,9 +12003,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "select",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11282,11 +12017,15 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
     test.describe("Booking With Radio Question and Short text question", () => {
       test("Radio required and Short text required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11295,19 +12034,27 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "text",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
       test("Radio and Short text not required", async ({ bookingPage }) => {
         await bookingPage.addQuestion("radio", "radio-test", "radio test", true);
+
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11316,9 +12063,13 @@ test.describe("Booking With Radio Question and Each Other Question", () => {
           secondQuestion: "text",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -11332,18 +12083,25 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
 
   test.beforeEach(async ({ page, users }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
   });
 
   test("Long Text and Address required", async ({ bookingPage }) => {
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
+
     await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
+
     await bookingPage.addQuestion("address", "address-test", "address test", true, "address test");
+
     await bookingPage.updateEventType();
 
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.selectTimeSlot(eventTypePage);
+
     await bookingPage.fillAndConfirmBooking({
       eventTypePage,
       placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11352,21 +12110,31 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
       secondQuestion: "address",
       options: bookingOptions,
     });
+
     await bookingPage.rescheduleBooking(eventTypePage);
+
     await bookingPage.assertBookingRescheduled(eventTypePage);
+
     await bookingPage.cancelBooking(eventTypePage);
+
     await bookingPage.assertBookingCanceled(eventTypePage);
   });
 
   test("Long Text required and Address not required", async ({ bookingPage }) => {
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
+
     await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
+
     await bookingPage.addQuestion("address", "address-test", "address test", false, "address test");
+
     await bookingPage.updateEventType();
 
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.selectTimeSlot(eventTypePage);
+
     await bookingPage.fillAndConfirmBooking({
       eventTypePage,
       placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11375,9 +12143,13 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
       secondQuestion: "address",
       options: { ...bookingOptions, isRequired: false },
     });
+
     await bookingPage.rescheduleBooking(eventTypePage);
+
     await bookingPage.assertBookingRescheduled(eventTypePage);
+
     await bookingPage.cancelBooking(eventTypePage);
+
     await bookingPage.assertBookingCanceled(eventTypePage);
   });
 
@@ -11475,6 +12247,7 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
 
   test.describe("Booking With Long Text Question and Multiple email Question", () => {
     const bookingOptions = { hasPlaceholder: true, isRequired: true };
+
     test("Long Text and Multiple email required", async ({ bookingPage }) => {
       await bookingPage.goToEventType("30 min");
       await bookingPage.goToTab("event_advanced_tab_title");
@@ -11604,13 +12377,19 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
 
   test("Long Text required and Number not required", async ({ bookingPage }) => {
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
+
     await bookingPage.addQuestion("textarea", "textarea-test", "textarea test", true, "textarea test");
+
     await bookingPage.addQuestion("multiselect", "multiselect-test", "multiselect test", false);
+
     await bookingPage.updateEventType();
 
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.selectTimeSlot(eventTypePage);
+
     await bookingPage.fillAndConfirmBooking({
       eventTypePage,
       placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -11619,9 +12398,13 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
       secondQuestion: "multiselect",
       options: { hasPlaceholder: false, isRequired: false },
     });
+
     await bookingPage.rescheduleBooking(eventTypePage);
+
     await bookingPage.assertBookingRescheduled(eventTypePage);
+
     await bookingPage.cancelBooking(eventTypePage);
+
     await bookingPage.assertBookingCanceled(eventTypePage);
   });
 
@@ -11765,6 +12548,7 @@ test.describe("Booking With Long Text Question and Each Other Question", () => {
 
   test.describe("Booking With Long Text Question and Short text question", () => {
     const bookingOptions = { hasPlaceholder: true, isRequired: true };
+
     test("Long Text and Short text required", async ({ bookingPage }) => {
       await bookingPage.goToEventType("30 min");
       await bookingPage.goToTab("event_advanced_tab_title");
@@ -11819,23 +12603,31 @@ test.describe.configure({ mode: "serial" });
 test.describe("Booking with recurring checked", () => {
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("recurring");
   });
 
   test("Updates event type with recurring events", async ({ page, bookingPage }) => {
     await bookingPage.updateRecurringTab("2", "3");
+
     await bookingPage.updateEventType();
+
     await page.getByRole("link", { name: "Event Types" }).click();
+
     await bookingPage.assertRepeatEventType();
   });
 
   test("Updates and shows recurring schedule correctly in booking page", async ({ bookingPage }) => {
     await bookingPage.updateRecurringTab("2", "3");
+
     await bookingPage.updateEventType();
 
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.fillRecurringFieldAndConfirm(eventTypePage);
   });
 });
@@ -11847,8 +12639,11 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
 
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -12292,11 +13087,15 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           true,
           "multiemail test"
         );
+
         await bookingPage.addQuestion("select", "select-test", "select test", true, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -12305,9 +13104,13 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           secondQuestion: "select",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
@@ -12319,11 +13122,15 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           true,
           "multiemail test"
         );
+
         await bookingPage.addQuestion("select", "select-test", "select test", false, "select test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -12332,9 +13139,13 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           secondQuestion: "select",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -12348,11 +13159,15 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           true,
           "multiemail test"
         );
+
         await bookingPage.addQuestion("text", "text-test", "text test", true, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -12361,9 +13176,13 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           secondQuestion: "text",
           options: bookingOptions,
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
 
@@ -12375,11 +13194,15 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           true,
           "multiemail test"
         );
+
         await bookingPage.addQuestion("text", "text-test", "text test", false, "text test");
+
         await bookingPage.updateEventType();
 
         const eventTypePage = await bookingPage.previewEventType();
+
         await bookingPage.selectTimeSlot(eventTypePage);
+
         await bookingPage.fillAndConfirmBooking({
           eventTypePage,
           placeholderText: "Please share anything that will help prepare for our meeting.",
@@ -12388,9 +13211,13 @@ test.describe("Booking With Multiple Email Question and Each Other Question", ()
           secondQuestion: "text",
           options: { ...bookingOptions, isRequired: false },
         });
+
         await bookingPage.rescheduleBooking(eventTypePage);
+
         await bookingPage.assertBookingRescheduled(eventTypePage);
+
         await bookingPage.cancelBooking(eventTypePage);
+
         await bookingPage.assertBookingCanceled(eventTypePage);
       });
     });
@@ -12402,12 +13229,17 @@ import { test } from "../lib/fixtures";
 test.describe("Check availability tab in a event-type", () => {
   test("Check availability in event type", async ({ eventTypePage, users }) => {
     await loginUser(users);
+
     await eventTypePage.goToEventTypesPage();
 
     await eventTypePage.goToEventType("30 min");
+
     await eventTypePage.goToTab("availability");
+
     await eventTypePage.checkAvailabilityTab();
+
     await eventTypePage.goToAvailabilityPage();
+
     await eventTypePage.checkAvailabilityPage();
   });
 });
@@ -12418,8 +13250,11 @@ import { test } from "../lib/fixtures";
 test.describe("Booking With All Questions", () => {
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_advanced_tab_title");
   });
 
@@ -12465,11 +13300,17 @@ test.describe("Booking With All Questions", () => {
     await bookingPage.updateEventType();
 
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.selectTimeSlot(eventTypePage);
+
     await bookingPage.fillAllQuestions(eventTypePage, allQuestions, bookingOptions);
+
     await bookingPage.rescheduleBooking(eventTypePage);
+
     await bookingPage.assertBookingRescheduled(eventTypePage);
+
     await bookingPage.cancelBooking(eventTypePage);
+
     await bookingPage.assertBookingCanceled(eventTypePage);
   });
 
@@ -12513,15 +13354,20 @@ test.describe("Booking With All Questions", () => {
     await bookingPage.updateEventType();
 
     const eventTypePage = await bookingPage.previewEventType();
+
     await bookingPage.selectTimeSlot(eventTypePage);
+
     await bookingPage.fillAllQuestions(eventTypePage, allQuestions, {
       ...bookingOptions,
       isAllRequired: false,
     });
 
     await bookingPage.rescheduleBooking(eventTypePage);
+
     await bookingPage.assertBookingRescheduled(eventTypePage);
+
     await bookingPage.cancelBooking(eventTypePage);
+
     await bookingPage.assertBookingCanceled(eventTypePage);
   });
 });
@@ -12534,6 +13380,7 @@ test.afterEach(({ users }) => users.deleteAll());
 test.describe("Change Password Test", () => {
   test("change password", async ({ page, users }) => {
     const pro = await users.create();
+
     await pro.apiLogin();
     // Go to http://localhost:3000/settings/security
     await page.goto("/settings/security/password");
@@ -12609,6 +13456,7 @@ testBothFutureAndLegacyRoutes.describe("Login and logout tests", () => {
 
     // check if we are at the login page
     await page.goto("/");
+
     await expect(page.locator(`[data-testid=login-form]`)).toBeVisible();
   });
 
@@ -12811,15 +13659,21 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
     test.describe("Different Locations Tests", () => {
       test("can add Attendee Phone Number location and book with it", async ({ page }) => {
         await gotoFirstEventType(page);
+
         await selectAttendeePhoneNumber(page);
+
         await saveEventType(page);
+
         await gotoBookingPage(page);
+
         await selectFirstAvailableTimeSlotNextMonth(page);
 
         await page.locator(`[data-fob-field-name="location"] input`).fill("9199999999");
+
         await bookTimeSlot(page);
 
         await expect(page.locator("[data-testid=success-page]")).toBeVisible();
+
         await expect(page.locator("text=+19199999999")).toBeVisible();
       });
 
@@ -12827,19 +13681,25 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         await gotoFirstEventType(page);
 
         await page.locator("#location-select").click();
+
         await page.locator(`text="Organizer Phone Number"`).click();
 
         const locationInputName = "locations[0].hostPhoneNumber";
+
         await page.locator(`input[name="${locationInputName}"]`).waitFor();
+
         await page.locator(`input[name="${locationInputName}"]`).fill("9199999999");
 
         await saveEventType(page);
+
         await gotoBookingPage(page);
+
         await selectFirstAvailableTimeSlotNextMonth(page);
 
         await bookTimeSlot(page);
 
         await expect(page.locator("[data-testid=success-page]")).toBeVisible();
+
         await expect(page.locator("text=+19199999999")).toBeVisible();
       });
 
@@ -12847,16 +13707,21 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         await gotoFirstEventType(page);
 
         await page.locator("#location-select").click();
+
         await page.locator(`text="Cal Video (Global)"`).click();
 
         await saveEventType(page);
+
         await page.getByTestId("toast-success").waitFor();
+
         await gotoBookingPage(page);
+
         await selectFirstAvailableTimeSlotNextMonth(page);
 
         await bookTimeSlot(page);
 
         await expect(page.locator("[data-testid=success-page]")).toBeVisible();
+
         await expect(page.locator("[data-testid=where] ")).toContainText("Cal Video");
       });
 
@@ -12864,16 +13729,21 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         await gotoFirstEventType(page);
 
         await page.locator("#location-select").click();
+
         await page.locator(`text="Link meeting"`).click();
 
         const locationInputName = `locations[0].link`;
 
         const testUrl = "https://cal.ai/";
+
         await page.locator(`input[name="${locationInputName}"]`).fill(testUrl);
 
         await saveEventType(page);
+
         await page.getByTestId("toast-success").waitFor();
+
         await gotoBookingPage(page);
+
         await selectFirstAvailableTimeSlotNextMonth(page);
 
         await bookTimeSlot(page);
@@ -12881,6 +13751,7 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
         const linkElement = await page.locator("[data-testid=where] > a");
+
         expect(await linkElement.getAttribute("href")).toBe(testUrl);
       });
 
@@ -12894,21 +13765,26 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         await addAnotherLocation(page, "Cal Video (Global)");
 
         await saveEventType(page);
+
         await page.waitForLoadState("networkidle");
 
         // Remove Attendee Phone Number Location
         const removeButtomId = "delete-locations.0.type";
+
         await page.getByTestId(removeButtomId).click();
 
         await saveEventType(page);
+
         await page.waitForLoadState("networkidle");
 
         await gotoBookingPage(page);
+
         await selectFirstAvailableTimeSlotNextMonth(page);
 
         await bookTimeSlot(page);
 
         await expect(page.locator("[data-testid=success-page]")).toBeVisible();
+
         await expect(page.locator("[data-testid=where]")).toHaveText(/Cal Video/);
       });
 
@@ -12918,7 +13794,9 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         const $eventTypes = page.locator("[data-testid=event-types] > li a");
 
         const firstEventTypeElement = $eventTypes.first();
+
         await firstEventTypeElement.click();
+
         await page.waitForURL((url) => {
           return !!url.pathname.match(/\/event-types\/.+/);
         });
@@ -12926,6 +13804,7 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         const locationAddress = "New Delhi";
 
         await fillLocation(page, locationAddress, 0, false);
+
         await page.locator("[data-testid=update-eventtype]").click();
 
         await page.goto("/event-types");
@@ -12936,9 +13815,13 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
           .getAttribute("href");
 
         await page.goto(previewLink ?? "");
+
         await selectFirstAvailableTimeSlotNextMonth(page);
+
         await bookTimeSlot(page);
+
         await expect(page.locator("[data-testid=success-page]")).toBeVisible();
+
         await expect(page.locator(`[data-testid="where"]`)).toHaveText(locationAddress);
       });
 
@@ -12948,49 +13831,73 @@ testBothFutureAndLegacyRoutes.describe("Event Types tests", () => {
         await gotoFirstEventType(page);
 
         await page.locator("#location-select").click();
+
         await page.locator(`text="Link meeting"`).click();
 
         const locationInputName = (idx: number) => `locations[${idx}].link`;
 
         const testUrl1 = "https://cal.ai/";
+
         await page.locator(`input[name="${locationInputName(0)}"]`).fill(testUrl1);
+
         await page.locator("[data-testid=display-location]").last().check();
+
         await checkDisplayLocation(page);
+
         await unCheckDisplayLocation(page);
 
         await page.locator("[data-testid=add-location]").click();
 
         const testUrl2 = "https://cal.com/ai";
+
         await page.locator(`text="Link meeting"`).last().click();
+
         await page.locator(`input[name="${locationInputName(1)}"]`).waitFor();
+
         await page.locator(`input[name="${locationInputName(1)}"]`).fill(testUrl2);
+
         await checkDisplayLocation(page);
+
         await unCheckDisplayLocation(page);
 
         // Remove Both of the locations
         const removeButtomId = "delete-locations.0.type";
+
         await page.getByTestId(removeButtomId).click();
+
         await page.getByTestId(removeButtomId).click();
 
         // Add Multiple Organizer Phone Number options
         await page.locator("#location-select").click();
+
         await page.locator(`text="Organizer Phone Number"`).click();
 
         const organizerPhoneNumberInputName = (idx: number) => `locations[${idx}].hostPhoneNumber`;
 
         const testPhoneInputValue1 = "9199999999";
+
         await page.locator(`input[name="${organizerPhoneNumberInputName(0)}"]`).waitFor();
+
         await page.locator(`input[name="${organizerPhoneNumberInputName(0)}"]`).fill(testPhoneInputValue1);
+
         await page.locator("[data-testid=display-location]").last().check();
+
         await checkDisplayLocation(page);
+
         await unCheckDisplayLocation(page);
+
         await page.locator("[data-testid=add-location]").click();
 
         const testPhoneInputValue2 = "9188888888";
+
         await page.locator(`text="Organizer Phone Number"`).last().click();
+
         await page.locator(`input[name="${organizerPhoneNumberInputName(1)}"]`).waitFor();
+
         await page.locator(`input[name="${organizerPhoneNumberInputName(1)}"]`).fill(testPhoneInputValue2);
+
         await checkDisplayLocation(page);
+
         await unCheckDisplayLocation(page);
       });
     });
@@ -13073,6 +13980,7 @@ test.describe("unauthorized user sees correct translations (de)", async () => {
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("html[lang=de]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=ltr]").waitFor({ state: "attached" });
 
     {
@@ -13094,9 +14002,11 @@ test.describe("unauthorized user sees correct translations (ar)", async () => {
 
   test("should use correct translations and html attributes", async ({ page }) => {
     await page.goto("/");
+
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("html[lang=ar]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=rtl]").waitFor({ state: "attached" });
 
     {
@@ -13118,9 +14028,11 @@ test.describe("unauthorized user sees correct translations (zh)", async () => {
 
   test("should use correct translations and html attributes", async ({ page }) => {
     await page.goto("/");
+
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("html[lang=zh]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=ltr]").waitFor({ state: "attached" });
 
     {
@@ -13142,9 +14054,11 @@ test.describe("unauthorized user sees correct translations (zh-CN)", async () =>
 
   test("should use correct translations and html attributes", async ({ page }) => {
     await page.goto("/");
+
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("html[lang=zh-CN]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=ltr]").waitFor({ state: "attached" });
 
     {
@@ -13166,9 +14080,11 @@ test.describe("unauthorized user sees correct translations (zh-TW)", async () =>
 
   test("should use correct translations and html attributes", async ({ page }) => {
     await page.goto("/");
+
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("html[lang=zh-TW]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=ltr]").waitFor({ state: "attached" });
 
     {
@@ -13190,9 +14106,11 @@ test.describe("unauthorized user sees correct translations (pt)", async () => {
 
   test("should use correct translations and html attributes", async ({ page }) => {
     await page.goto("/");
+
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("html[lang=pt]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=ltr]").waitFor({ state: "attached" });
 
     {
@@ -13214,9 +14132,11 @@ test.describe("unauthorized user sees correct translations (pt-br)", async () =>
 
   test("should use correct translations and html attributes", async ({ page }) => {
     await page.goto("/");
+
     await page.waitForLoadState("domcontentloaded");
 
     await page.locator("html[lang=pt-BR]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=ltr]").waitFor({ state: "attached" });
 
     {
@@ -13238,10 +14158,12 @@ test.describe("unauthorized user sees correct translations (es-419)", async () =
 
   test("should use correct translations and html attributes", async ({ page }) => {
     await page.goto("/");
+
     await page.waitForLoadState("domcontentloaded");
 
     // es-419 is disabled in i18n config, so es should be used as fallback
     await page.locator("html[lang=es]").waitFor({ state: "attached" });
+
     await page.locator("html[dir=ltr]").waitFor({ state: "attached" });
 
     {
@@ -13288,6 +14210,7 @@ test.describe("authorized user sees correct translations (de)", async () => {
 
       {
         const locator = page.getByText("Event Types", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13302,11 +14225,13 @@ test.describe("authorized user sees correct translations (de)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "Buchungen", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Bookings", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13321,11 +14246,13 @@ test.describe("authorized user sees correct translations (de)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "Buchungen", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Bookings", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13355,11 +14282,13 @@ test.describe("authorized user sees correct translations (pt-br)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "Tipos de Eventos", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Event Types", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13374,11 +14303,13 @@ test.describe("authorized user sees correct translations (pt-br)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "Reservas", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Bookings", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13393,11 +14324,13 @@ test.describe("authorized user sees correct translations (pt-br)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "Reservas", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Bookings", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13427,11 +14360,13 @@ test.describe("authorized user sees correct translations (ar)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "أنواع الحدث", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Event Types", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13446,11 +14381,13 @@ test.describe("authorized user sees correct translations (ar)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "عمليات الحجز", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Bookings", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13465,11 +14402,13 @@ test.describe("authorized user sees correct translations (ar)", async () => {
 
       {
         const locator = page.getByRole("heading", { name: "عمليات الحجز", exact: true });
+
         await expect(locator).toHaveCount(1);
       }
 
       {
         const locator = page.getByText("Bookings", { exact: true });
+
         await expect(locator).toHaveCount(0);
       }
     });
@@ -13660,12 +14599,14 @@ test.describe("Out of office", () => {
     await page.goto(`/settings/my-account/out-of-office`);
 
     await page.getByTestId("profile-redirect-switch").click();
+
     await page
       .getByTestId("team_username_select")
       .locator("div")
       .filter({ hasText: "Select team member" })
       .first()
       .click();
+
     await page.locator("#react-select-2-option-0 div").click();
 
     // send request
@@ -13681,6 +14622,7 @@ test.describe("Out of office", () => {
     const userTo = await users.create({ name: "userTwo" });
 
     const uuid = uuidv4();
+
     await prisma.outOfOfficeEntry.create({
       data: {
         start: dayjs().startOf("day").toDate(),
@@ -13875,12 +14817,15 @@ test.describe("Stripe integration", () => {
 
   test("when enabling Stripe, credentialId is included", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
+
     await page.goto("/apps/installed");
 
     await user.getPaymentCredential();
 
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
+
     await user.setupEventWithPrice(eventType, "stripe");
 
     // Need to wait for the DB to be updated with the metadata
@@ -13901,6 +14846,7 @@ test.describe("Stripe integration", () => {
     const stripeAppMetadata = metadata?.apps?.stripe;
 
     expect(stripeAppMetadata).toHaveProperty("credentialId");
+
     expect(typeof stripeAppMetadata?.credentialId).toBe("number");
   });
 
@@ -13919,6 +14865,7 @@ test.describe("Stripe integration", () => {
       teammates: teamMatesObj,
       schedulingType: SchedulingType.COLLECTIVE,
     });
+
     await owner.apiLogin();
 
     const { team } = await owner.getFirstTeamMembership();
@@ -13962,6 +14909,7 @@ test.describe("Stripe integration", () => {
     const stripeAppMetadata = metadata?.apps?.stripe;
 
     expect(stripeAppMetadata).toHaveProperty("credentialId");
+
     expect(typeof stripeAppMetadata?.credentialId).toBe("number");
   });
 
@@ -13969,11 +14917,15 @@ test.describe("Stripe integration", () => {
     const user = await users.create();
 
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
+
     await user.apiLogin();
+
     await page.goto("/apps/installed");
 
     await user.getPaymentCredential();
+
     await user.setupEventWithPrice(eventType, "stripe");
+
     await user.bookAndPayEvent(eventType);
     // success
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
@@ -13983,17 +14935,22 @@ test.describe("Stripe integration", () => {
     const user = await users.create();
 
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
+
     await user.apiLogin();
+
     await page.goto("/apps/installed");
 
     await user.getPaymentCredential();
+
     await user.setupEventWithPrice(eventType, "stripe");
 
     // booking process without payment
     await page.goto(`${user.username}/${eventType?.slug}`);
+
     await selectFirstAvailableTimeSlotNextMonth(page);
     // --- fill form
     await page.fill('[name="name"]', "Stripe Stripeson");
+
     await page.fill('[name="email"]', "test@example.com");
 
     await Promise.all([page.waitForURL("/payment/*"), page.press('[name="email"]', "Enter")]);
@@ -14001,6 +14958,7 @@ test.describe("Stripe integration", () => {
     await page.goto(`/bookings/upcoming`);
 
     await expect(page.getByText("Unconfirmed")).toBeVisible();
+
     await expect(page.getByText("Pending payment").last()).toBeVisible();
   });
 
@@ -14008,11 +14966,15 @@ test.describe("Stripe integration", () => {
     const user = await users.create();
 
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
+
     await user.apiLogin();
+
     await page.goto("/apps/installed");
 
     await user.getPaymentCredential();
+
     await user.setupEventWithPrice(eventType, "stripe");
+
     await user.bookAndPayEvent(eventType);
 
     // Rescheduling the event
@@ -14032,14 +14994,19 @@ test.describe("Stripe integration", () => {
     const user = await users.create();
 
     const eventType = user.eventTypes.find((e) => e.slug === "paid") as Prisma.EventType;
+
     await user.apiLogin();
+
     await page.goto("/apps/installed");
 
     await user.getPaymentCredential();
+
     await user.setupEventWithPrice(eventType, "stripe");
+
     await user.bookAndPayEvent(eventType);
 
     await page.click('[data-testid="cancel"]');
+
     await page.click('[data-testid="confirm_cancel"]');
 
     await expect(await page.locator('[data-testid="cancelled-headline"]').first()).toBeVisible();
@@ -14335,12 +15302,15 @@ test.describe("Manage Booking Questions", () => {
 
       await test.step("Open the 'Name' field dialog", async () => {
         await page.click('[href$="tabName=advanced"]');
+
         await page.locator('[data-testid="field-name"] [data-testid="edit-field-action"]').click();
       });
 
       await test.step("Toggle on the variant toggle and save Event Type", async () => {
         await page.click('[data-testid="variant-toggle"]');
+
         await page.click("[data-testid=field-add-save]");
+
         await saveEventType(page);
       });
 
@@ -14413,7 +15383,9 @@ test.describe("Manage Booking Questions", () => {
 
       await test.step("Verify that we can prefill name field with no lastname", async () => {
         const searchParams = new URLSearchParams();
+
         searchParams.append("name", "FirstName");
+
         await doOnFreshPreviewWithSearchParams(searchParams, page, context, async (page) => {
           await selectFirstAvailableTimeSlotNextMonth(page);
           await expectSystemFieldsToBeThereOnBookingPage({
@@ -14431,8 +15403,11 @@ test.describe("Manage Booking Questions", () => {
 
       await test.step("Verify that we can prefill name field with firstName,lastName query params", async () => {
         const searchParams = new URLSearchParams();
+
         searchParams.append("firstName", "John");
+
         searchParams.append("lastName", "Doe");
+
         await doOnFreshPreviewWithSearchParams(searchParams, page, context, async (page) => {
           await selectFirstAvailableTimeSlotNextMonth(page);
           await expectSystemFieldsToBeThereOnBookingPage({
@@ -14497,9 +15472,13 @@ async function runTestStepsCommonForTeamAndUserEventType(
 
   await test.step("Check that all the system questions are shown in the list", async () => {
     await page.locator("[data-testid=field-name]").isVisible();
+
     await page.locator("[data-testid=field-email]").isVisible();
+
     await page.locator("[data-testid=field-notes]").isVisible();
+
     await page.locator("[data-testid=field-guests]").isVisible();
+
     await page.locator("[data-testid=field-rescheduleReason]").isVisible();
     // It is conditional
     // await page.locator("data-testid=field-location").isVisible();
@@ -14533,6 +15512,7 @@ async function runTestStepsCommonForTeamAndUserEventType(
       name: "how-are-you",
       page,
     });
+
     await doOnFreshPreview(page, context, async (page) => {
       const formBuilderFieldLocator = page.locator('[data-fob-field-name="how-are-you"]');
       await expect(formBuilderFieldLocator).toBeHidden();
@@ -14621,7 +15601,9 @@ async function runTestStepsCommonForTeamAndUserEventType(
 
   await test.step("Do a reschedule and notice that we can't book without giving a value for rescheduleReason", async () => {
     const page = previewTabPage;
+
     await rescheduleFromTheLinkOnPage({ page });
+
     await expectErrorToBeThereFor({ page, name: "rescheduleReason" });
   });
 }
@@ -14639,8 +15621,11 @@ async function expectSystemFieldsToBeThereOnBookingPage({
       lastName?: string;
       fullName?: string;
     };
+
     email: string;
+
     notes: string;
+
     guests: string[];
   }>;
 }) {
@@ -14665,7 +15650,9 @@ async function expectSystemFieldsToBeThereOnBookingPage({
     if (values?.name) {
       await expect(nameLocator.locator('[name="name"]')).toHaveValue(values?.name?.fullName || "");
     }
+
     await expect(nameLocator.locator('[name="name"]')).toBeVisible();
+
     expect(await nameLocator.locator("label").innerText()).toContain("*");
   }
 
@@ -14687,6 +15674,7 @@ async function expectSystemFieldsToBeThereOnBookingPage({
     for (let i = 0; i < values.guests.length; i++) {
       await expect(allGuestsLocators.nth(i)).toHaveValue(values.guests[i] || "");
     }
+
     await expect(guestsLocator.locator("[data-testid='add-another-guest']")).toBeVisible();
   } else {
     await expect(guestsLocator.locator("[data-testid='add-guests']")).toBeVisible();
@@ -14751,9 +15739,13 @@ async function addQuestionAndSave({
   page: Page;
   question: {
     name?: string;
+
     type?: string;
+
     label?: string;
+
     placeholder?: string;
+
     required?: boolean;
   };
 }) {
@@ -14903,9 +15895,13 @@ async function addWebhook(
 
   const data: {
     id: string;
+
     subscriberUrl: string;
+
     eventTriggers: WebhookTriggerEvents[];
+
     userId?: number;
+
     teamId?: number;
   } = {
     id: uuid(),
@@ -14932,6 +15928,7 @@ async function expectWebhookToBeCalled(
   webhookReceiver: Awaited<ReturnType<typeof addWebhook>>,
   expectedBody: {
     triggerEvent: WebhookTriggerEvents;
+
     payload: Omit<Partial<CalendarEvent>, "attendees"> & {
       attendees: Partial<CalendarEvent["attendees"][number]>[];
     };
@@ -14954,6 +15951,7 @@ test.afterEach(({ users }) => users.deleteAll());
 test.describe("Login with api request", () => {
   test("context request will share cookie storage with its browser context", async ({ page, users }) => {
     const pro = await users.create();
+
     await pro.apiLogin();
 
     const contextCookies = await page.context().cookies();
@@ -14962,7 +15960,9 @@ test.describe("Login with api request", () => {
 
     // The browser context will already contain all the cookies from the API response.
     expect(cookiesMap.has("next-auth.csrf-token")).toBeTruthy();
+
     expect(cookiesMap.has("next-auth.callback-url")).toBeTruthy();
+
     expect(cookiesMap.has("next-auth.session-token")).toBeTruthy();
   });
 });
@@ -15003,6 +16003,7 @@ test.describe("Embed Code Generator Tests", () => {
         const [pro] = users.get();
 
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
+
         await expectToBeNavigatingToEmbedTypesDialog(page, {
           embedUrl,
           basePage: "/event-types",
@@ -15023,6 +16024,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToReactCodeTab(page);
+
         await expectToContainValidCode(page, {
           language: "react",
           embedType: "inline",
@@ -15054,6 +16056,7 @@ test.describe("Embed Code Generator Tests", () => {
           embedType: "floating-popup",
           basePage: "/event-types",
         });
+
         await expectToContainValidCode(page, {
           language: "html",
           embedType: "floating-popup",
@@ -15061,6 +16064,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToReactCodeTab(page);
+
         await expectToContainValidCode(page, {
           language: "react",
           embedType: "floating-popup",
@@ -15068,6 +16072,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToPreviewTab(page);
+
         await expectToContainValidPreviewIframe(page, {
           embedType: "floating-popup",
           calLink: `${pro.username}/30-min`,
@@ -15091,6 +16096,7 @@ test.describe("Embed Code Generator Tests", () => {
           embedType: "element-click",
           basePage: "/event-types",
         });
+
         await expectToContainValidCode(page, {
           language: "html",
           embedType: "element-click",
@@ -15098,6 +16104,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToReactCodeTab(page);
+
         await expectToContainValidCode(page, {
           language: "react",
           embedType: "element-click",
@@ -15105,15 +16112,18 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToPreviewTab(page);
+
         await expectToContainValidPreviewIframe(page, {
           embedType: "element-click",
           calLink: `${pro.username}/30-min`,
         });
       });
     });
+
     test.describe("Event Type Edit Page", () => {
       test.beforeEach(async ({ page }) => {
         await page.goto(`/event-types`);
+
         await Promise.all([
           page.locator('a[href*="/event-types/"]').first().click(),
           page.waitForURL((url) => url.pathname.startsWith("/event-types/")),
@@ -15124,6 +16134,7 @@ test.describe("Embed Code Generator Tests", () => {
         const basePage = new URL(page.url()).pathname;
 
         const embedUrl = await clickEmbedButton(page);
+
         await expectToBeNavigatingToEmbedTypesDialog(page, {
           embedUrl,
           basePage,
@@ -15164,6 +16175,7 @@ test.describe("Embed Code Generator Tests", () => {
       });
       await user.apiLogin();
     });
+
     test.describe("Event Types Page", () => {
       test.beforeEach(async ({ page }) => {
         await page.goto("/event-types");
@@ -15175,6 +16187,7 @@ test.describe("Embed Code Generator Tests", () => {
         const { team: org } = await user.getOrgMembership();
 
         const embedUrl = await clickFirstEventTypeEmbedButton(page);
+
         await expectToBeNavigatingToEmbedTypesDialog(page, {
           embedUrl,
           basePage: "/event-types",
@@ -15196,6 +16209,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToReactCodeTab(page);
+
         await expectToContainValidCode(page, {
           language: "react",
           embedType: "inline",
@@ -15203,6 +16217,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToPreviewTab(page);
+
         await expectToContainValidPreviewIframe(page, {
           embedType: "inline",
           calLink: `${user.username}/30-min`,
@@ -15229,6 +16244,7 @@ test.describe("Embed Code Generator Tests", () => {
           embedType: "floating-popup",
           basePage: "/event-types",
         });
+
         await expectToContainValidCode(page, {
           language: "html",
           embedType: "floating-popup",
@@ -15236,6 +16252,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToReactCodeTab(page);
+
         await expectToContainValidCode(page, {
           language: "react",
           embedType: "floating-popup",
@@ -15243,6 +16260,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToPreviewTab(page);
+
         await expectToContainValidPreviewIframe(page, {
           embedType: "floating-popup",
           calLink: `${user.username}/30-min`,
@@ -15269,6 +16287,7 @@ test.describe("Embed Code Generator Tests", () => {
           embedType: "element-click",
           basePage: "/event-types",
         });
+
         await expectToContainValidCode(page, {
           language: "html",
           embedType: "element-click",
@@ -15276,6 +16295,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToReactCodeTab(page);
+
         await expectToContainValidCode(page, {
           language: "react",
           embedType: "element-click",
@@ -15283,6 +16303,7 @@ test.describe("Embed Code Generator Tests", () => {
         });
 
         await goToPreviewTab(page);
+
         await expectToContainValidPreviewIframe(page, {
           embedType: "element-click",
           calLink: `${user.username}/30-min`,
@@ -15351,7 +16372,9 @@ async function expectToBeNavigatingToEmbedCodeAndPreviewDialog(
     basePage,
   }: {
     embedUrl: string | null;
+
     embedType: EmbedType;
+
     basePage: string;
   }
 ) {
@@ -15515,10 +16538,15 @@ test.describe("Unpublished", () => {
     const { team } = await owner.getFirstTeamMembership();
 
     const { requestedSlug } = team.metadata as { requestedSlug: string };
+
     await page.goto(`/team/${requestedSlug}`);
+
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
+
     expect(await page.locator(`h2:has-text("${title(team.name)}")`).count()).toBe(1);
+
     expect(await page.locator(`div:text("${description("team")}")`).count()).toBe(1);
+
     await expect(page.locator(`img`)).toHaveAttribute("src", avatar(requestedSlug));
   });
 
@@ -15534,10 +16562,15 @@ test.describe("Unpublished", () => {
     const { requestedSlug } = team.metadata as { requestedSlug: string };
 
     const { slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
+
     await page.goto(`/team/${requestedSlug}/${teamEventSlug}`);
+
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
+
     expect(await page.locator(`h2:has-text("${title(team.name)}")`).count()).toBe(1);
+
     expect(await page.locator(`div:text("${description("team")}")`).count()).toBe(1);
+
     await expect(page.locator(`img`)).toHaveAttribute("src", avatar(requestedSlug));
   });
 
@@ -15547,11 +16580,17 @@ test.describe("Unpublished", () => {
     const { team: org } = await owner.getOrgMembership();
 
     const { requestedSlug } = org.metadata as { requestedSlug: string };
+
     await page.goto(`/org/${requestedSlug}`);
+
     await page.waitForLoadState("networkidle");
+
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
+
     expect(await page.locator(`h2:has-text("${title(org.name)}")`).count()).toBe(1);
+
     expect(await page.locator(`div:text("${description("organization")}")`).count()).toBe(1);
+
     await expect(page.locator(`img`)).toHaveAttribute("src", avatar(requestedSlug, "org"));
   });
 
@@ -15568,11 +16607,17 @@ test.describe("Unpublished", () => {
     const { requestedSlug } = org.metadata as { requestedSlug: string };
 
     const [{ slug: subteamSlug }] = org.children as { slug: string }[];
+
     await page.goto(`/org/${requestedSlug}/team/${subteamSlug}`);
+
     await page.waitForLoadState("networkidle");
+
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
+
     expect(await page.locator(`h2:has-text("${title(org.name)}")`).count()).toBe(1);
+
     expect(await page.locator(`div:text("${description("organization")}")`).count()).toBe(1);
+
     await expect(page.locator(`img`)).toHaveAttribute("src", avatar(requestedSlug, "org"));
   });
 
@@ -15591,12 +16636,17 @@ test.describe("Unpublished", () => {
     const [{ slug: subteamSlug, id: subteamId }] = org.children as { slug: string; id: number }[];
 
     const { slug: subteamEventSlug } = await owner.getFirstTeamEvent(subteamId);
+
     await page.goto(`/org/${requestedSlug}/team/${subteamSlug}/${subteamEventSlug}`);
+
     await page.waitForLoadState("networkidle");
 
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
+
     expect(await page.locator(`h2:has-text("${title(org.name)}")`).count()).toBe(1);
+
     expect(await page.locator(`div:text("${description("organization")}")`).count()).toBe(1);
+
     await expect(page.locator(`img`)).toHaveAttribute("src", avatar(requestedSlug, "org"));
   });
 
@@ -15606,11 +16656,17 @@ test.describe("Unpublished", () => {
     const { team: org } = await owner.getOrgMembership();
 
     const { requestedSlug } = org.metadata as { requestedSlug: string };
+
     await page.goto(`/org/${requestedSlug}/${owner.username}`);
+
     await page.waitForLoadState("networkidle");
+
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
+
     expect(await page.locator(`h2:has-text("${title(org.name)}")`).count()).toBe(1);
+
     expect(await page.locator(`div:text("${description("organization")}")`).count()).toBe(1);
+
     await expect(page.locator(`img`)).toHaveAttribute("src", avatar(requestedSlug, "org"));
   });
 
@@ -15622,11 +16678,17 @@ test.describe("Unpublished", () => {
     const { requestedSlug } = org.metadata as { requestedSlug: string };
 
     const [{ slug: ownerEventType }] = owner.eventTypes;
+
     await page.goto(`/org/${requestedSlug}/${owner.username}/${ownerEventType}`);
+
     await page.waitForLoadState("networkidle");
+
     expect(await page.locator('[data-testid="empty-screen"]').count()).toBe(1);
+
     expect(await page.locator(`h2:has-text("${title(org.name)}")`).count()).toBe(1);
+
     expect(await page.locator(`div:text("${description("organization")}")`).count()).toBe(1);
+
     await expect(page.locator(`img`)).toHaveAttribute("src", avatar(requestedSlug, "org"));
   });
 });
@@ -15648,12 +16710,19 @@ test.beforeEach(async ({ page, users, bookingPage }) => {
 test.describe("Check advanced options in a managed team event type", () => {
   test("Check advanced options in a managed team event type without offer seats", async ({ bookingPage }) => {
     await bookingPage.checkRequiresConfirmation();
+
     await bookingPage.checkRequiresBookerEmailVerification();
+
     await bookingPage.checkHideNotes();
+
     await bookingPage.checkRedirectOnBooking();
+
     await bookingPage.checkEnablePrivateUrl();
+
     await bookingPage.checkLockTimezone();
+
     await bookingPage.updateEventType();
+
     await bookingPage.goToEventTypesPage();
 
     await bookingPage.checkEventType();
@@ -15661,13 +16730,21 @@ test.describe("Check advanced options in a managed team event type", () => {
 
   test("Check advanced options in a managed team event type with offer seats", async ({ bookingPage }) => {
     await bookingPage.checkRequiresConfirmation();
+
     await bookingPage.checkRequiresBookerEmailVerification();
+
     await bookingPage.checkHideNotes();
+
     await bookingPage.checkRedirectOnBooking();
+
     await bookingPage.checkEnablePrivateUrl();
+
     await bookingPage.toggleOfferSeats();
+
     await bookingPage.checkLockTimezone();
+
     await bookingPage.updateEventType();
+
     await bookingPage.goToEventTypesPage();
 
     await bookingPage.checkEventType();
@@ -15694,8 +16771,11 @@ test.describe("Team", () => {
     const teamOwner = await users.create(undefined, { hasTeam: true });
 
     const { team } = await teamOwner.getFirstTeamMembership();
+
     await teamOwner.apiLogin();
+
     await page.goto(`/settings/teams/${team.id}/members`);
+
     await page.waitForLoadState("networkidle");
 
     await test.step("To the team by email (external user)", async () => {
@@ -15780,8 +16860,11 @@ test.describe("Team", () => {
     const teamOwner = await users.create({ name: `team-owner-${Date.now()}` }, { hasTeam: true });
 
     const { team } = await teamOwner.getFirstTeamMembership();
+
     await teamOwner.apiLogin();
+
     await page.goto(`/settings/teams/${team.id}/members`);
+
     await page.waitForLoadState("networkidle");
 
     await test.step("To the organization by email (internal user)", async () => {
@@ -15858,12 +16941,16 @@ test.describe("Onboarding", () => {
       await test.step("step 1", async () => {
         // Check required fields
         await page.locator("button[type=submit]").click();
+
         await expect(page.locator("data-testid=required")).toBeVisible();
 
         // happy path
         await page.locator("input[name=username]").fill("new user onboarding");
+
         await page.locator("input[name=name]").fill("new user 2");
+
         await page.locator("input[role=combobox]").click();
+
         await page
           .locator("*")
           .filter({ hasText: /^Europe\/London/ })
@@ -15876,11 +16963,13 @@ test.describe("Onboarding", () => {
         await expect(page).toHaveURL(/.*connected-calendar/);
 
         const userComplete = await user.self();
+
         expect(userComplete.name).toBe("new user 2");
       });
 
       await test.step("step 2", async () => {
         const isDisabled = await page.locator("button[data-testid=save-calendar-button]").isDisabled();
+
         await expect(isDisabled).toBe(true);
         // tests skip button, we don't want to test entire flow.
         await page.locator("button[data-testid=skip-step]").click();
@@ -15890,6 +16979,7 @@ test.describe("Onboarding", () => {
 
       await test.step("step 3", async () => {
         const isDisabled = await page.locator("button[data-testid=save-video-button]").isDisabled();
+
         await expect(isDisabled).toBe(true);
         // tests skip button, we don't want to test entire flow.
         await page.locator("button[data-testid=skip-step]").click();
@@ -15899,6 +16989,7 @@ test.describe("Onboarding", () => {
 
       await test.step("step 4", async () => {
         const isDisabled = await page.locator("button[data-testid=save-availability]").isDisabled();
+
         await expect(isDisabled).toBe(false);
         // same here, skip this step.
         await page.locator("button[data-testid=save-availability]").click();
@@ -16046,6 +17137,7 @@ test.describe("Booking limits", () => {
 
         // try to book directly via form page
         await page.goto(slotUrl);
+
         await bookTimeSlot(page);
 
         await expect(page.getByTestId("booking-fail")).toBeVisible({ timeout: 1000 });
@@ -16133,6 +17225,7 @@ test.describe("Booking limits", () => {
 
         // try to book directly via form page
         await page.goto(slotUrl);
+
         await bookTimeSlot(page);
 
         await expect(page.getByTestId("booking-fail")).toBeVisible({ timeout: 5000 });
@@ -16224,6 +17317,7 @@ test.describe("Duration limits", () => {
 
         // try to book directly via form page
         await page.goto(slotUrl);
+
         await bookTimeSlot(page);
 
         await expect(page.getByTestId("booking-fail")).toBeVisible({ timeout: 1000 });
@@ -16319,6 +17413,7 @@ test.describe("Duration limits", () => {
 
         // try to book directly via form page
         await page.goto(slotUrl);
+
         await bookTimeSlot(page);
 
         await expect(page.getByTestId("booking-fail")).toBeVisible({ timeout: 1000 });
@@ -16367,6 +17462,7 @@ test.describe("OAuth Provider", () => {
   });
   test("should create valid access toke & refresh token for user", async ({ page, users }) => {
     const user = await users.create({ username: "test user", name: "test user" });
+
     await user.apiLogin();
 
     await page.goto(
@@ -16374,6 +17470,7 @@ test.describe("OAuth Provider", () => {
     );
 
     await page.waitForLoadState("networkidle");
+
     await page.getByTestId("allow-button").click();
 
     await page.waitForFunction(() => {
@@ -16447,6 +17544,7 @@ test.describe("OAuth Provider", () => {
 
   test("should create valid access token & refresh token for team", async ({ page, users }) => {
     const user = await users.create({ username: "test user", name: "test user" }, { hasTeam: true });
+
     await user.apiLogin();
 
     await page.goto(
@@ -16542,8 +17640,11 @@ test.describe("OAuth Provider", () => {
 
     // check if user is redirected to login page
     await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+
     await page.locator("#email").fill(user.email);
+
     await page.locator("#password").fill(user.username || "");
+
     await page.locator('[type="submit"]').click();
 
     await page.waitForSelector("#account-select");
@@ -16607,7 +17708,9 @@ test.describe("OIDC", () => {
   test("Setup with SAML admin and login", async ({ page, users }) => {
     // Add the admin user provided in the environment variables to the db
     const samlAdminUser = await users.create({ email: SAML_ADMIN_EMAIL, password: SAML_ADMIN_PASSWORD });
+
     await samlAdminUser.apiLogin();
+
     await test.step("Connect with OIDC Provider", async () => {
       await page.goto("/settings/security/sso");
       await page.click('[data-testid="sso-oidc-configure"]');
@@ -16622,6 +17725,7 @@ test.describe("OIDC", () => {
     });
     // Logout the SAML Admin
     await samlAdminUser.logout();
+
     await test.step("Login using the OIDC provider", async () => {
       // Login a user using the OIDC provider.
       // The credentials are handled by the provider, so we don't need to create a user in the db.
@@ -16637,6 +17741,7 @@ test.describe("OIDC", () => {
     });
     // Logout the user.
     await page.goto("/auth/logout");
+
     await test.step("Disconnect OIDC Provider", async () => {
       samlAdminUser.apiLogin();
       await page.goto("/settings/security/sso", { waitUntil: "load" });
@@ -16659,10 +17764,13 @@ test.afterEach(({ users }) => users.deleteAll());
 test.describe("Payment app", () => {
   test("Should be able to edit alby price, currency", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     expect(paymentEvent).not.toBeNull();
+
     await prisma.credential.create({
       data: {
         type: "alby_payment",
@@ -16680,9 +17788,13 @@ test.describe("Payment app", () => {
     await page.goto(`event-types/${paymentEvent?.id}?tabName=apps`);
 
     await page.locator("#event-type-form").getByRole("switch").click();
+
     await page.getByPlaceholder("Price").click();
+
     await page.getByPlaceholder("Price").fill("200");
+
     await page.getByText("SatoshissatsCurrencyBTCPayment optionCollect payment on booking").click();
+
     await page.getByTestId("update-eventtype").click();
 
     await page.goto(`${user.username}/${paymentEvent?.slug}`);
@@ -16691,19 +17803,24 @@ test.describe("Payment app", () => {
     expect(await page.locator("text=200 sats").first()).toBeTruthy();
 
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     expect(await page.locator("text=200 sats").first()).toBeTruthy();
 
     // go to /event-types and check if the price is 200 sats
     await page.goto(`event-types/`);
+
     expect(await page.locator("text=200 sats").first()).toBeTruthy();
   });
 
   test("Should be able to edit stripe price, currency", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     expect(paymentEvent).not.toBeNull();
+
     await prisma.credential.create({
       data: {
         type: "stripe_payment",
@@ -16722,12 +17839,17 @@ test.describe("Payment app", () => {
     });
 
     await page.goto(`event-types/${paymentEvent?.id}?tabName=apps`);
+
     await page.locator("#event-type-form").getByRole("switch").click();
+
     await page.getByTestId("stripe-currency-select").click();
+
     await page.getByTestId("select-option-usd").click();
 
     await page.getByTestId("stripe-price-input").click();
+
     await page.getByTestId("stripe-price-input").fill("350");
+
     await page.getByTestId("update-eventtype").click();
 
     await page.goto(`${user.username}/${paymentEvent?.slug}`);
@@ -16736,19 +17858,24 @@ test.describe("Payment app", () => {
     expect(await page.locator("text=350").first()).toBeTruthy();
 
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     expect(await page.locator("text=350").first()).toBeTruthy();
 
     // go to /event-types and check if the price is 200 sats
     await page.goto(`event-types/`);
+
     expect(await page.locator("text=350").first()).toBeTruthy();
   });
 
   test("Should be able to edit paypal price, currency", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     expect(paymentEvent).not.toBeNull();
+
     await prisma.credential.create({
       data: {
         type: "paypal_payment",
@@ -16766,14 +17893,17 @@ test.describe("Payment app", () => {
     await page.locator("#event-type-form").getByRole("switch").click();
 
     await page.getByPlaceholder("Price").click();
+
     await page.getByPlaceholder("Price").fill("150");
 
     await page.getByTestId("paypal-currency-select").click();
+
     await page.locator("#react-select-2-option-13").click();
 
     await page.getByTestId("paypal-payment-option-select").click();
 
     await page.getByText("$MXNCurrencyMexican pesoPayment option").click();
+
     await page.getByTestId("update-eventtype").click();
 
     await page.goto(`${user.username}/${paymentEvent?.slug}`);
@@ -16787,15 +17917,19 @@ test.describe("Payment app", () => {
 
     // go to /event-types and check if the price is 150
     await page.goto(`event-types/`);
+
     expect(await page.locator("text=MX$150.00").first()).toBeTruthy();
   });
 
   test("Should display App is not setup already for alby", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     expect(paymentEvent).not.toBeNull();
+
     await prisma.credential.create({
       data: {
         type: "alby_payment",
@@ -16819,10 +17953,13 @@ test.describe("Payment app", () => {
 
   test("Should display App is not setup already for paypal", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     expect(paymentEvent).not.toBeNull();
+
     await prisma.credential.create({
       data: {
         type: "paypal_payment",
@@ -16851,9 +17988,11 @@ test.describe("Payment app", () => {
   test("Should not display App is not setup already for non payment app", async ({ page, users }) => {
     // We will use google analytics app for this test
     const user = await users.create();
+
     await user.apiLogin();
     // Any event should work here
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
+
     expect(paymentEvent).not.toBeNull();
 
     await prisma.credential.create({
@@ -16871,13 +18010,17 @@ test.describe("Payment app", () => {
     await page.locator("#event-type-form").getByRole("switch").click();
     // make sure Tracking ID is displayed
     expect(await page.locator("text=Tracking ID").first()).toBeTruthy();
+
     await page.getByLabel("Tracking ID").click();
+
     await page.getByLabel("Tracking ID").fill("demo");
+
     await page.getByTestId("update-eventtype").click();
   });
 
   test("Should only be allowed to enable one payment app", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
@@ -16885,6 +18028,7 @@ test.describe("Payment app", () => {
     if (!paymentEvent) {
       throw new Error("No payment event found");
     }
+
     await prisma.credential.createMany({
       data: [
         {
@@ -16916,6 +18060,7 @@ test.describe("Payment app", () => {
     await page.goto(`event-types/${paymentEvent.id}?tabName=apps`);
 
     await page.locator("[data-testid='paypal-app-switch']").click();
+
     await page.locator("[data-testid='stripe-app-switch']").isDisabled();
   });
 
@@ -16924,6 +18069,7 @@ test.describe("Payment app", () => {
     users,
   }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     const paymentEvent = user.eventTypes.find((item) => item.slug === "paid");
@@ -16963,11 +18109,15 @@ test.describe("Payment app", () => {
     await page.goto(`event-types/${paymentEvent.id}?tabName=apps`);
 
     await page.locator("[data-testid='paypal-app-switch']").click();
+
     await page.locator("[data-testid='paypal-price-input']").fill("100");
+
     await page.locator("[data-testid='paypal-currency-select']").first().click();
+
     await page.locator("#react-select-2-option-13").click();
     // await page.locator(".mb-1 > .bg-default > div > div:nth-child(2)").first().click();
     // await page.getByText("$MXNCurrencyMexican pesoPayment option").click();
+
     await page.locator("[data-testid='update-eventtype']").click();
 
     // Need to wait for the DB to be updated
@@ -16985,8 +18135,11 @@ test.describe("Payment app", () => {
     expect(paypalPrice?.price).toEqual(10000);
 
     await page.locator("[data-testid='paypal-app-switch']").click();
+
     await page.locator("[data-testid='stripe-app-switch']").click();
+
     await page.locator("[data-testid='stripe-price-input']").fill("200");
+
     await page.locator("[data-testid='update-eventtype']").click();
 
     // Need to wait for the DB to be updated
@@ -17106,6 +18259,7 @@ test.describe("Webhook tests", async () => {
       body.payload.location = dynamic;
       for (const attendee of body.payload.attendees) {
         attendee.timeZone = dynamic;
+
         attendee.language = dynamic;
       }
       body.payload.organizer.id = dynamic;
@@ -17233,6 +18387,7 @@ test.describe("Webhook tests", async () => {
       body.payload.location = dynamic;
       for (const attendee of body.payload.attendees) {
         attendee.timeZone = dynamic;
+
         attendee.language = dynamic;
       }
       body.payload.organizer.id = dynamic;
@@ -17354,6 +18509,7 @@ test.describe("Webhook tests", async () => {
       body.payload.location = dynamic;
       for (const attendee of body.payload.attendees) {
         attendee.timeZone = dynamic;
+
         attendee.language = dynamic;
       }
       body.payload.organizer.id = dynamic;
@@ -17777,10 +18933,12 @@ test.describe("Webhook tests", async () => {
         eventTypeId: "[redacted/dynamic]",
       },
     };
+
     test.beforeEach(async ({ users }) => {
       users.deleteAll();
       await loginUser(users);
     });
+
     test("Create booking", async ({ bookingPage }) => {
       const webhookReceiver = createHttpServer();
       await bookingPage.createBookingWebhook(webhookReceiver, "30 min");
@@ -18033,12 +19191,16 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
+
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await bookTimeSlot(page);
+
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     // The title of the booking
     const BookingTitle = `${teamEventTitle} between ${team.name} and ${testName}`;
+
     await expect(page.locator("[data-testid=booking-title]")).toHaveText(BookingTitle);
     // The booker should be in the attendee list
     await expect(page.locator(`[data-testid="attendee-name-${testName}"]`)).toHaveText(testName);
@@ -18073,8 +19235,11 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
+
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await bookTimeSlot(page);
+
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     // The person who booked the meeting should be in the attendee list
@@ -18082,12 +19247,15 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
 
     // The title of the booking
     const BookingTitle = `${teamEventTitle} between ${team.name} and ${testName}`;
+
     await expect(page.locator("[data-testid=booking-title]")).toHaveText(BookingTitle);
 
     // Since all the users have the same leastRecentlyBooked value
     // Anyone of the teammates could be the Host of the booking.
     const chosenUser = await page.getByTestId("booking-host-name").textContent();
+
     expect(chosenUser).not.toBeNull();
+
     expect(teamMatesObj.concat([{ name: owner.name! }]).some(({ name }) => name === chosenUser)).toBe(true);
     // TODO: Assert whether the user received an email
   });
@@ -18135,7 +19303,9 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
     const user = await users.create();
     // Name to be used for both user and team
     const uniqueName = user.username!;
+
     await user.apiLogin();
+
     await page.goto("/teams");
 
     await test.step("Can create team with same name", async () => {
@@ -18196,6 +19366,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
 
     // Mark team as private
     await page.goto(`/settings/teams/${team.id}/members`);
+
     await Promise.all([
       page.click("[data-testid=make-team-private-check]"),
       expect(page.locator(`[data-testid=make-team-private-check][data-state="checked"]`)).toBeVisible(),
@@ -18206,11 +19377,14 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
 
     // Go to Team's page
     await page.goto(`/team/${team.slug}`);
+
     await expect(page.locator('[data-testid="book-a-team-member-btn"]')).toBeHidden();
 
     // Go to members page
     await page.goto(`/team/${team.slug}?members=1`);
+
     await expect(page.locator('[data-testid="you-cannot-see-team-members"]')).toBeVisible();
+
     await expect(page.locator('[data-testid="team-members-container"]')).toBeHidden();
   });
 
@@ -18222,6 +19396,7 @@ testBothFutureAndLegacyRoutes.describe("Teams - NonOrg", (routeVariant) => {
 test.describe("Teams - Org", () => {
   test.afterEach(({ orgs, users }) => {
     orgs.deleteAll();
+
     users.deleteAll();
   });
 
@@ -18236,7 +19411,9 @@ test.describe("Teams - Org", () => {
     });
 
     const inviteeEmail = `${user.username}+invitee@example.com`;
+
     await user.apiLogin();
+
     await page.goto("/teams");
 
     await test.step("Can create team", async () => {
@@ -18325,6 +19502,7 @@ test.describe("Teams - Org", () => {
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
 
     await expect(page.locator(`text=${NotFoundPageTextAppDir}`)).toBeVisible();
+
     await doOnOrgDomain(
       {
         orgSlug: org.slug,
@@ -18332,12 +19510,16 @@ test.describe("Teams - Org", () => {
       },
       async () => {
         await page.goto(`/team/${team.slug}/${teamEventSlug}`);
+
         await selectFirstAvailableTimeSlotNextMonth(page);
+
         await bookTimeSlot(page);
+
         await expect(page.getByTestId("success-page")).toBeVisible();
 
         // The title of the booking
         const BookingTitle = `${teamEventTitle} between ${team.name} and ${testName}`;
+
         await expect(page.getByTestId("booking-title")).toHaveText(BookingTitle);
         // The booker should be in the attendee list
         await expect(page.getByTestId(`attendee-name-${testName}`)).toHaveText(testName);
@@ -18374,8 +19556,11 @@ test.describe("Teams - Org", () => {
     const { title: teamEventTitle, slug: teamEventSlug } = await owner.getFirstTeamEvent(team.id);
 
     await page.goto(`/team/${team.slug}/${teamEventSlug}`);
+
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await bookTimeSlot(page);
+
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     // The person who booked the meeting should be in the attendee list
@@ -18383,12 +19568,15 @@ test.describe("Teams - Org", () => {
 
     // The title of the booking
     const BookingTitle = `${teamEventTitle} between ${team.name} and ${testName}`;
+
     await expect(page.getByTestId("booking-title")).toHaveText(BookingTitle);
 
     // Since all the users have the same leastRecentlyBooked value
     // Anyone of the teammates could be the Host of the booking.
     const chosenUser = await page.getByTestId("booking-host-name").textContent();
+
     expect(chosenUser).not.toBeNull();
+
     expect(teamMatesObj.concat([{ name: owner.name! }]).some(({ name }) => name === chosenUser)).toBe(true);
     // TODO: Assert whether the user received an email
   });
@@ -18433,6 +19621,7 @@ test.describe("Teams - Org", () => {
 
     // This is the most closest to the actual user flow as org1.cal.com maps to /org/orgSlug
     await page.goto(`/org/${org.slug}/${teamSlugUpperCase}/${teamEventSlugUpperCase}`);
+
     await page.waitForSelector("[data-testid=day]");
   });
 });
@@ -18523,7 +19712,9 @@ test.describe("Signup Flow Test", async () => {
 
     // Fill form
     await page.locator('input[name="username"]').fill("rock");
+
     await page.locator('input[name="email"]').fill(userToCreate.email);
+
     await page.locator('input[name="password"]').fill(userToCreate.password);
 
     await page.click('button[type="submit"]');
@@ -18551,13 +19742,17 @@ test.describe("Signup Flow Test", async () => {
 
     // Fill form
     await page.locator('input[name="username"]').fill(userToCreate.username);
+
     await page.locator('input[name="email"]').fill(userToCreate.email);
+
     await page.locator('input[name="password"]').fill(userToCreate.password);
 
     await page.click('button[type="submit"]');
+
     await page.waitForLoadState("networkidle");
     // Find the newly created user and add it to the fixture store
     const newUser = await users.set(userToCreate.email);
+
     expect(newUser).not.toBeNull();
 
     // Check that the URL matches the expected URL
@@ -18569,6 +19764,7 @@ test.describe("Signup Flow Test", async () => {
   });
   test("Signup fields prefilled with query params", async ({ page, users }) => {
     const signupUrlWithParams = "/signup?username=rick-jones&email=rick-jones%40example.com";
+
     await page.goto(signupUrlWithParams);
 
     // Fill form
@@ -18577,6 +19773,7 @@ test.describe("Signup Flow Test", async () => {
     const emailInput = page.locator('input[name="email"]');
 
     expect(await usernameInput.inputValue()).toBe("rick-jones");
+
     expect(await emailInput.inputValue()).toBe("rick-jones@example.com");
   });
   test("Signup with token prefils correct fields", async ({ page, users, prisma }) => {
@@ -18628,12 +19825,15 @@ test.describe("Signup Flow Test", async () => {
     const emailField = page.locator('input[name="email"]');
 
     expect(await usernameField.inputValue()).toBe(userToCreate.username);
+
     expect(await emailField.inputValue()).toBe(userToCreate.email);
 
     // Cleanup specific to this test
     // Clean up the user and token
     await prisma.user.deleteMany({ where: { email: userToCreate.email } });
+
     await prisma.verificationToken.deleteMany({ where: { identifier: createdtoken.identifier } });
+
     await prisma.team.deleteMany({ where: { id: createdtoken.teamId! } });
   });
   test("Email verification sent if enabled", async ({ page, prisma, emails, users, features }) => {
@@ -18657,7 +19857,9 @@ test.describe("Signup Flow Test", async () => {
 
     // Fill form
     await page.locator('input[name="username"]').fill(userToCreate.username);
+
     await page.locator('input[name="email"]').fill(userToCreate.email);
+
     await page.locator('input[name="password"]').fill(userToCreate.password);
 
     await page.click('button[type="submit"]');
@@ -18665,6 +19867,7 @@ test.describe("Signup Flow Test", async () => {
     await page.waitForURL((url) => url.pathname.includes("/auth/verify-email"));
     // Find the newly created user and add it to the fixture store
     const newUser = await users.set(userToCreate.email);
+
     expect(newUser).not.toBeNull();
 
     const receivedEmails = await getEmailsReceivedByUser({
@@ -18679,6 +19882,7 @@ test.describe("Signup Flow Test", async () => {
     expect(receivedEmails?.total).toBe(1);
 
     const verifyEmail = receivedEmails?.items[0];
+
     expect(verifyEmail?.subject).toBe(`${APP_NAME}: Verify your account`);
   });
   test("If signup is disabled allow team invites", async ({ browser, page, users, emails }) => {
@@ -18690,8 +19894,11 @@ test.describe("Signup Flow Test", async () => {
     const teamOwner = await users.create(undefined, { hasTeam: true });
 
     const { team } = await teamOwner.getFirstTeamMembership();
+
     await teamOwner.apiLogin();
+
     await page.goto(`/settings/teams/${team.id}/members`);
+
     await page.waitForLoadState("networkidle");
 
     await test.step("Invite User to team", async () => {
@@ -18769,6 +19976,7 @@ const addOauthBasedIntegration = async function ({
   slug: string;
   authorization: {
     url: string;
+
     verify: (config: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       requestHeaders: any;
@@ -19007,6 +20215,7 @@ test.fixme("Integrations", () => {
     };
        */
     });
+
     test("Can disconnect from integration", async ({ page, users }) => {
       const user = await users.create();
       await user.apiLogin();
@@ -19048,6 +20257,7 @@ test.fixme("Integrations", () => {
             expect(params.get("redirect_uri")).toBeTruthy();
             // TODO: We can check if client_id is correctly read from DB or not
             expect(params.get("client_id")).toBeTruthy();
+
             expect(params.get("scope")).toBe(
               ["crm.objects.contacts.read", "crm.objects.contacts.write"].join(" ")
             );
@@ -19065,8 +20275,11 @@ test.fixme("Integrations", () => {
           url: "https://api.hubapi.com/oauth/v1/token",
           verify({ params, code }) {
             expect(params.get("grant_type")).toBe("authorization_code");
+
             expect(params.get("code")).toBe(code);
+
             expect(params.get("client_id")).toBeTruthy();
+
             expect(params.get("client_secret")).toBeTruthy();
 
             return {
@@ -19101,6 +20314,7 @@ import { test } from "./lib/fixtures";
 test.describe("Change Theme Test", () => {
   test("change theme to dark", async ({ page, users }) => {
     const pro = await users.create();
+
     await pro.apiLogin();
 
     await page.goto("/settings/my-account/appearance");
@@ -19112,16 +20326,19 @@ test.describe("Change Theme Test", () => {
     await page.click('[data-testid="update-theme-btn"]');
     //Wait for the toast to appear
     const toast = await page.waitForSelector('[data-testid="toast-success"]');
+
     expect(toast).toBeTruthy();
     //Go to the profile page and check if the theme is dark
     await page.goto(`/${pro.username}`);
 
     const darkModeClass = await page.getAttribute("html", "class");
+
     expect(darkModeClass).toContain("dark");
   });
 
   test("change theme to light", async ({ page, users }) => {
     const pro = await users.create();
+
     await pro.apiLogin();
 
     await page.goto("/settings/my-account/appearance");
@@ -19133,11 +20350,13 @@ test.describe("Change Theme Test", () => {
     await page.click('[data-testid="update-theme-btn"]');
     //Wait for the toast to appear
     const toast = await page.waitForSelector('[data-testid="toast-success"]');
+
     expect(toast).toBeTruthy();
     //Go to the profile page and check if the theme is light
     await page.goto(`/${pro.username}`);
 
     const darkModeClass = await page.getAttribute("html", "class");
+
     expect(darkModeClass).toContain("light");
   });
 });
@@ -19199,26 +20418,32 @@ declare global {
 export const test = base.extend<Fixtures>({
   orgs: async ({ page }, use) => {
     const orgsFixture = createOrgsFixture(page);
+
     await use(orgsFixture);
   },
   users: async ({ page, context, emails }, use, workerInfo) => {
     const usersFixture = createUsersFixture(page, emails, workerInfo);
+
     await use(usersFixture);
   },
   bookings: async ({ page }, use) => {
     const bookingsFixture = createBookingsFixture(page);
+
     await use(bookingsFixture);
   },
   payments: async ({ page }, use) => {
     const payemntsFixture = createPaymentsFixture(page);
+
     await use(payemntsFixture);
   },
   embeds: async ({ page }, use) => {
     const embedsFixture = createEmbedsFixture(page);
+
     await use(embedsFixture);
   },
   servers: async ({}, use) => {
     const servers = createServersFixture();
+
     await use(servers);
   },
   prisma: async ({}, use) => {
@@ -19232,19 +20457,24 @@ export const test = base.extend<Fixtures>({
   },
   bookingPage: async ({ page }, use) => {
     const bookingPage = createBookingPageFixture(page);
+
     await use(bookingPage);
   },
   features: async ({ page }, use) => {
     const features = createFeatureFixture(page);
+
     await features.init();
+
     await use(features);
   },
   workflowPage: async ({ page }, use) => {
     const workflowPage = createWorkflowPageFixture(page);
+
     await use(workflowPage);
   },
   eventTypePage: async ({ page }, use) => {
     const eventTypePage = createEventTypeFixture(page);
+
     await use(eventTypePage);
   },
 });
@@ -19276,6 +20506,7 @@ export const testBothFutureAndLegacyRoutes = {
             ]);
           });
         }
+
         testFn(routeVariant as RouteVariant);
       });
     });
@@ -19291,8 +20522,11 @@ import { parse } from "url";
 declare let process: {
   env: {
     E2E_DEV_SERVER: string;
+
     PLAYWRIGHT_TEST_BASE_URL: string;
+
     NEXT_PUBLIC_WEBAPP_URL: string;
+
     NEXT_PUBLIC_WEBSITE_URL: string;
   };
 };
@@ -19325,9 +20559,11 @@ export const nextServer = async ({ port = 3000 } = { port: 3000 }) => {
       const parsedUrl = parse(req.url, true);
       handle(req, res, parsedUrl);
     });
+
     server.listen({ port: port }, () => {
       resolve(server);
     });
+
     server.on("error", (error) => {
       if (error) throw new Error(`Could not start Next.js server - ${error.message}`);
     });
@@ -19393,7 +20629,9 @@ export function createHttpServer(opts: { requestHandler?: RequestHandler } = {})
         if (requestList.length !== count) {
           return;
         }
+
         eventEmitter.off("push", pushHandler);
+
         resolve();
       };
 
@@ -19406,6 +20644,7 @@ export function createHttpServer(opts: { requestHandler?: RequestHandler } = {})
     req.on("data", (data) => {
       buffer.push(data);
     });
+
     req.on("end", () => {
       const _req: Request = req;
       // assume all incoming request bodies are json
@@ -19532,6 +20771,7 @@ export async function gotoRoutingLink({
     if (!href) {
       throw new Error("Preview link not found");
     }
+
     previewLink = href;
   } else {
     previewLink = `/forms/${formId}`;
@@ -19847,21 +21087,26 @@ const fillQuestion = async (eventTypePage: Page, questionType: string, customLoc
     checkbox: async () => {
       if (customLocators.shouldUseLastRadioGroupLocator || customLocators.shouldChangeMultiSelectLocator) {
         await eventTypePage.getByLabel("Option 1").last().click();
+
         await eventTypePage.getByLabel("Option 2").last().click();
       } else if (customLocators.shouldUseFirstRadioGroupLocator) {
         await eventTypePage.getByLabel("Option 1").first().click();
+
         await eventTypePage.getByLabel("Option 2").first().click();
       } else {
         await eventTypePage.getByLabel("Option 1").click();
+
         await eventTypePage.getByLabel("Option 2").click();
       }
     },
     multiselect: async () => {
       if (customLocators.shouldChangeMultiSelectLocator) {
         await eventTypePage.getByLabel("multi-select-dropdown").click();
+
         await eventTypePage.getByTestId("select-option-Option 1").click();
       } else {
         await eventTypePage.getByLabel("multi-select-dropdown").last().click();
+
         await eventTypePage.getByTestId("select-option-Option 1").click();
       }
     },
@@ -19874,9 +21119,11 @@ const fillQuestion = async (eventTypePage: Page, questionType: string, customLoc
     select: async () => {
       if (customLocators.shouldChangeSelectLocator) {
         await eventTypePage.getByLabel("select-dropdown").first().click();
+
         await eventTypePage.getByTestId("select-option-Option 1").click();
       } else {
         await eventTypePage.getByLabel("select-dropdown").last().click();
+
         await eventTypePage.getByTestId("select-option-Option 1").click();
       }
     },
@@ -20031,6 +21278,7 @@ export function createBookingPageFixture(page: Page) {
       await page.getByLabel("Label").fill(label);
       if (placeholder) {
         await page.getByLabel("Placeholder").click();
+
         await page.getByLabel("Placeholder").fill(placeholder);
       }
       if (!isRequired) {
@@ -20119,7 +21367,9 @@ export function createBookingPageFixture(page: Page) {
         await eventTypePage.getByRole("heading", { name: "Could not reschedule the meeting." }).isVisible()
       ) {
         await eventTypePage.getByTestId("back").click();
+
         await eventTypePage.getByTestId("time").last().click();
+
         await eventTypePage.getByTestId("confirm-reschedule-button").click();
       }
     },
@@ -20189,9 +21439,13 @@ export function createBookingPageFixture(page: Page) {
       await eventTypePage.waitForTimeout(400);
       if (await eventTypePage.getByRole("heading", { name: "Could not book the meeting." }).isVisible()) {
         await eventTypePage.getByTestId("back").click();
+
         await eventTypePage.getByTestId("time").last().click();
+
         await fillQuestion(eventTypePage, question, customLocators);
+
         options.isRequired && (await fillQuestion(eventTypePage, secondQuestion, customLocators));
+
         await eventTypePage.getByTestId(confirmButton).click();
       }
       const scheduleSuccessfullyPage = eventTypePage.getByText(scheduleSuccessfullyText);
@@ -20267,6 +21521,7 @@ export function createBookingPageFixture(page: Page) {
           .click();
 
         const managedEventClarification = (await localize("en"))("managed_event_url_clarification");
+
         await expect(page.getByText(managedEventClarification)).toBeVisible();
       }
 
@@ -20568,16 +21823,19 @@ export const createEmbedsFixture = (page: Page) => {
               setTimeout(tryAddingListener, 500);
               return;
             }
+
             if (calNamespace) {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               //@ts-ignore
               api = window.Cal.ns[calNamespace];
             }
+
             console.log("PlaywrightTest:", `Adding listener for __iframeReady on namespace:${calNamespace}`);
 
             if (!api) {
               throw new Error(`namespace "${calNamespace}" not found`);
             }
+
             api("on", {
               action: "*",
               callback: (e) => {
@@ -20591,6 +21849,7 @@ export const createEmbedsFixture = (page: Page) => {
 
                 const eventStore = (store[`${e.detail.type}-${e.detail.namespace}`] =
                   store[`${e.detail.type}-${e.detail.namespace}`] || []);
+
                 eventStore.push(e.detail);
               },
             });
@@ -20643,14 +21902,17 @@ export function createWorkflowPageFixture(page: Page) {
     } else {
       await page.getByTestId("create-button").click();
     }
+
     if (name) {
       await fillNameInput(name);
     }
+
     if (trigger) {
       page.locator("div").filter({ hasText: WorkflowTriggerEvents.BEFORE_EVENT }).nth(1);
       page.getByText(trigger);
       await selectEventType("30 min");
     }
+
     await saveWorkflow();
   };
 
@@ -20660,6 +21922,7 @@ export function createWorkflowPageFixture(page: Page) {
 
   const assertListCount = async (count: number) => {
     const workflowListCount = await page.locator('[data-testid="workflow-list"] > li');
+
     await expect(workflowListCount).toHaveCount(count);
   };
 
@@ -20691,16 +21954,19 @@ export function createWorkflowPageFixture(page: Page) {
     const confirmDeleteText = (await localize("en"))("confirm_delete_workflow");
 
     await deleteButton.click();
+
     await page.getByRole("button", { name: confirmDeleteText }).click();
   };
 
   const selectEventType = async (name: string) => {
     await page.getByText("Select...").click();
+
     await page.getByText(name, { exact: true }).click();
   };
 
   const hasReadonlyBadge = async () => {
     const readOnlyBadge = page.getByText((await localize("en"))("readonly"));
+
     await expect(readOnlyBadge).toBeVisible();
   };
 
@@ -20718,6 +21984,7 @@ export function createWorkflowPageFixture(page: Page) {
     ]);
 
     expect(editButton.isDisabled()).toBeTruthy();
+
     expect(deleteButton.isDisabled()).toBeTruthy();
   };
 
@@ -20733,6 +22000,7 @@ export function createWorkflowPageFixture(page: Page) {
         bookingUid: booking?.uid ?? "",
       },
     });
+
     expect(workflowReminders).toHaveLength(count);
   };
 
@@ -20922,7 +22190,9 @@ export const createFeatureFixture = (page: Page) => {
       const feature = store.features.find((b) => b.slug === slug);
       if (feature) {
         const enabled = !feature.enabled;
+
         await prisma.feature.update({ where: { slug }, data: { enabled } });
+
         store.features = store.features.map((b) => (b.slug === slug ? { ...b, enabled } : b));
       }
     },
@@ -20930,6 +22200,7 @@ export const createFeatureFixture = (page: Page) => {
       const feature = store.features.find((b) => b.slug === slug);
       if (feature) {
         store.features = store.features.map((b) => (b.slug === slug ? { ...b, enabled } : b));
+
         await prisma.feature.update({ where: { slug }, data: { enabled } });
       }
     },
@@ -20961,6 +22232,7 @@ export const createEmailsFixture = () => {
             );
           }
         }
+
         return mailhogAPI.search.bind(mailhogAPI)(query, kind, start, limit);
       },
       deleteMessage: mailhogAPI.deleteMessage.bind(mailhogAPI),
@@ -20980,11 +22252,13 @@ type Route = {
   id: string;
   action: {
     type: string;
+
     value: string;
   };
   isFallback: boolean;
   queryValue: {
     id: string;
+
     type: string;
   };
 };
@@ -21004,8 +22278,11 @@ export const createRoutingFormsFixture = () => {
       routes?: Route[];
       fields: {
         type: string;
+
         label: string;
+
         identifier?: string;
+
         required: boolean;
       }[];
     }) {
@@ -21250,8 +22527,11 @@ const createTeamEventType = async (
   team: { id: number },
   scenario?: {
     schedulingType?: SchedulingType;
+
     teamEventTitle?: string;
+
     teamEventSlug?: string;
+
     teamEventLength?: number;
   }
 ) => {
@@ -21296,10 +22576,15 @@ const createTeamAndAddUser = async (
     organizationId,
   }: {
     user: { id: number; email: string; username: string | null; role?: MembershipRole };
+
     isUnpublished?: boolean;
+
     isOrg?: boolean;
+
     isOrgVerified?: boolean;
+
     hasSubteam?: true;
+
     organizationId?: number | null;
   },
   workerInfo: WorkerInfo
@@ -21322,8 +22607,11 @@ const createTeamAndAddUser = async (
   data.slug = !isUnpublished ? slug : undefined;
   if (isOrg && hasSubteam) {
     const team = await createTeamAndAddUser({ user }, workerInfo);
+
     await createTeamEventType(user, team);
+
     await createTeamWorkflow(user, team);
+
     data.children = { connect: [{ id: team.id }] };
   }
   data.orgUsers = isOrg ? { connect: [{ id: user.id }] } : undefined;
@@ -21353,8 +22641,11 @@ export const createUsersFixture = (
 ) => {
   const store = { users: [], trackedEmails: [], page, teams: [] } as {
     users: UserFixture[];
+
     trackedEmails: { email: string }[];
+
     page: typeof page;
+
     teams: Team[];
   };
   return {
@@ -21373,16 +22664,27 @@ export const createUsersFixture = (
       opts?: CustomUserOpts | null,
       scenario: {
         seedRoutingForms?: boolean;
+
         hasTeam?: true;
+
         teamRole?: MembershipRole;
+
         teammates?: CustomUserOpts[];
+
         schedulingType?: SchedulingType;
+
         teamEventTitle?: string;
+
         teamEventSlug?: string;
+
         teamEventLength?: number;
+
         isOrg?: boolean;
+
         isOrgVerified?: boolean;
+
         hasSubteam?: true;
+
         isUnpublished?: true;
       } = {}
     ) => {
@@ -21400,7 +22702,9 @@ export const createUsersFixture = (
       if (opts?.eventTypes) defaultEventTypes = defaultEventTypes.concat(opts.eventTypes);
       for (const eventTypeData of defaultEventTypes) {
         eventTypeData.owner = { connect: { id: _user.id } };
+
         eventTypeData.users = { connect: { id: _user.id } };
+
         await prisma.eventType.create({
           data: eventTypeData,
         });
@@ -21413,6 +22717,7 @@ export const createUsersFixture = (
       ];
       for (const workflowData of workflows) {
         workflowData.user = { connect: { id: _user.id } };
+
         await prisma.workflow.create({
           data: workflowData,
         });
@@ -21555,6 +22860,7 @@ export const createUsersFixture = (
           },
           workerInfo
         );
+
         store.teams.push(team);
 
         const teamEvent = await createTeamEventType(user, team, scenario);
@@ -21593,7 +22899,9 @@ export const createUsersFixture = (
               }),
               store.page
             );
+
             teamMatesIds.push(teamUser.id);
+
             store.users.push(teammateFixture);
           }
           // Add Teammates to OrgUsers
@@ -21642,6 +22950,7 @@ export const createUsersFixture = (
             });
           }
         }
+
         for (const id of emailMessageIds) {
           await emails.deleteMessage(id);
         }
@@ -21849,14 +23158,17 @@ const createUser = (
     role,
   }: {
     organizationId: number | null | undefined;
+
     role: MembershipRole | undefined;
   }) {
     if (!organizationId) {
       return null;
     }
+
     if (!role) {
       throw new Error("Missing role for user in organization");
     }
+
     return {
       organizationId: organizationId || null,
       ...(organizationId
@@ -22093,6 +23405,7 @@ test.describe("Apple Calendar", () => {
 
   test("Should be able to install and login on Apple Calendar", async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
 
     await installAppleCalendar(page);
@@ -22100,10 +23413,13 @@ test.describe("Apple Calendar", () => {
     await expect(page.locator('[data-testid="apple-calendar-form"]')).toBeVisible();
 
     await page.fill('[data-testid="apple-calendar-email"]', APPLE_CALENDAR_EMAIL);
+
     await page.fill('[data-testid="apple-calendar-password"]', APPLE_CALENDAR_PASSWORD);
+
     await page.click('[data-testid="apple-calendar-login-button"]');
 
     await expect(page.getByText("Apple Calendar")).toBeVisible();
+
     await expect(page.getByText(APPLE_CALENDAR_EMAIL)).toBeVisible();
   });
 });
@@ -22123,7 +23439,9 @@ test.describe("Teams", () => {
       hasSubteam: true,
       teammates: teamMatesObj,
     });
+
     await owner.apiLogin();
+
     await page.goto("/settings/my-account/profile");
 
     // check if user avatar is loaded
@@ -22190,13 +23508,17 @@ test.afterEach(({ users }) => users.deleteAll());
 test.describe("Booking with Seats", () => {
   test("User can create a seated event (2 seats as example)", async ({ users, page }) => {
     const user = await users.create({ name: "Seated event" });
+
     await user.apiLogin();
+
     await page.goto("/event-types");
     // We wait until loading is finished
     await page.waitForSelector('[data-testid="event-types"]');
 
     const eventTitle = "My 2-seated event";
+
     await createNewSeatedEventType(page, { eventTitle });
+
     await expect(page.locator(`text=Event type updated successfully`)).toBeVisible();
   });
 
@@ -22252,7 +23574,9 @@ test.describe("Booking with Seats", () => {
       { name: "Jane Second", email: "second+seats@cal.com", timeZone: "Europe/Berlin" },
       { name: "John Third", email: "third+seats@cal.com", timeZone: "Europe/Berlin" },
     ]);
+
     await page.goto(`/booking/${booking.uid}?cancel=true`);
+
     await expect(page.locator("[text=Cancel]")).toHaveCount(0);
 
     // expect login text to be in the page, not data-testid
@@ -22277,6 +23601,7 @@ test.describe("Booking with Seats", () => {
 
     // confirm cancellation
     await page.locator('[data-testid="confirm_cancel"]').click();
+
     await page.waitForLoadState("networkidle");
 
     const updatedBooking = await prisma.booking.findFirst({
@@ -22284,6 +23609,7 @@ test.describe("Booking with Seats", () => {
     });
 
     expect(updatedBooking).not.toBeNull();
+
     expect(updatedBooking?.status).toBe(BookingStatus.CANCELLED);
   });
 });
@@ -22365,6 +23691,7 @@ test.describe("Reschedule for booking with seats", () => {
       { name: "John First", email: "first+seats@cal.com", timeZone: "Europe/Berlin" },
       { name: "Jane Second", email: "second+seats@cal.com", timeZone: "Europe/Berlin" },
     ]);
+
     await user.apiLogin();
 
     const bookingAttendees = await prisma.attendee.findMany({
@@ -22394,6 +23721,7 @@ test.describe("Reschedule for booking with seats", () => {
 
     // Now we cancel the booking as the first attendee
     // booking/${bookingUid}?cancel=true&allRemainingBookings=false&seatReferenceUid={bookingSeat.referenceUid}
+
     await page.goto(
       `/booking/${booking.uid}?cancel=true&allRemainingBookings=false&seatReferenceUid=${bookingSeats[0].referenceUid}`
     );
@@ -22425,6 +23753,7 @@ test.describe("Reschedule for booking with seats", () => {
       { name: "John First", email: "first+seats@cal.com", timeZone: "Europe/Berlin" },
       { name: "Jane Second", email: "second+seats@cal.com", timeZone: "Europe/Berlin" },
     ]);
+
     await user.apiLogin();
 
     const bookingWithEventType = await prisma.booking.findFirst({
@@ -22475,17 +23804,20 @@ test.describe("Reschedule for booking with seats", () => {
     const foundFirstAttendeeAsOwner = await page.locator(
       'p[data-testid="attendee-email-first+seats@cal.com"]'
     );
+
     await expect(foundFirstAttendeeAsOwner).toHaveCount(1);
 
     const foundSecondAttendeeAsOwner = await page.locator(
       'p[data-testid="attendee-email-second+seats@cal.com"]'
     );
+
     await expect(foundSecondAttendeeAsOwner).toHaveCount(1);
 
     await page.goto("auth/logout");
 
     // Now we cancel the booking as the first attendee
     // booking/${bookingUid}?cancel=true&allRemainingBookings=false&seatReferenceUid={bookingSeat.referenceUid}
+
     await page.goto(
       `/booking/${booking.uid}?cancel=true&allRemainingBookings=false&seatReferenceUid=${bookingSeats[0].referenceUid}`
     );
@@ -22496,6 +23828,7 @@ test.describe("Reschedule for booking with seats", () => {
     await expect(notFoundSecondAttendee).toHaveCount(0);
 
     const foundFirstAttendee = await page.locator('p[data-testid="attendee-email-first+seats@cal.com"]');
+
     await expect(foundFirstAttendee).toHaveCount(1);
 
     await prisma.eventType.update({
@@ -22519,6 +23852,7 @@ test.describe("Reschedule for booking with seats", () => {
     const foundFirstAttendeeAgain = await page
       .locator('p[data-testid="attendee-email-first+seats@cal.com"]')
       .first();
+
     await expect(foundFirstAttendeeAgain).toHaveCount(1);
   });
 
@@ -22536,6 +23870,7 @@ test.describe("Reschedule for booking with seats", () => {
     const getBooking = await booking.self();
 
     await page.goto(`/booking/${booking.uid}`);
+
     await expect(page.locator('[data-testid="reschedule"]')).toHaveCount(0);
 
     // expect login text to be in the page, not data-testid
@@ -22564,16 +23899,19 @@ test.describe("Reschedule for booking with seats", () => {
     const nameElement = await page.locator("input[name=name]");
 
     const name = await nameElement.inputValue();
+
     expect(name).toBe(user.name);
 
     //same for email
     const emailElement = await page.locator("input[name=email]");
 
     const email = await emailElement.inputValue();
+
     expect(email).toBe(user.email);
 
     // reason to reschedule input should be visible textfield with name rescheduleReason
     const reasonElement = await page.locator("textarea[name=rescheduleReason]");
+
     await expect(reasonElement).toBeVisible();
 
     // expect to be redirected to reschedule page
@@ -22591,8 +23929,11 @@ test.describe("Reschedule for booking with seats", () => {
     });
 
     expect(updatedBooking).not.toBeNull();
+
     expect(getBooking?.startTime).not.toBe(updatedBooking?.startTime);
+
     expect(getBooking?.endTime).not.toBe(updatedBooking?.endTime);
+
     expect(updatedBooking?.status).toBe(BookingStatus.ACCEPTED);
   });
 
@@ -22615,6 +23956,7 @@ test.describe("Reschedule for booking with seats", () => {
 
     // expect textarea with name notes to be visible
     const notesElement = await page.locator("textarea[name=notes]");
+
     await expect(notesElement).toBeVisible();
 
     // expect button confirm instead of reschedule
@@ -22646,6 +23988,7 @@ test.describe("Workflow Tab - Event Type", () => {
     test.describe("User Workflows", () => {
       test.beforeEach(async ({ page, users }) => {
         await loginUser(users);
+
         await page.goto("/workflows");
       });
 
@@ -22653,6 +23996,7 @@ test.describe("Workflow Tab - Event Type", () => {
         const { createWorkflow, assertListCount } = workflowPage;
 
         await createWorkflow({ name: "" });
+
         await assertListCount(3);
       });
 
@@ -22660,8 +24004,11 @@ test.describe("Workflow Tab - Event Type", () => {
         const { saveWorkflow, fillNameInput, editSelectedWorkflow, hasWorkflowInList } = workflowPage;
 
         await editSelectedWorkflow("Test Workflow");
+
         await fillNameInput("Edited Workflow");
+
         await saveWorkflow();
+
         await hasWorkflowInList("Edited Workflow");
       });
 
@@ -22674,7 +24021,9 @@ test.describe("Workflow Tab - Event Type", () => {
           .first();
 
         await deleteAndConfirm(firstWorkflow);
+
         await hasWorkflowInList("Edited Workflow", true);
+
         await assertListCount(1);
       });
 
@@ -22686,8 +24035,11 @@ test.describe("Workflow Tab - Event Type", () => {
         const [eventType] = user.eventTypes;
 
         await createWorkflow({ name: "A New Workflow", trigger: WorkflowTriggerEvents.NEW_EVENT });
+
         await page.goto(`/${user.username}/${eventType.slug}`);
+
         await bookEventOnThisPage(page);
+
         await assertWorkflowReminders(eventType.id, 1);
       });
     });
@@ -22697,9 +24049,11 @@ test.describe("Workflow Tab - Event Type", () => {
         const { createWorkflow, assertListCount } = workflowPage;
 
         await loginUserWithTeam(users, MembershipRole.ADMIN);
+
         await page.goto("/workflows");
 
         await createWorkflow({ name: "A New Workflow", isTeam: true });
+
         await assertListCount(4);
       });
 
@@ -22707,10 +24061,13 @@ test.describe("Workflow Tab - Event Type", () => {
         const { hasReadonlyBadge, selectedWorkflowPage, workflowOptionsAreDisabled } = workflowPage;
 
         await loginUserWithTeam(users, MembershipRole.MEMBER);
+
         await page.goto("/workflows");
 
         await workflowOptionsAreDisabled("Team Workflow");
+
         await selectedWorkflowPage("Team Workflow");
+
         await hasReadonlyBadge();
       });
     });
@@ -22727,6 +24084,7 @@ test.describe.configure({ mode: "parallel" });
 test.fixme("hash my url", () => {
   test.beforeEach(async ({ users }) => {
     const user = await users.create();
+
     await user.apiLogin();
   });
   test.afterEach(async ({ users }) => {
@@ -22736,6 +24094,7 @@ test.fixme("hash my url", () => {
     await page.goto("/event-types");
     // We wait until loading is finished
     await page.waitForSelector('[data-testid="event-types"]');
+
     await page.locator("ul[data-testid=event-types] > li a").first().click();
     // We wait for the page to load
     await page.locator(".primary-navigation >> text=Advanced").click();
@@ -22754,7 +24113,9 @@ test.fixme("hash my url", () => {
 
     // book using generated url hash
     await page.goto($url);
+
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await bookTimeSlot(page);
     // Make sure we're navigated to the success page
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
@@ -22763,11 +24124,13 @@ test.fixme("hash my url", () => {
     await page.goto("/event-types");
     // We wait until loading is finished
     await page.waitForSelector('[data-testid="event-types"]');
+
     await page.locator("ul[data-testid=event-types] > li a").first().click();
     // We wait for the page to load
     await page.locator(".primary-navigation >> text=Advanced").click();
     // we wait for the hashedLink setting to load
     const $newUrl = await page.locator('//*[@data-testid="generated-hash-url"]').inputValue();
+
     expect($url !== $newUrl).toBeTruthy();
   });
 });
@@ -22794,6 +24157,7 @@ test.describe("Wipe my Cal App Test", () => {
     const pro = await users.create();
 
     const [eventType] = pro.eventTypes;
+
     await prisma.credential.create({
       data: {
         key: {},
@@ -22802,6 +24166,7 @@ test.describe("Wipe my Cal App Test", () => {
         appId: "wipe-my-cal",
       },
     });
+
     await bookings.create(
       pro.id,
       pro.username,
@@ -22810,15 +24175,21 @@ test.describe("Wipe my Cal App Test", () => {
       dayjs().endOf("day").subtract(29, "minutes").toDate(),
       dayjs().endOf("day").toDate()
     );
+
     await bookings.create(pro.id, pro.username, eventType.id, {});
+
     await bookings.create(pro.id, pro.username, eventType.id, {});
+
     await pro.apiLogin();
+
     await page.goto("/bookings/upcoming");
+
     await expect(page.locator("data-testid=wipe-today-button")).toBeVisible();
 
     const $openBookingCount = await page.locator('[data-testid="bookings"] > *').count();
 
     const $todayBookingCount = await page.locator('[data-testid="today-bookings"] > *').count();
+
     expect($openBookingCount + $todayBookingCount).toBe(3);
 
     await page.locator("data-testid=wipe-today-button").click();
@@ -22912,6 +24283,7 @@ async function createBooking({
   bookingsFixture: Fixtures["bookings"];
   organizer: {
     id: number;
+
     username: string | null;
   };
   organizerEventType: {
@@ -22919,7 +24291,9 @@ async function createBooking({
   };
   attendees: {
     name: string;
+
     email: string;
+
     timeZone: string;
   }[];
   relativeDate?: number;
@@ -23126,16 +24500,23 @@ import { test } from "../lib/fixtures";
 test.describe("Limits Tab - Event Type", () => {
   test.beforeEach(async ({ page, users, bookingPage }) => {
     await loginUser(users);
+
     await page.goto("/event-types");
+
     await bookingPage.goToEventType("30 min");
+
     await bookingPage.goToTab("event_limit_tab_title");
   });
 
   test("Check the functionalities of the Limits Tab", async ({ bookingPage }) => {
     await bookingPage.checkLimitBookingFrequency();
+
     await bookingPage.checkLimitBookingDuration();
+
     await bookingPage.checkLimitFutureBookings();
+
     await bookingPage.checkOffsetTimes();
+
     await bookingPage.checkBufferTime();
 
     await bookingPage.updateEventType();
@@ -23145,6 +24526,7 @@ test.describe("Limits Tab - Event Type", () => {
     await eventTypePage.waitForTimeout(10000);
 
     const counter = await eventTypePage.getByTestId("time").count();
+
     await bookingPage.checkTimeSlotsCount(eventTypePage, counter);
   });
 });
@@ -23159,7 +24541,9 @@ test.describe.configure({ mode: "parallel" });
 test.describe("Availablity tests", () => {
   test.beforeEach(async ({ page, users }) => {
     const user = await users.create();
+
     await user.apiLogin();
+
     await page.goto("/availability");
     // We wait until loading is finished
     await page.waitForSelector('[data-testid="schedules"]');
@@ -23202,6 +24586,7 @@ test.describe("Availablity tests", () => {
       page.locator('[type="submit"]').click();
       await expect(page.locator("[data-testid=availablity-title]")).toHaveValue("More working hours");
     });
+
     await test.step("Can delete a schedule", async () => {
       await page.getByRole("button", { name: /Go Back/i }).click();
       await page.locator('[data-testid="schedules"] > li').nth(1).getByTestId("schedule-more").click();
@@ -23211,6 +24596,7 @@ test.describe("Availablity tests", () => {
 
       await expect(page.locator('[data-testid="schedules"] > li').nth(1)).toHaveCount(0);
     });
+
     await test.step("Cannot delete a schedule if a single schedule is present", async () => {
       await page.locator('[data-testid="schedules"] > li').nth(0).getByTestId("schedule-more").click();
       await page.locator('[data-testid="delete-schedule"]').click();
@@ -23293,16 +24679,19 @@ test.describe("Insights", async () => {
     const user = await users.create();
 
     const userTwo = await users.create();
+
     await createTeamsAndMembership(user.id, userTwo.id);
 
     await user.apiLogin();
 
     // go to insights page
     await page.goto("/insights");
+
     await page.waitForLoadState("networkidle");
 
     // expect url to have isAll and TeamId in query params
     expect(page.url()).toContain("isAll=false");
+
     expect(page.url()).toContain("teamId=");
   });
 
@@ -23322,6 +24711,7 @@ test.describe("Insights", async () => {
     // expect url to have isAll and TeamId in query params
 
     expect(page.url()).toContain("isAll=false");
+
     expect(page.url()).not.toContain("teamId=");
   });
 
@@ -23343,6 +24733,7 @@ test.describe("Insights", async () => {
 
     // get div from team select filter with this class flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1
     await page.getByTestId("dashboard-shell").getByText("Team: test-insights").click();
+
     await page
       .locator('div[class="flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1"]')
       .click();
@@ -23361,9 +24752,11 @@ test.describe("Insights", async () => {
       isOrg: true,
       hasSubteam: true,
     });
+
     await owner.apiLogin();
 
     await page.goto("/insights");
+
     await page.waitForLoadState("networkidle");
 
     await page.getByTestId("dashboard-shell").getByText("All").nth(1).click();
@@ -23388,6 +24781,7 @@ test.describe("Insights", async () => {
 
     // get div from team select filter with this class flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1
     await page.getByTestId("dashboard-shell").getByText("Team: test-insights").click();
+
     await page
       .locator('div[class="flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1"]')
       .click();
@@ -23412,6 +24806,7 @@ test.describe("Insights", async () => {
 
     // get div from team select filter with this class flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1
     await page.getByTestId("dashboard-shell").getByText("Team: test-insights").click();
+
     await page
       .locator('div[class="flex flex-col gap-0.5 [&>*:first-child]:mt-1 [&>*:last-child]:mb-1"]')
       .click();
@@ -23453,12 +24848,14 @@ test.describe("Insights", async () => {
       .locator('div[class="hover:bg-muted flex items-center py-2 pl-3 pr-2.5 hover:cursor-pointer"]')
       .nth(0)
       .click();
+
     await page.waitForLoadState("networkidle");
 
     await page
       .locator('div[class="hover:bg-muted flex items-center py-2 pl-3 pr-2.5 hover:cursor-pointer"]')
       .nth(1)
       .click();
+
     await page.waitForLoadState("networkidle");
     // press escape button to close the filter
     await page.keyboard.press("Escape");
@@ -23479,6 +24876,7 @@ test.describe("Insights", async () => {
     await owner.apiLogin();
 
     await page.goto("/insights");
+
     await page.waitForLoadState("networkidle");
 
     const downloadPromise = page.waitForEvent("download");
@@ -23530,6 +24928,7 @@ test.describe("Reschedule Tests", async () => {
     });
 
     await user.apiLogin();
+
     await page.goto("/bookings/upcoming");
 
     await page.locator('[data-testid="edit_booking"]').nth(0).click();
@@ -23539,13 +24938,17 @@ test.describe("Reschedule Tests", async () => {
     await page.fill('[data-testid="reschedule_reason"]', "I can't longer have it");
 
     await page.locator('button[data-testid="send_request"]').click();
+
     await expect(page.locator('[id="modal-title"]')).toBeHidden();
 
     const updatedBooking = await booking.self();
 
     expect(updatedBooking?.rescheduled).toBe(true);
+
     expect(updatedBooking?.cancellationReason).toBe("I can't longer have it");
+
     expect(updatedBooking?.status).toBe(BookingStatus.CANCELLED);
+
     await booking.delete();
   });
 
@@ -23562,7 +24965,9 @@ test.describe("Reschedule Tests", async () => {
     await selectFirstAvailableTimeSlotNextMonth(page);
 
     const formerTimeElement = page.locator('[data-testid="former_time_p"]');
+
     await expect(formerTimeElement).toBeVisible();
+
     await booking.delete();
   });
 
@@ -23575,10 +24980,13 @@ test.describe("Reschedule Tests", async () => {
     });
 
     await user.apiLogin();
+
     await page.goto("/bookings/cancelled");
 
     const requestRescheduleSentElement = page.locator('[data-testid="request_reschedule_sent"]').nth(1);
+
     await expect(requestRescheduleSentElement).toBeVisible();
+
     await booking.delete();
   });
 
@@ -23597,6 +25005,7 @@ test.describe("Reschedule Tests", async () => {
     await selectFirstAvailableTimeSlotNextMonth(page);
 
     await expect(page.locator('[name="name"]')).toBeDisabled();
+
     await expect(page.locator('[name="email"]')).toBeDisabled();
 
     await page.locator('[data-testid="confirm-reschedule-button"]').click();
@@ -23610,6 +25019,7 @@ test.describe("Reschedule Tests", async () => {
     const rescheduledBooking = await prisma.booking.findFirstOrThrow({ where: { uid: booking.uid } });
 
     expect(newBooking).not.toBeNull();
+
     expect(rescheduledBooking.status).toBe(BookingStatus.CANCELLED);
 
     await prisma.booking.deleteMany({
@@ -23626,7 +25036,9 @@ test.describe("Reschedule Tests", async () => {
     test.skip(!IS_STRIPE_ENABLED, "Skipped as Stripe is not installed");
 
     const user = await users.create();
+
     await user.apiLogin();
+
     await user.getPaymentCredential();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const eventType = user.eventTypes.find((e) => e.slug === "paid")!;
@@ -23636,6 +25048,7 @@ test.describe("Reschedule Tests", async () => {
       status: BookingStatus.CANCELLED,
       paid: false,
     });
+
     await prisma.eventType.update({
       where: {
         id: eventType.id,
@@ -23654,6 +25067,7 @@ test.describe("Reschedule Tests", async () => {
     });
 
     const payment = await payments.create(booking.id);
+
     await page.goto(`/${user.username}/${eventType.slug}?rescheduleUid=${booking.uid}`);
 
     await selectFirstAvailableTimeSlotNextMonth(page);
@@ -23669,8 +25083,11 @@ test.describe("Reschedule Tests", async () => {
 
   test("Paid rescheduling should go to success page", async ({ page, users, bookings, payments }) => {
     const user = await users.create();
+
     await user.apiLogin();
+
     await user.getPaymentCredential();
+
     await users.logout();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const eventType = user.eventTypes.find((e) => e.slug === "paid")!;
@@ -23682,6 +25099,7 @@ test.describe("Reschedule Tests", async () => {
     });
 
     const payment = await payments.create(booking.id);
+
     await page.goto(`/${user?.username}/${eventType?.slug}?rescheduleUid=${booking?.uid}`);
 
     await selectFirstAvailableTimeSlotNextMonth(page);
@@ -23709,7 +25127,9 @@ test.describe("Reschedule Tests", async () => {
     await expect(page).toHaveURL(/.*booking/);
 
     const newBooking = await prisma.booking.findFirst({ where: { fromReschedule: booking?.uid } });
+
     expect(newBooking).not.toBeNull();
+
     expect(newBooking?.status).toBe(BookingStatus.PENDING);
   });
 
@@ -23721,6 +25141,7 @@ test.describe("Reschedule Tests", async () => {
     const booking = await bookings.create(user.id, user.username, eventType.id, {
       status: BookingStatus.ACCEPTED,
     });
+
     await user.apiLogin();
 
     await page.goto(`/${user.username}/${eventType.slug}?rescheduleUid=${booking.uid}`);
@@ -23732,7 +25153,9 @@ test.describe("Reschedule Tests", async () => {
     await expect(page).toHaveURL(/.*booking/);
 
     const newBooking = await prisma.booking.findFirst({ where: { fromReschedule: booking?.uid } });
+
     expect(newBooking).not.toBeNull();
+
     expect(newBooking?.status).toBe(BookingStatus.ACCEPTED);
   });
 
@@ -23753,7 +25176,9 @@ test.describe("Reschedule Tests", async () => {
     await expect(page).toHaveURL(/.*booking/);
 
     const newBooking = await prisma.booking.findFirst({ where: { fromReschedule: booking?.uid } });
+
     expect(newBooking).not.toBeNull();
+
     expect(newBooking?.status).toBe(BookingStatus.ACCEPTED);
   });
 
@@ -23786,6 +25211,7 @@ test.describe("Reschedule Tests", async () => {
     await selectFirstAvailableTimeSlotNextMonth(page);
 
     await page.locator('[data-testid="confirm-reschedule-button"]').click();
+
     await expect(page).toHaveURL(/.*booking/);
   });
   test("Should load Valid Cal video url after rescheduling Opt in events", async ({
@@ -23807,8 +25233,11 @@ test.describe("Reschedule Tests", async () => {
     };
 
     await page.goto(`/${user.username}/${eventType.slug}`);
+
     await selectFirstAvailableTimeSlotNextMonth(page);
+
     await bookTimeSlot(page);
+
     await expect(page.locator("[data-testid=success-page]")).toBeVisible();
 
     const pageUrl = new URL(page.url());
@@ -23818,6 +25247,7 @@ test.describe("Reschedule Tests", async () => {
     const bookingUID = pathSegments[pathSegments.length - 1];
 
     const currentBooking = await prisma.booking.findFirst({ where: { uid: bookingUID } });
+
     expect(currentBooking).not.toBeUndefined();
     // eslint-disable-next-line playwright/no-conditional-in-test
     if (currentBooking) {
@@ -23837,10 +25267,13 @@ test.describe("Reschedule Tests", async () => {
         await confirmBooking(newBooking?.id);
 
         const booking = await prisma.booking.findFirst({ where: { id: newBooking.id } });
+
         expect(booking).not.toBeUndefined();
+
         expect(booking?.status).toBe(BookingStatus.ACCEPTED);
 
         const locationVideoCallUrl = bookingMetadataSchema.parse(booking?.metadata || {})?.videoCallUrl;
+
         expect(locationVideoCallUrl).not.toBeUndefined();
 
         // eslint-disable-next-line playwright/no-conditional-in-test
@@ -23949,6 +25382,7 @@ const files = diff
   .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"));
 
 console.log("ℹ️ Changed files:");
+
 console.log(files.map((str) => `  - ${str}`).join("\n"));
 
 try {
@@ -23965,6 +25399,7 @@ try {
 
   if (!filesWithTypeErrors.length) {
     console.log(`🎉 You haven't introduced any new type errors!`);
+
     process.exit(0);
   }
   console.log("❌ ❌ ❌ You seem to have touched files that have type errors ❌ ❌ ❌");
@@ -23993,6 +25428,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array());
 
     expect(nonce).toEqual("");
+
     expect(atob(nonce).length).toEqual(0);
   });
 
@@ -24004,6 +25440,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
+
     expect(nonce).toEqual("ABCDEFGHIJKLMNOPQRSTQQ==");
 
     expect(atob(nonce).length).toEqual(16);
@@ -24017,6 +25454,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
+
     expect(nonce).toEqual("ABCDEFGHIJKLMNOPQRSTQQ==");
 
     expect(atob(nonce).length).toEqual(16);
@@ -24030,6 +25468,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
+
     expect(nonce).toEqual("ABCDEFGHIJKLMNOPQRSTQQ==");
 
     expect(atob(nonce).length).toEqual(16);
@@ -24043,6 +25482,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
+
     expect(nonce).toEqual("ABCDEFGHIJKLMNOPQRSTQQ==");
 
     expect(atob(nonce).length).toEqual(16);
@@ -24056,6 +25496,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
+
     expect(nonce).toEqual("ACEGIKMOQSUWYacegikmgg==");
 
     expect(atob(nonce).length).toEqual(16);
@@ -24069,6 +25510,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
+
     expect(nonce).toEqual("AAAAAAAAAAAAAAAAAAAAAA==");
 
     expect(atob(nonce).length).toEqual(16);
@@ -24082,6 +25524,7 @@ describe("buildNonce", () => {
     const nonce = buildNonce(new Uint8Array(array));
 
     expect(nonce.length).toEqual(24);
+
     expect(nonce).toEqual("////////////////////ww==");
 
     expect(atob(nonce).length).toEqual(16);
@@ -24143,12 +25586,17 @@ export class HttpError<TCode extends number = number> extends Error {
     super(opts.message ?? `HTTP Error ${opts.statusCode} `);
 
     Object.setPrototypeOf(this, HttpError.prototype);
+
     this.name = HttpError.prototype.constructor.name;
 
     this.cause = opts.cause;
+
     this.statusCode = opts.statusCode;
+
     this.url = opts.url;
+
     this.method = opts.method;
+
     this.message = opts.message ?? `HTTP Error ${opts.statusCode}`;
 
     if (opts.cause instanceof Error && opts.cause.stack) {
@@ -24223,8 +25671,11 @@ const log = logger.getSubLogger({ prefix: ["orgMigration"] });
 type UserMetadata = {
   migratedToOrgFrom?: {
     username: string;
+
     reverted: boolean;
+
     revertTime: string;
+
     lastMigrationTime: string;
   };
 };
@@ -24244,7 +25695,9 @@ export async function moveUserToOrg({
   user: { id?: number; userName?: string };
   targetOrg: {
     id: number;
+
     username?: string;
+
     membership: { role: MembershipRole; accepted?: boolean };
   };
   shouldMoveTeams: boolean;
@@ -24457,6 +25910,7 @@ async function dbMoveTeamToOrg({
   teamId: number;
   targetOrg: {
     id: number;
+
     teamSlug: string;
   };
 }) {
@@ -24522,6 +25976,7 @@ async function getUniqueUserThatDoesntBelongToOrg(
     if (foundUsers.length > 1) {
       throw new Error(`More than one user found with username: ${userName}`);
     }
+
     return foundUsers[0];
   } else {
     return await prisma.user.findUnique({
@@ -24676,6 +26131,7 @@ async function addRedirect({
       log.debug("No slug for team. Not adding the redirect", safeStringify({ team }));
       continue;
     }
+
     await prisma.tempOrgRedirect.upsert({
       where: {
         from_type_fromOrgId: {
@@ -24921,6 +26377,7 @@ async function removeUserAlongWithItsTeamsRedirects({
       log.debug("No slug for team. Not removing the redirect", safeStringify({ team }));
       continue;
     }
+
     await prisma.tempOrgRedirect.deleteMany({
       where: {
         type: RedirectType.Team,
@@ -24975,6 +26432,7 @@ async function dbRemoveTeamFromOrg({ teamId }: { teamId: number }) {
         });
       }
     }
+
     throw e;
   }
 }
@@ -25092,8 +26550,11 @@ export type Area = {
 const createImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
+
     image.addEventListener("load", () => resolve(image));
+
     image.addEventListener("error", (error) => reject(error));
+
     image.setAttribute("crossOrigin", "anonymous"); // needed to avoid cross-origin issues on CodeSandbox
     image.src = url;
   });
@@ -25166,7 +26627,9 @@ function getCspPolicy(nonce: string) {
         : // Note: We could use 'strict-dynamic' with 'nonce-..' instead of unsafe-inline but there are some streaming related scripts that get blocked(because they don't have nonce on them). It causes a really frustrating full page error model by Next.js to show up sometimes
           "'unsafe-inline' 'unsafe-eval' https: http:"
     };
+
     object-src 'none';
+
     base-uri 'none';
 	  child-src app.cal.com;
 	  style-src 'self' ${
@@ -25174,6 +26637,7 @@ function getCspPolicy(nonce: string) {
     } app.cal.com;
 	  font-src 'self';
 	  img-src 'self' ${WEBAPP_URL} https://img.youtube.com https://eu.ui-avatars.com/api/ data:;
+
     connect-src 'self'
 	`;
 }
@@ -25330,7 +26794,9 @@ const useMediaQuery = (query: string) => {
     if (media.matches !== matches) {
       setMatches(media.matches);
     }
+
     const listener = () => setMatches(media.matches);
+
     window.addEventListener("resize", listener);
 
     return () => window.removeEventListener("resize", listener);
@@ -25391,8 +26857,11 @@ export const useFileReader = (options: UseFileReaderProps) => {
     }
 
     const reader = new FileReader();
+
     reader.onloadstart = () => setLoading(true);
+
     reader.onloadend = () => setLoading(false);
+
     reader.onerror = () => setError(reader.error);
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -25401,6 +26870,7 @@ export const useFileReader = (options: UseFileReaderProps) => {
         onLoad(e.target?.result ?? null);
       }
     };
+
     reader[method](file);
   }, [file, method, onLoad]);
 
@@ -25502,7 +26972,9 @@ export const getEventTypesFromDB = async (id: number) => {
 export const handleSeatsEventTypeOnBooking = async (
   eventType: {
     seatsPerTimeSlot?: number | null;
+
     seatsShowAttendees: boolean | null;
+
     seatsShowAvailabilityCount: boolean | null;
     [x: string | number | symbol]: unknown;
   },
@@ -25510,13 +26982,19 @@ export const handleSeatsEventTypeOnBooking = async (
     Prisma.BookingGetPayload<{
       include: {
         attendees: { select: { name: true; email: true } };
+
         seatsReferences: { select: { referenceUid: true } };
+
         user: {
           select: {
             id: true;
+
             name: true;
+
             email: true;
+
             username: true;
+
             timeZone: true;
           };
         };
@@ -25532,10 +27010,15 @@ export const handleSeatsEventTypeOnBooking = async (
       email: string;
       name: string;
     };
+
     id: number;
+
     data: Prisma.JsonValue;
+
     bookingId: number;
+
     attendeeId: number;
+
     referenceUid: string;
   } | null;
   let seatAttendee: seatAttendee = null;
@@ -25559,7 +27042,9 @@ export const handleSeatsEventTypeOnBooking = async (
       description?: string;
       responses: Prisma.JsonValue;
     };
+
     bookingInfo["description"] = seatAttendeeData.description ?? null;
+
     bookingInfo["responses"] = bookingResponsesDbSchema.parse(seatAttendeeData.responses ?? {});
   }
 
@@ -25754,6 +27239,7 @@ export const getTemporaryOrgRedirect = async ({
     if (!redirect) {
       return slug;
     }
+
     const newSlug = new URL(redirect.toUrl).pathname.slice(1);
 
     return newSlug;
@@ -25781,6 +27267,7 @@ type RootMetadataRecipe = Readonly<{
   twitterSite: string;
   robots: {
     index: boolean;
+
     follow: boolean;
   };
 }>;
@@ -25937,6 +27424,7 @@ describe("withEmbedSsr", () => {
             },
           })
         );
+
         expect(ret).toEqual({
           redirect: {
             destination: "/reschedule/embed?layout=week_view&embed=namespace1",
@@ -25960,6 +27448,7 @@ describe("withEmbedSsr", () => {
             },
           })
         );
+
         expect(ret).toEqual({
           redirect: {
             destination: "/reschedule/embed?redirectParam=1&layout=week_view&embed=namespace1",
@@ -25983,6 +27472,7 @@ describe("withEmbedSsr", () => {
             },
           })
         );
+
         expect(ret).toEqual({
           redirect: {
             destination: "/reschedule/embed?redirectParam=1&layout=week_view&embed=",
@@ -27044,7 +28534,9 @@ describe("orgMigration", () => {
         orgSlug: data.targetOrg.slug,
       });
     });
+
     it.todo("should migrate a team with members");
+
     it.todo("Try migrating an already migrated team");
   });
 
@@ -27363,6 +28855,7 @@ async function expectUserToBeAPartOfOrg({
   usernameInOrg: string;
   expectedMembership: {
     role: MembershipRole;
+
     accepted: boolean;
   };
 }) {
@@ -27402,6 +28895,7 @@ async function expectUserToBeAPartOfTeam({
   teamId: number;
   expectedMembership: {
     role: MembershipRole;
+
     accepted: boolean;
   };
 }) {
@@ -27633,6 +29127,7 @@ async function expectRedirectToBeEnabled({
     const redirectThatShouldntBeThere = await prismock.tempOrgRedirect.findUnique({
       where: tempOrgRedirectThatShouldNotExistWhere,
     });
+
     expect(redirectThatShouldntBeThere).toBeNull();
   }
 
@@ -27797,7 +29292,9 @@ import { getTemporaryOrgRedirect } from "./getTemporaryOrgRedirect";
 const mockData = {
   redirects: [] as {
     toUrl: string;
+
     from: string;
+
     redirectType: RedirectType;
   }[],
 };
@@ -27974,6 +29471,7 @@ describe("getTemporaryOrgRedirect", () => {
       toUrl: "https://calcom.cal.com/first-in-org1",
       redirectType: RedirectType.Team,
     });
+
     mockARedirectInDB({
       slug: "second",
       toUrl: "https://calcom.cal.com/second-in-org1",
@@ -28001,6 +29499,7 @@ describe("getTemporaryOrgRedirect", () => {
       toUrl: "https://calcom.cal.com/second-in-org1",
       redirectType: RedirectType.Team,
     });
+
     mockARedirectInDB({
       slug: "first",
       toUrl: "https://calcom.cal.com/first-in-org1",
@@ -28042,6 +29541,7 @@ describe("getTemporaryOrgRedirect", () => {
       toUrl: "https://calcom.cal.com/first-in-org1",
       redirectType: RedirectType.Team,
     });
+
     mockARedirectInDB({
       slug: "second",
       toUrl: "https://calcom.cal.com/second-in-org1",
@@ -28071,6 +29571,7 @@ describe("getTemporaryOrgRedirect", () => {
       toUrl: "https://calcom.cal.com/first-in-org1",
       redirectType: RedirectType.Team,
     });
+
     mockARedirectInDB({
       slug: "second",
       toUrl: "https://calcom.cal.com/second-in-org1",
@@ -28098,6 +29599,7 @@ describe("getTemporaryOrgRedirect", () => {
       toUrl: "https://calcom.cal.com/first-in-org1",
       redirectType: RedirectType.Team,
     });
+
     mockARedirectInDB({
       slug: "second",
       toUrl: "https://calcom.cal.com/second-in-org1",
@@ -28291,8 +29793,11 @@ const triggerWebhook = async ({
   downloadLink: string;
   booking: {
     userId: number | undefined;
+
     eventTypeId: number | null;
+
     eventTypeParentId: number | null | undefined;
+
     teamId?: number | null;
   };
 }) => {
@@ -28928,6 +30433,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
     // Don't leak info about whether the user exists
     if (!user) return res.status(201).json({ message: "password_reset_email_sent" });
+
     await passwordResetRequest(user);
 
     return res.status(201).json({ message: "password_reset_email_sent" });
@@ -29048,6 +30554,7 @@ export default async function handler(req: RequestWithUsernameStatus, res: NextA
   // Use a try catch instead of returning res every time
   try {
     ensureReqIsPost(req);
+
     ensureSignupIsEnabled(req);
 
     /**
@@ -29066,6 +30573,7 @@ export default async function handler(req: RequestWithUsernameStatus, res: NextA
     if (e instanceof HttpError) {
       return res.status(e.statusCode).json({ message: e.message });
     }
+
     logger.error(e);
 
     return res.status(500).json({ message: "Internal server error" });
@@ -29357,6 +30865,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { code, state } = req.query as {
     code: string;
+
     state: string;
   };
 
@@ -29532,6 +31041,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       return res.status(error.statusCode).json({ message: error.message });
     }
+
     log.error("moveTeamToOrg failed:", safeStringify(error));
 
     const errorMessage = error instanceof Error ? error.message : "Something went wrong";
@@ -29593,6 +31103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (error.statusCode > 300) {
           log.error("Reverse migration failed:", safeStringify(error));
         }
+
         return res.status(error.statusCode).json({ message: error.message });
       }
       log.error("Reverse migration failed:", safeStringify(error));
@@ -29600,6 +31111,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(500).json({ message: errorMessage });
     }
+
     return res.status(200).json({ message: "Reverted" });
   }
   log.error("Reverse Migration failed:", safeStringify(parsedBody.error));
@@ -29662,6 +31174,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       return res.status(error.statusCode).json({ message: error.message });
     }
+
     log.error("RemoveTeamFromOrg failed:", safeStringify(error));
 
     const errorMessage = error instanceof Error ? error.message : "Something went wrong";
@@ -29736,6 +31249,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
           return res.status(error.statusCode).json({ message: error.message });
         }
+
         log.error("Migration failed:", safeStringify(error));
 
         const errorMessage = error instanceof Error ? error.message : "Something went wrong";
@@ -29745,6 +31259,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
       return res.status(403).json({ message: "Not Authorized" });
     }
+
     return res.status(200).json({ message: "Migrated" });
   }
   log.error("Migration failed:", safeStringify(parsedBody.error));
@@ -30038,6 +31553,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (identity?.org) {
       res.setHeader("x-cal-org", identity.org);
     }
+
     res.writeHead(302, {
       Location: AVATAR_FALLBACK,
     });
@@ -30049,6 +31565,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (identity.org) {
       res.setHeader("x-cal-org", identity.org);
     }
+
     res.writeHead(302, { Location: img });
 
     return res.end();
@@ -30308,10 +31825,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     res.setHeader("Content-Type", response.headers.get("content-type") as string);
+
     res.setHeader("Cache-Control", "s-maxage=86400, stale-while-revalidate=60");
+
     res.send(buffer);
   } catch (error) {
     res.statusCode = 404;
+
     res.json({ error: "Failed fetching logo" });
   }
 }
@@ -30400,6 +31920,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       redirectUrl = handler.redirect?.url || getInstalledAppPath(handler);
       res.json({ url: redirectUrl, newTab: handler.redirect?.newTab });
     }
+
     if (!res.writableEnded) return res.status(200);
 
     return res;
@@ -30409,9 +31930,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (error instanceof HttpError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+
     if (error instanceof Error) {
       return res.status(400).json({ message: error.message });
     }
+
     return res.status(404).json({ message: `API handler not found` });
   }
 };
@@ -30497,6 +32020,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== "POST") {
       throw new HttpCode({ statusCode: 405, message: "Method Not Allowed" });
     }
+
     const sig = req.headers["stripe-signature"];
 
     if (!sig) {
@@ -30506,6 +32030,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!process.env.STRIPE_WEBHOOK_SECRET_APPS) {
       throw new HttpCode({ statusCode: 500, message: "Missing process.env.STRIPE_WEBHOOK_SECRET_APPS" });
     }
+
     const requestBuffer = await buffer(req);
 
     const payload = requestBuffer.toString();
@@ -30525,7 +32050,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } catch (_err) {
     const err = getErrorFromUnknown(_err);
+
     console.error(`Webhook Error: ${err.message}`);
+
     res.status(err.statusCode ?? 500).send({
       message: err.message,
       stack: IS_PRODUCTION ? undefined : err.stack,
@@ -30720,6 +32247,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data: true,
       },
     });
+
     img = data;
   } catch (e) {
     // If anything goes wrong or avatar is not found, use default avatar
@@ -31139,6 +32667,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === "POST") {
     const { integration, externalId, credentialId } = selectedCalendarSelectSchema.parse(req.body);
+
     await prisma.selectedCalendar.upsert({
       where: {
         userId_integration_externalId: {
@@ -31156,11 +32685,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // already exists
       update: {},
     });
+
     res.status(200).json({ message: "Calendar Selection Saved" });
   }
 
   if (req.method === "DELETE") {
     const { integration, externalId } = selectedCalendarSelectSchema.parse(req.query);
+
     await prisma.selectedCalendar.delete({
       where: {
         userId_integration_externalId: {
@@ -31194,6 +32725,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const selectableCalendars = calendars.map((cal) => {
       return { selected: selectedCalendarIds.findIndex((s) => s.externalId === cal.externalId) > -1, ...cal };
     });
+
     res.status(200).json(selectableCalendars);
   }
 }
@@ -31408,26 +32940,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     for (const team of teams) {
       const EventData: {
         Created: number;
+
         Completed: number;
+
         Rescheduled: number;
+
         Cancelled: number;
+
         mostBookedEvents: {
           eventTypeId?: number | null;
           eventTypeName?: string | null;
           count?: number | null;
         }[];
+
         membersWithMostBookings: {
           userId: number | null;
           user: {
             id: number;
+
             name: string | null;
+
             email: string;
+
             avatar: string | null;
+
             username: string | null;
           };
           count: number;
         }[];
+
         admin: { email: string; name: string };
+
         team: {
           name: string;
           id: number;
@@ -31565,15 +33108,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         Prisma.EventTypeGetPayload<{
           select: {
             id: true;
+
             title: true;
+
             teamId: true;
+
             userId: true;
+
             slug: true;
+
             users: {
               select: {
                 username: true;
               };
             };
+
             team: {
               select: {
                 slug: true;
@@ -31598,9 +33147,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (eventTypeSelected.userId) {
           eventSlug = `${eventTypeSelected?.users[0]?.username}/${eventTypeSelected?.slug}`;
         }
+
         if (eventTypeSelected?.team && eventTypeSelected?.team?.slug) {
           eventSlug = `${eventTypeSelected.team.slug}/${eventTypeSelected.slug}`;
         }
+
         return {
           eventTypeId: booking.eventTypeId,
           eventTypeName: eventSlug,
@@ -31640,6 +33191,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         const userHashMap = new Map();
+
         teamUsers.forEach((user) => {
           userHashMap.set(user.id, user);
         });
@@ -32050,6 +33602,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Response>) {
       res,
       user: { ...user, locale: user?.locale ?? "en" },
     });
+
     await caller.confirm({
       bookingId: booking.id,
       recurringEventId: booking.recurringEventId || undefined,
@@ -32060,6 +33613,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Response>) {
     let message = "Error confirming booking";
 
     if (e instanceof TRPCError) message = (e as TRPCError).message;
+
     res.redirect(`/booking/${bookingUid}?error=${encodeURIComponent(message)}`);
 
     return;
@@ -32253,10 +33807,12 @@ export const sendBookingEmail = async ({
   eventTypeSlug: string;
   slots?: {
     time: string;
+
     text: string;
   }[];
   date: {
     date: string;
+
     text: string;
   };
 }) => {
@@ -32685,24 +34241,33 @@ export default editBookingTool;
 export type Availability = {
   busy: {
     start: string;
+
     end: string;
+
     title?: string;
   }[];
   timeZone: string;
   dateRanges: {
     start: string;
+
     end: string;
   }[];
   workingHours: {
     days: number[];
+
     startTime: number;
+
     endTime: number;
+
     userId: number;
   }[];
   dateOverrides: {
     date: string;
+
     startTime: number;
+
     endTime: number;
+
     userId: number;
   };
   currentSeats: number;
@@ -32716,6 +34281,7 @@ export type EventType = {
   slug: string;
   hosts: {
     userId: number;
+
     isFixed: boolean;
   }[];
   hidden: boolean;
@@ -33009,6 +34575,7 @@ export const POST = async (request: NextRequest) => {
       to: user.email,
       from: aiEmail,
     });
+
     console.error(availability.error);
 
     return new NextResponse("Error fetching availability. Please try again.", { status: 400 });
@@ -33021,6 +34588,7 @@ export const POST = async (request: NextRequest) => {
       to: user.email,
       from: aiEmail,
     });
+
     console.error(eventTypes.error);
 
     return new NextResponse("Error fetching event types. Please try again.", { status: 400 });
@@ -33364,7 +34932,9 @@ describe("Adds a request ID", () => {
     await middleware.fn(req, res, serverNext);
 
     expect(middlewareSpy).toBeCalled();
+
     expect(res.statusCode).toBe(200);
+
     expect(res.getHeader("Calcom-Response-ID")).toBeDefined();
   });
 });
@@ -33400,6 +34970,7 @@ describe("HTTP Methods function only allows the correct HTTP Methods", () => {
     await middleware.fn(req, res, serverNext);
 
     expect(middlewareSpy).toBeCalled();
+
     expect(res.statusCode).toBe(200);
   });
   it("Should allow the passed in Method", async () => {
@@ -33419,6 +34990,7 @@ describe("HTTP Methods function only allows the correct HTTP Methods", () => {
     await middleware.fn(req, res, serverNext);
 
     expect(middlewareSpy).toBeCalled();
+
     expect(res.statusCode).toBe(405);
   });
 });
@@ -33464,6 +35036,7 @@ describe("Verify API key", () => {
     };
 
     vi.mocked(checkLicense).mockResolvedValue(false);
+
     vi.mocked(isAdminGuard).mockResolvedValue(false);
 
     const serverNext = vi.fn((next: void) => Promise.resolve(next));
@@ -33473,6 +35046,7 @@ describe("Verify API key", () => {
     await middleware.fn(req, res, serverNext);
 
     expect(middlewareSpy).toBeCalled();
+
     expect(res.statusCode).toBe(401);
   });
   it("It should thow an error if no api key is provided", async () => {
@@ -33486,6 +35060,7 @@ describe("Verify API key", () => {
     };
 
     vi.mocked(checkLicense).mockResolvedValue(true);
+
     vi.mocked(isAdminGuard).mockResolvedValue(false);
 
     const serverNext = vi.fn((next: void) => Promise.resolve(next));
@@ -33495,6 +35070,7 @@ describe("Verify API key", () => {
     await middleware.fn(req, res, serverNext);
 
     expect(middlewareSpy).toBeCalled();
+
     expect(res.statusCode).toBe(401);
   });
 });
@@ -33513,6 +35089,7 @@ describe("API - withMiddleware test", () => {
     const customPrismaClientIndex = middlewareOrder.indexOf("customPrismaClient");
 
     const verifyApiKeyIndex = middlewareOrder.indexOf("verifyApiKey");
+
     expect(customPrismaClientIndex).toBeLessThan(verifyApiKeyIndex);
   });
 });
@@ -33695,9 +35272,11 @@ describe.skipIf(true)("POST /api/bookings", () => {
         });
 
         prismaMock.eventType.findUniqueOrThrow.mockResolvedValue(buildEventType());
+
         prismaMock.booking.findMany.mockResolvedValue([]);
 
         await handler(req, res);
+
         console.log({ statusCode: res._getStatusCode(), data: JSON.parse(res._getData()) });
 
         expect(prismaMock.booking.create).toHaveBeenCalledTimes(1);
@@ -33733,11 +35312,15 @@ describe.skipIf(true)("POST /api/bookings", () => {
         const data = JSON.parse(res._getData());
 
         expect(prismaMock.booking.create).toHaveBeenCalledTimes(12);
+
         expect(res._getStatusCode()).toBe(201);
+
         expect(data.message).toEqual("Bookings created successfully.");
+
         expect(data.bookings.length).toEqual(12);
       });
     });
+
     test("Notifies multiple bookings", async () => {
       const { req, res } = createMocks<CustomNextApiRequest, CustomNextApiResponse>({
         method: "POST",
@@ -33797,12 +35380,17 @@ export declare module "next" {
     session?: Session | null;
 
     userId: number;
+
     method: string;
+
     prisma: PrismaClient;
     // session: { user: { id: number } };
     // query: Partial<{ [key: string]: string | string[] }>;
+
     isAdmin: boolean;
+
     isCustomPrisma: boolean;
+
     pagination: { take: number; skip: number };
   }
 }
@@ -33970,10 +35558,12 @@ export const membershipIdSchema = schemaQueryIdAsString
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "userId is not a number" });
       return z.NEVER;
     }
+
     if (!teamIdInt.success) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "teamId is not a number " });
       return z.NEVER;
     }
+
     return {
       userId: userIdInt.data.id,
       teamId: teamIdInt.data.id,
@@ -35068,17 +36658,25 @@ export enum Frequency {
 interface EventTypeExtended extends Omit<EventType, "recurringEvent" | "locations"> {
   recurringEvent: {
     dtstart?: Date | undefined;
+
     interval?: number | undefined;
+
     count?: number | undefined;
+
     freq?: Frequency | undefined;
+
     until?: Date | undefined;
+
     tzid?: string | undefined;
   } | null;
   locations:
     | {
         link?: string | undefined;
+
         address?: string | undefined;
+
         hostPhoneNumber?: string | undefined;
+
         type: EventLocationType;
       }[]
     | null
@@ -35179,6 +36777,7 @@ export default function parseJSONSafely(str: string) {
         message: `Invalid JSON in the body: ${(e as Error).message}`,
       };
     }
+
     return {};
   }
 }
@@ -35255,6 +36854,7 @@ export const customPrismaClient: NextMiddleware = async (req, res, next) => {
   // If no custom api Id is provided, attach to request the regular cal.com prisma client.
   if (!key) {
     req.prisma = customPrisma();
+
     await next();
 
     return;
@@ -35304,6 +36904,7 @@ export const captureErrors: NextMiddleware = async (_req, res, next) => {
       res.status(400).json({ message: redactedError.message, error: redactedError });
       return;
     }
+
     res.status(400).json({ message: "Something went wrong", error });
   }
 };
@@ -36133,6 +37734,7 @@ export async function paymentById(
       where: { id: userId },
       include: { bookings: true },
     });
+
     await prisma.payment
       .findUnique({ where: { id: safeQuery.data.id } })
       .then((data) => schemaPaymentPublic.parse(data))
@@ -37003,6 +38605,7 @@ async function handler(req: NextApiRequest) {
     if (!user) {
       throw new HttpError({ message: "User not found", statusCode: 500 });
     }
+
     args.where = buildWhereClause(userId, attendeeEmails, [], []);
   }
 
@@ -37493,6 +39096,7 @@ async function postHandler(req: NextApiRequest) {
 
   if (parsedBody.parentId) {
     await checkParentEventOwnership(req);
+
     await checkUserMembership(req);
   }
 
@@ -37848,6 +39452,7 @@ export async function patchHandler(req: NextApiRequest) {
 
   if (hosts) {
     await ensureOnlyMembersAsHosts(req, parsedBody);
+
     data.hosts = {
       deleteMany: {},
       create: hosts.map((host) => ({
@@ -37963,6 +39568,7 @@ export async function getHandler(req: NextApiRequest) {
         defaultScheduleId: true,
       },
     });
+
     eventType.scheduleId = user.defaultScheduleId;
   }
 
@@ -37983,6 +39589,7 @@ async function checkPermissions<T extends BaseEventTypeCheckPermissions>(
   if (req.isAdmin) return true;
   if (eventType?.teamId) {
     req.query.teamId = String(eventType.teamId);
+
     await canAccessTeamEventOrThrow(req, {
       in: [MembershipRole.OWNER, MembershipRole.ADMIN, MembershipRole.MEMBER],
     });
@@ -38147,7 +39754,9 @@ async function postHandler(req: NextApiRequest) {
 
   if (isAdmin && bodyUserId) {
     const where: Prisma.UserWhereInput = { id: bodyUserId };
+
     await prisma.user.findFirstOrThrow({ where });
+
     args.data.userId = bodyUserId;
   }
 
@@ -38275,6 +39884,7 @@ function handleAdminRequests(req: CustomNextApiRequest) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
 
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
+
     req.args.where = { userId: { in: userIds } };
 
     if (Array.isArray(query.userId)) req.args.orderBy = { userId: "asc" };
@@ -38777,6 +40387,7 @@ async function handler(req: NextApiRequest) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
 
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
+
     args.where = { userId: { in: userIds } };
 
     if (Array.isArray(query.userId)) args.orderBy = { userId: "asc" };
@@ -38894,6 +40505,7 @@ async function postHandler(req: NextApiRequest) {
         statusCode: 400,
         message: "Bad request, eventTypeId invalid",
       });
+
     parsedBody.userId = undefined;
   }
 
@@ -39278,6 +40890,7 @@ async function validateRequestAndOwnership({
         message: `The provided destination calendar can only be linked to an event type`,
       });
     }
+
     if (destinationCalendarObject.userId !== assignedUserId) {
       throw new HttpError({
         statusCode: 403,
@@ -40549,6 +42162,7 @@ export async function getHandler(req: NextApiRequest) {
 
   if (req.query.email) {
     const validationResult = schemaQuerySingleOrMultipleUserEmails.parse(req.query);
+
     where.email = {
       in: Array.isArray(validationResult.email) ? validationResult.email : [validationResult.email],
     };
@@ -41126,6 +42740,7 @@ const patchHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       const statusCode = getHTTPStatusCodeFromError(cause);
       throw new HttpError({ statusCode, message: cause.message });
     }
+
     throw cause;
   }
 };
@@ -41374,6 +42989,7 @@ export async function patchHandler(req: NextApiRequest) {
       ...(_team.metadata as Prisma.JsonObject),
       requestedSlug: data.slug,
     };
+
     delete data.slug;
 
     if (IS_TEAM_BILLING_ENABLED) {
@@ -41755,6 +43371,7 @@ async function handler(req: NextApiRequest) {
     if (member.accepted) {
       allMemberIds.push(member.userId);
     }
+
     return allMemberIds;
   }, []);
   const members = await prisma.user.findMany({
@@ -42022,6 +43639,7 @@ export async function patchHandler(req: NextApiRequest) {
         { where: { id: data.bookingId } }
       : /* For non-admins we make sure the booking belongs to the user */
         { where: { id: data.bookingId, userId } };
+
     await prisma.booking.findFirstOrThrow(args);
   }
   const booking_reference = await prisma.bookingReference.update({ where: { id }, data });
@@ -42218,7 +43836,9 @@ async function postHandler(req: NextApiRequest) {
     const where: Prisma.EventTypeWhereInput = { id: eventTypeId };
 
     if (!isAdmin) where.userId = userId;
+
     await prisma.eventType.findFirstOrThrow({ where });
+
     args.data.eventTypeId = eventTypeId;
   }
 
@@ -42226,12 +43846,15 @@ async function postHandler(req: NextApiRequest) {
 
   if (isAdmin && bodyUserId) {
     const where: Prisma.UserWhereInput = { id: bodyUserId };
+
     await prisma.user.findFirstOrThrow({ where });
+
     args.data.userId = bodyUserId;
   }
 
   if (eventTriggers) {
     const eventTriggersSet = new Set(eventTriggers);
+
     args.data.eventTriggers = Array.from(eventTriggersSet);
   }
 
@@ -42401,7 +44024,9 @@ export async function patchHandler(req: NextApiRequest) {
     const where: Prisma.EventTypeWhereInput = { id: eventTypeId };
 
     if (!isAdmin) where.userId = userId;
+
     await prisma.eventType.findFirstOrThrow({ where });
+
     args.data.eventTypeId = eventTypeId;
   }
 
@@ -42409,12 +44034,15 @@ export async function patchHandler(req: NextApiRequest) {
 
   if (isAdmin && bodyUserId) {
     const where: Prisma.UserWhereInput = { id: bodyUserId };
+
     await prisma.user.findFirstOrThrow({ where });
+
     args.data.userId = bodyUserId;
   }
 
   if (eventTriggers) {
     const eventTriggersSet = new Set(eventTriggers);
+
     args.data.eventTriggers = Array.from(eventTriggersSet);
   }
 
@@ -42534,6 +44162,7 @@ async function getHandler(req: NextApiRequest) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
 
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
+
     args.where = { OR: [{ eventType: { userId: { in: userIds } } }, { userId: { in: userIds } }] };
 
     if (Array.isArray(query.userId)) args.orderBy = { userId: "asc", eventType: { userId: "asc" } };
@@ -42603,7 +44232,9 @@ async function postHandler(req: NextApiRequest) {
 
   if (isAdmin && bodyUserId) {
     const where: Prisma.UserWhereInput = { id: bodyUserId };
+
     await prisma.user.findFirstOrThrow({ where });
+
     args.data.userId = bodyUserId;
   }
 
@@ -42760,7 +44391,9 @@ export async function patchHandler(req: NextApiRequest) {
 
   if (isAdmin && bodyUserId) {
     const where: Prisma.UserWhereInput = { id: bodyUserId };
+
     await prisma.user.findFirstOrThrow({ where });
+
     args.data.userId = bodyUserId;
   }
 
@@ -42888,6 +44521,7 @@ async function getHandler(req: NextApiRequest) {
     const query = schemaQuerySingleOrMultipleUserIds.parse(req.query);
 
     const userIds = Array.isArray(query.userId) ? query.userId : [query.userId || userId];
+
     args.where = { userId: { in: userIds } };
 
     if (Array.isArray(query.userId)) args.orderBy = { userId: "asc" };
@@ -42935,6 +44569,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (!Array.isArray(usernameList)) {
       slugs = usernameList ? [usernameList] : undefined;
     }
+
     const input = getScheduleSchema.parse({ usernameList: slugs, ...rest });
 
     const timeZoneSupported = input.timeZone ? isSupportedTimeZone(input.timeZone) : false;
@@ -42962,6 +44597,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const statusCode = getHTTPStatusCodeFromError(cause);
       throw new HttpError({ statusCode, message: cause.message });
     }
+
     throw cause;
   }
 }
@@ -43032,9 +44668,13 @@ describe("GET /api/slots", () => {
           },
           prisma: prismock,
         });
+
         buildMockData();
+
         await handler(req, res);
+
         console.log({ statusCode: res._getStatusCode(), data: JSON.parse(res._getData()) });
+
         expect(JSON.parse(res._getData())).toMatchInlineSnapshot(`
           {
             "slots": {},
@@ -43053,9 +44693,13 @@ describe("GET /api/slots", () => {
           },
           prisma: prismock,
         });
+
         buildMockData();
+
         await handler(req, res);
+
         console.log({ statusCode: res._getStatusCode(), data: JSON.parse(res._getData()) });
+
         expect(JSON.parse(res._getData())).toMatchInlineSnapshot(`
           {
             "slots": {},
